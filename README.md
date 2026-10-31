@@ -9,6 +9,8 @@ Free, fast browser games. No backend, no database, no API key. Plain HTML, CSS a
 
 Categories: game type — Arcade (Fruit Slice) and Puzzle (Memory Match) — plus a second audience filter — All Ages, Kids, Adults. Both current games are All Ages, so they show under both Kids and Adults; future kids-only or adult-only games will be tagged accordingly. Both filters work together on the homepage. Header: logo + language selector + ☰ hamburger menu only — no individual game links in the header; the menu lists Home, categories and info pages, and category links from other pages open the homepage with that filter applied.
 
+Game card pattern (use for every future game): by default only the square thumbnail + game name are visible. Category tags, description, how-to-play and the Play button live in `.card-info`, which pops up over the thumbnail on hover, on card focus, or on tap (tap toggles `.show-info`; tapping Play follows the link). Do not put description/tags outside `.card-info` on new cards.
+
 Languages: header language selector with 11 popular languages — English, Hindi, Spanish, French, German, Portuguese, Arabic, Chinese, Russian, Turkish, Urdu (`lang.js`, choice saved in browser). Homepage, navigation, game headings, instructions and HUD labels translate; About/Contact/Privacy/Terms content stays in English for now (their navigation translates). SEO: keyword-rich titles/descriptions, Open Graph tags, canonical URLs, `sitemap.xml`, `robots.txt`. Design: responsive for mobile and tablet, large touch targets, no heavy images or backend, so pages stay fast.
 
 ## Run locally
