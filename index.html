@@ -3,8 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mini Game Arcade — Play Free Browser Games</title>
-<meta name="description" content="Mini Game Arcade: free, fast browser games that work on phone and desktop. No download, no sign-up. Start with Fruit Slice.">
+<title>Mini Game Arcade — Free Browser Games: Fruit Slice, Memory Match & More</title>
+<meta name="description" content="Play free browser games on mobile, tablet or desktop. No download, no sign-up. Fruit Slice arcade game and Memory Match puzzle game, with more quick games coming.">
+<meta name="keywords" content="free browser games, mini games, fruit slice game, memory match game, puzzle games, arcade games, play games online, mobile games, no download games">
+<meta property="og:title" content="Mini Game Arcade — Free Browser Games">
+<meta property="og:description" content="Free, fast browser games on mobile, tablet and desktop. No download, no sign-up.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,21 +29,51 @@
 </header>
 <main>
   <h1>Play a quick game. No download, no sign-up.</h1>
-  <p>Mini Game Arcade is a small collection of free browser games made to be played in a few minutes on your phone or computer. Every game listed here actually works — we do not list games that are not ready yet.</p>
+  <p>Mini Game Arcade is a small collection of free browser games made to be played in a few minutes on your phone, tablet or computer. Every game listed here actually works — we do not list games that are not ready yet.</p>
 
-  <section class="card">
+  <nav class="filters" aria-label="Filter games by category">
+    <button type="button" class="filter-btn active" data-filter="all">All Games</button>
+    <button type="button" class="filter-btn" data-filter="arcade">Arcade</button>
+    <button type="button" class="filter-btn" data-filter="puzzle">Puzzle</button>
+  </nav>
+  <p id="filter-note" class="muted" aria-live="polite">Showing all games.</p>
+
+  <section class="card game-card" data-category="arcade">
+    <p class="tag">Arcade</p>
     <h2>🍉 Fruit Slice</h2>
     <p>Slice flying fruit, build a combo, and avoid the bombs. 60 seconds, 3 lives, mouse or touch.</p>
     <p><a class="btn" href="fruit-slice.html">Play Fruit Slice</a></p>
     <p class="muted">How to play: swipe across a fruit to slice it. Do not slice a bomb. Missing a fruit costs a life.</p>
   </section>
 
-  <section class="card">
+  <section class="card game-card" data-category="puzzle">
+    <p class="tag">Puzzle</p>
     <h2>🧠 Memory Match</h2>
     <p>Flip cards and find all 8 pairs. Timer, move counter, restart, and a win screen — mouse, touch, and keyboard.</p>
     <p><a class="btn" href="memory-match.html">Play Memory Match</a></p>
     <p class="muted">How to play: flip two cards at a time. Matching pairs stay face up.</p>
   </section>
+  <script>
+    (function () {
+      var buttons = document.querySelectorAll('.filter-btn');
+      var cards = document.querySelectorAll('.game-card');
+      var note = document.getElementById('filter-note');
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          buttons.forEach(function (b) { b.classList.remove('active'); });
+          btn.classList.add('active');
+          var f = btn.getAttribute('data-filter');
+          var shown = 0;
+          cards.forEach(function (c) {
+            var show = f === 'all' || c.getAttribute('data-category') === f;
+            c.style.display = show ? '' : 'none';
+            if (show) shown += 1;
+          });
+          note.textContent = f === 'all' ? 'Showing all games.' : 'Showing ' + shown + ' ' + f + ' game(s).';
+        });
+      });
+    })();
+  </script>
 
   <section class="card">
     <h2>More games coming</h2>
