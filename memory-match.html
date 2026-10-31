@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Memory Match — Mini Game Arcade</title>
+<meta name="description" content="Memory Match: flip cards, find all 8 pairs, beat your time. Playable with mouse, touch, and keyboard.">
+<link rel="stylesheet" href="style.css">
+<style>
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:520px;margin:16px auto}
+.card-btn{aspect-ratio:1;border:2px solid #1f2937;border-radius:14px;background:#ffd166;font-size:2rem;cursor:pointer}
+.card-btn.flipped,.card-btn.matched{background:#fff}
+.card-btn.matched{border-color:#22c55e}
+.card-btn:disabled{cursor:default;opacity:1}
+@media(max-width:500px){.card-btn{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<header>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="fruit-slice.html">Fruit Slice</a>
+    <a href="memory-match.html">Memory Match</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </nav>
+</header>
+<main>
+  <h1>Memory Match</h1>
+  <p>Flip two cards at a time and find all 8 pairs. Fewer moves and a faster time is better.</p>
+  <div class="hud">
+    <span>Moves: <strong id="moves">0</strong></span>
+    <span>Pairs: <strong id="pairs">0 / 8</strong></span>
+    <span>Time: <strong id="time">0</strong>s</span>
+    <span>Best: <strong id="best">—</strong></span>
+  </div>
+  <p><button class="btn small secondary" id="restartBtn" type="button">Restart</button></p>
+  <div class="grid" id="grid" role="grid" aria-label="Memory Match cards"></div>
+  <p id="message" aria-live="polite"></p>
+  <p><a href="index.html">← Back to all games</a></p>
+  <p class="muted">Controls: click or tap a card to flip it. Keyboard: Tab to a card, then Enter or Space to flip it.</p>
+</main>
+<footer>
+  <a href="about.html">About</a> · <a href="contact.html">Contact</a> · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms</a>
+</footer>
+<script src="memory-match.js"></script>
+</body>
+</html>

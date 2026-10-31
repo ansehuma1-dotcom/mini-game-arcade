@@ -5,6 +5,7 @@ Free, fast browser games. No backend, no database, no API key. Plain HTML, CSS a
 ## Games
 
 - **Fruit Slice** (`fruit-slice.html`): slice flying fruit with mouse or touch, build combos, avoid bombs. 60 seconds, 3 lives, start / pause / restart, game-over, sound on/off (Web Audio, only after you interact).
+- **Memory Match** (`memory-match.html`): flip cards, find all 8 pairs. Timer, move counter, restart, win screen, best time saved in your browser only. Mouse, touch, and keyboard (Tab + Enter/Space).
 
 ## Run locally
 
