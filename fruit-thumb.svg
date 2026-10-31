@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Fruit Slice game thumbnail">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffedd5"/><stop offset="1" stop-color="#fca5a5"/>
+    </linearGradient>
+    <linearGradient id="flesh" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fb7185"/><stop offset="1" stop-color="#e11d48"/>
+    </linearGradient>
+    <linearGradient id="blade" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fafc"/><stop offset="1" stop-color="#94a3b8"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <circle cx="350" cy="55" r="48" fill="#fdba74" opacity=".55"/>
+  <circle cx="42" cy="340" r="34" fill="#fda4af" opacity=".5"/>
+  <!-- juice splash -->
+  <path d="M40 300 Q90 230 150 270 Q120 310 70 330 Q45 325 40 300Z" fill="#ef4444" opacity=".85"/>
+  <circle cx="165" cy="255" r="12" fill="#ef4444"/><circle cx="185" cy="275" r="7" fill="#ef4444"/><circle cx="150" cy="235" r="6" fill="#ef4444"/>
+  <!-- small fruit pieces -->
+  <g transform="translate(300 285)">
+    <circle r="42" fill="#fb923c"/><circle r="32" fill="#ffedd5"/><path d="M0 0 L26 -18 M0 0 L28 8 M0 0 L-8 30 M0 0 L-26 4" stroke="#fb923c" stroke-width="5" stroke-linecap="round"/><circle r="5" fill="#fb923c"/>
+  </g>
+  <g transform="translate(70 95) rotate(-18)">
+    <ellipse rx="34" ry="24" fill="#dc2626"/><ellipse rx="24" ry="16" fill="#fca5a5" opacity=".6"/>
+    <path d="M-30 -12 Q0 -34 30 -10 Q20 4 0 6 Q-20 4 -30 -12Z" fill="#16a34a"/>
+  </g>
+  <!-- knife slash -->
+  <path d="M285 55 L120 285" stroke="#fff" stroke-width="14" stroke-linecap="round" opacity=".9"/>
+  <path d="M285 55 L120 285" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round" stroke-dasharray="18 12"/>
+  <!-- big watermelon slice -->
+  <g transform="translate(200 215)">
+    <path d="M-118 18 A120 120 0 0 1 118 18 Z" fill="#16a34a"/>
+    <path d="M-104 16 A106 106 0 0 1 104 16 Z" fill="#fef3c7"/>
+    <path d="M-92 14 A94 94 0 0 1 92 14 Z" fill="url(#flesh)"/>
+    <g fill="#1f2937">
+      <ellipse cx="-55" cy="-28" rx="7" ry="11" transform="rotate(-20 -55 -28)"/>
+      <ellipse cx="0" cy="-42" rx="7" ry="11"/>
+      <ellipse cx="55" cy="-28" rx="7" ry="11" transform="rotate(20 55 -28)"/>
+      <ellipse cx="-28" cy="-2" rx="6" ry="10" transform="rotate(-10 -28 -2)"/>
+      <ellipse cx="28" cy="-2" rx="6" ry="10" transform="rotate(10 28 -2)"/>
+    </g>
+    <path d="M-92 14 A94 94 0 0 1 -30 -72" stroke="#fda4af" stroke-width="6" fill="none" opacity=".7" stroke-linecap="round"/>
+  </g>
+  <!-- knife -->
+  <g transform="translate(268 92) rotate(38)">
+    <path d="M0 0 L95 -14 L95 14 Z" fill="url(#blade)" stroke="#64748b" stroke-width="2"/>
+    <rect x="-42" y="-12" width="42" height="24" rx="8" fill="#7c2d12"/>
+    <circle cx="-28" cy="0" r="4" fill="#fdba74"/>
+  </g>
+</svg>

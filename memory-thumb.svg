@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Memory Match game thumbnail">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ddd6fe"/><stop offset="1" stop-color="#bfdbfe"/>
+    </linearGradient>
+    <linearGradient id="down" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#bg)"/>
+  <circle cx="352" cy="52" r="40" fill="#a5b4fc" opacity=".55"/>
+  <circle cx="48" cy="348" r="30" fill="#93c5fd" opacity=".55"/>
+  <path d="M52 52 l10 22 24 3 -17 17 4 24 -21 -12 -21 12 4 -24 -17 -17 24 -3Z" fill="#fbbf24"/>
+  <path d="M330 330 l7 15 17 2 -12 12 3 17 -15 -8 -15 8 3 -17 -12 -12 17 -2Z" fill="#f472b6"/>
+  <!-- card grid: 3 x 2 -->
+  <g>
+    <!-- row 1 -->
+    <g transform="translate(52 78)">
+      <rect width="88" height="112" rx="16" fill="url(#down)"/>
+      <circle cx="44" cy="56" r="26" fill="none" stroke="#fbbf24" stroke-width="5"/>
+      <text x="44" y="68" text-anchor="middle" font-size="38" font-family="system-ui, sans-serif" font-weight="800" fill="#fbbf24">?</text>
+    </g>
+    <g transform="translate(156 78)">
+      <rect width="88" height="112" rx="16" fill="#fff" stroke="#c7d2fe" stroke-width="3"/>
+      <path d="M44 38 l11 24 26 4 -19 18 5 26 -23 -13 -23 13 5 -26 -19 -18 26 -4Z" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+    </g>
+    <g transform="translate(260 78)">
+      <rect width="88" height="112" rx="16" fill="url(#down)"/>
+      <circle cx="44" cy="56" r="26" fill="none" stroke="#fbbf24" stroke-width="5"/>
+      <text x="44" y="68" text-anchor="middle" font-size="38" font-family="system-ui, sans-serif" font-weight="800" fill="#fbbf24">?</text>
+    </g>
+    <!-- row 2 -->
+    <g transform="translate(52 212)">
+      <rect width="88" height="112" rx="16" fill="#fff" stroke="#c7d2fe" stroke-width="3"/>
+      <path d="M44 96 C20 74 14 52 30 40 C40 32 52 36 44 52 C52 36 64 32 74 40 C90 52 84 74 44 96Z" fill="#ef4444"/>
+    </g>
+    <g transform="translate(156 212)">
+      <rect width="88" height="112" rx="16" fill="#fff" stroke="#facc15" stroke-width="5"/>
+      <path d="M44 38 l11 24 26 4 -19 18 5 26 -23 -13 -23 13 5 -26 -19 -18 26 -4Z" fill="#facc15" stroke="#eab308" stroke-width="2"/>
+    </g>
+    <g transform="translate(260 212)">
+      <rect width="88" height="112" rx="16" fill="#fff" stroke="#fda4af" stroke-width="5"/>
+      <path d="M44 96 C20 74 14 52 30 40 C40 32 52 36 44 52 C52 36 64 32 74 40 C90 52 84 74 44 96Z" fill="#ef4444"/>
+    </g>
+  </g>
+  <!-- match swoosh -->
+  <path d="M150 150 Q200 190 250 150" stroke="#22c55e" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M250 150 l-16 -2 l8 14Z" fill="#22c55e"/>
+</svg>
