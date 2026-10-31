@@ -31,16 +31,19 @@
   <h1>Play a quick game. No download, no sign-up.</h1>
   <p>Mini Game Arcade is a small collection of free browser games made to be played in a few minutes on your phone, tablet or computer. Every game listed here actually works — we do not list games that are not ready yet.</p>
 
+  <div class="filters-row">
   <nav class="filters" aria-label="Filter games by category">
     <button type="button" class="filter-btn type-btn active" data-filter="all">All Games</button>
     <button type="button" class="filter-btn type-btn" data-filter="arcade">Arcade</button>
     <button type="button" class="filter-btn type-btn" data-filter="puzzle">Puzzle</button>
   </nav>
+  <span class="filters-divider" aria-hidden="true">|</span>
   <nav class="filters" aria-label="Filter games by who they are for">
     <button type="button" class="filter-btn audience-btn active" data-filter="all">All Ages</button>
     <button type="button" class="filter-btn audience-btn" data-filter="kids">Kids</button>
     <button type="button" class="filter-btn audience-btn" data-filter="adults">Adults</button>
   </nav>
+  </div>
   <p id="filter-note" class="muted" aria-live="polite">Showing all games.</p>
 
   <section class="card game-card" data-category="arcade" data-audience="all-ages">
