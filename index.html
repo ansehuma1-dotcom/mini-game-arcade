@@ -46,21 +46,25 @@
   </div>
   <p id="filter-note" class="muted" aria-live="polite">Showing all games.</p>
 
+  <div class="games-grid">
   <section class="card game-card" data-category="arcade" data-audience="all-ages">
+    <div class="thumb thumb-arcade" aria-hidden="true">🍉</div>
     <p class="tag">Arcade</p> <p class="tag">All Ages</p>
-    <h2>🍉 Fruit Slice</h2>
+    <h2>Fruit Slice</h2>
     <p>Slice flying fruit, build a combo, and avoid the bombs. 60 seconds, 3 lives, mouse or touch.</p>
     <p><a class="btn" href="fruit-slice.html">Play Fruit Slice</a></p>
     <p class="muted">How to play: swipe across a fruit to slice it. Do not slice a bomb. Missing a fruit costs a life.</p>
   </section>
 
   <section class="card game-card" data-category="puzzle" data-audience="all-ages">
+    <div class="thumb thumb-puzzle" aria-hidden="true">🧠</div>
     <p class="tag">Puzzle</p> <p class="tag">All Ages</p>
-    <h2>🧠 Memory Match</h2>
+    <h2>Memory Match</h2>
     <p>Flip cards and find all 8 pairs. Timer, move counter, restart, and a win screen — mouse, touch, and keyboard.</p>
     <p><a class="btn" href="memory-match.html">Play Memory Match</a></p>
     <p class="muted">How to play: flip two cards at a time. Matching pairs stay face up.</p>
   </section>
+  </div>
   <script>
     (function () {
       var typeBtns = document.querySelectorAll('.type-btn');
