@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mini Game Arcade — Free Browser Games: Fruit Slice, Memory Match & More</title>
 <meta name="description" content="Play free browser games on mobile, tablet or desktop. No download, no sign-up. Fruit Slice arcade game and Memory Match puzzle game, with more quick games coming.">
-<meta name="keywords" content="free browser games, mini games, fruit slice game, memory match game, puzzle games, arcade games, play games online, mobile games, no download games">
+<meta name="keywords" content="free browser games, mini games, fruit slice game, memory match game, puzzle games, arcade games, kids games, games for adults, play games online, mobile games, no download games">
 <meta property="og:title" content="Mini Game Arcade — Free Browser Games">
 <meta property="og:description" content="Free, fast browser games on mobile, tablet and desktop. No download, no sign-up.">
 <meta property="og:type" content="website">
@@ -32,22 +32,27 @@
   <p>Mini Game Arcade is a small collection of free browser games made to be played in a few minutes on your phone, tablet or computer. Every game listed here actually works — we do not list games that are not ready yet.</p>
 
   <nav class="filters" aria-label="Filter games by category">
-    <button type="button" class="filter-btn active" data-filter="all">All Games</button>
-    <button type="button" class="filter-btn" data-filter="arcade">Arcade</button>
-    <button type="button" class="filter-btn" data-filter="puzzle">Puzzle</button>
+    <button type="button" class="filter-btn type-btn active" data-filter="all">All Games</button>
+    <button type="button" class="filter-btn type-btn" data-filter="arcade">Arcade</button>
+    <button type="button" class="filter-btn type-btn" data-filter="puzzle">Puzzle</button>
+  </nav>
+  <nav class="filters" aria-label="Filter games by who they are for">
+    <button type="button" class="filter-btn audience-btn active" data-filter="all">All Ages</button>
+    <button type="button" class="filter-btn audience-btn" data-filter="kids">Kids</button>
+    <button type="button" class="filter-btn audience-btn" data-filter="adults">Adults</button>
   </nav>
   <p id="filter-note" class="muted" aria-live="polite">Showing all games.</p>
 
-  <section class="card game-card" data-category="arcade">
-    <p class="tag">Arcade</p>
+  <section class="card game-card" data-category="arcade" data-audience="all-ages">
+    <p class="tag">Arcade</p> <p class="tag">All Ages</p>
     <h2>🍉 Fruit Slice</h2>
     <p>Slice flying fruit, build a combo, and avoid the bombs. 60 seconds, 3 lives, mouse or touch.</p>
     <p><a class="btn" href="fruit-slice.html">Play Fruit Slice</a></p>
     <p class="muted">How to play: swipe across a fruit to slice it. Do not slice a bomb. Missing a fruit costs a life.</p>
   </section>
 
-  <section class="card game-card" data-category="puzzle">
-    <p class="tag">Puzzle</p>
+  <section class="card game-card" data-category="puzzle" data-audience="all-ages">
+    <p class="tag">Puzzle</p> <p class="tag">All Ages</p>
     <h2>🧠 Memory Match</h2>
     <p>Flip cards and find all 8 pairs. Timer, move counter, restart, and a win screen — mouse, touch, and keyboard.</p>
     <p><a class="btn" href="memory-match.html">Play Memory Match</a></p>
@@ -55,23 +60,35 @@
   </section>
   <script>
     (function () {
-      var buttons = document.querySelectorAll('.filter-btn');
+      var typeBtns = document.querySelectorAll('.type-btn');
+      var audienceBtns = document.querySelectorAll('.audience-btn');
       var cards = document.querySelectorAll('.game-card');
       var note = document.getElementById('filter-note');
-      buttons.forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          buttons.forEach(function (b) { b.classList.remove('active'); });
-          btn.classList.add('active');
-          var f = btn.getAttribute('data-filter');
-          var shown = 0;
-          cards.forEach(function (c) {
-            var show = f === 'all' || c.getAttribute('data-category') === f;
-            c.style.display = show ? '' : 'none';
-            if (show) shown += 1;
-          });
-          note.textContent = f === 'all' ? 'Showing all games.' : 'Showing ' + shown + ' ' + f + ' game(s).';
+      var typeFilter = 'all', audienceFilter = 'all';
+      function apply() {
+        var shown = 0;
+        cards.forEach(function (c) {
+          var typeOk = typeFilter === 'all' || c.getAttribute('data-category') === typeFilter;
+          var aud = c.getAttribute('data-audience');
+          var audOk = audienceFilter === 'all' || aud === 'all-ages' || aud === audienceFilter;
+          var show = typeOk && audOk;
+          c.style.display = show ? '' : 'none';
+          if (show) shown += 1;
         });
-      });
+        note.textContent = shown === 0 ? 'No games match those filters yet.' : 'Showing ' + shown + ' game(s).';
+      }
+      function wire(btns, set) {
+        btns.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            btns.forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            set(btn.getAttribute('data-filter'));
+            apply();
+          });
+        });
+      }
+      wire(typeBtns, function (v) { typeFilter = v; });
+      wire(audienceBtns, function (v) { audienceFilter = v; });
     })();
   </script>
 
