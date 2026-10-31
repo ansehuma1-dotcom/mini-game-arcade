@@ -2,18 +2,21 @@
 </head><body><header>
   <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
   <a href="index.html">🍉 Mini Game Arcade</a>
-  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
-  <nav class="site-menu hidden" id="siteMenu" aria-label="Site menu">
+  <nav class="header-links">
     <a href="index.html" data-i18n="home">Home</a>
-    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
-    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
-    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
-    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
-    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
     <a href="about.html" data-i18n="about">About</a>
     <a href="contact.html" data-i18n="contact">Contact</a>
     <a href="privacy.html" data-i18n="privacy">Privacy</a>
     <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
   </nav>
 </header><main><h1>About Mini Game Arcade</h1><p>Mini Game Arcade is a small, free website for quick browser games. It is run as an independent hobby project. The first game is Fruit Slice, a fruit-slicing game with original, simple graphics.</p><p>We only list games that are finished and playable. New games are added one at a time, after testing on phone and desktop.</p><p>Questions? See the <a href="contact.html" data-i18n="contact">Contact</a> page.</p></main><footer><a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a></footer><script src="menu.js"></script>
 <script src="lang.js"></script>
