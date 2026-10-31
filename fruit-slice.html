@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fruit Slice — Mini Game Arcade</title>
+<meta name="description" content="Fruit Slice: slice flying fruit, build combos, avoid bombs. 60 seconds, 3 lives, playable with mouse or touch.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="fruit-slice.html">Fruit Slice</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </nav>
+</header>
+<main>
+  <h1>Fruit Slice</h1>
+  <p>Swipe across fruit to slice it. Build a combo by slicing quickly. <strong>Do not slice a bomb.</strong> Missing a fruit costs a life. You have 60 seconds and 3 lives.</p>
+
+  <div class="hud">
+    <span>Score: <strong id="score">0</strong></span>
+    <span>Combo: <strong id="combo">x1</strong></span>
+    <span>Time: <strong id="time">60</strong>s</span>
+    <span>Lives: <strong id="lives">❤️❤️❤️</strong></span>
+    <span>Best: <strong id="best">0</strong></span>
+  </div>
+
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Fruit Slice game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to slice?</h2>
+      <p id="overlayText">Swipe with your mouse or finger. Slice fruit, avoid bombs, don't let fruit fall.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+      <p class="muted" style="color:#fff">Sound is off until you start. Use the sound button below to turn it on or off.</p>
+    </div>
+  </div>
+
+  <p>
+    <button class="btn small secondary" id="pauseBtn" type="button">Pause</button>
+    <button class="btn small secondary" id="restartBtn" type="button">Restart</button>
+    <button class="btn small secondary" id="soundBtn" type="button">Sound: Off</button>
+  </p>
+  <p><a href="index.html">← Back to all games</a></p>
+  <p class="muted">Controls: mouse drag or touch swipe across the game area. Keyboard: press S to start, P to pause, R to restart. While you are swiping inside the game, the page will not scroll; normal scrolling works outside the game.</p>
+</main>
+<footer>
+  <a href="about.html">About</a> · <a href="contact.html">Contact</a> · <a href="privacy.html">Privacy Policy</a> · <a href="terms.html">Terms</a>
+</footer>
+<script src="fruit-slice.js"></script>
+</body>
+</html>
