@@ -27,6 +27,10 @@ Then open http://localhost:8000
 
 See `DEPLOYMENT.md`. In short: import this repository in Vercel, use the repository root as the project root, no build command, no framework preset needed for a static site.
 
+## Daily games
+
+At least 5 new original games are added daily, each with its own illustrated SVG thumbnail, category and audience tags, and a homepage card following the pattern above.
+
 ## Add a new game
 
 1. Build and test the game fully first.
