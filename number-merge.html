@@ -86,7 +86,7 @@
       gained+=r.gained; idx.forEach(function(ix,n){board[ix]=r.row[n];});
     }
     if(board.join()===before.join())return;
-    score+=gained;scoreEl.textContent=score;addTile();render();checkEnd();
+    score+=gained;if(gained>0&&window.mgaBeep)window.mgaBeep(500,0.1);scoreEl.textContent=score;addTile();render();checkEnd();
   }
   function canMove(){
     if(emptyCells().length)return true;
@@ -97,8 +97,8 @@
     return false;
   }
   function checkEnd(){
-    if(!won&&board.indexOf(2048)>=0){won=true;msg.textContent='You reached 2048 — you win! Keep playing or restart.';}
-    if(!canMove()){over=true;msg.textContent='No more moves — game over. Press Restart to play again.';}
+    if(!won&&board.indexOf(2048)>=0){won=true;if(window.mgaBeep)window.mgaBeep(880,0.2);msg.textContent='You reached 2048 — you win! Keep playing or restart.';}
+    if(!canMove()){over=true;if(window.mgaBeep)window.mgaBeep(160,0.3);msg.textContent='No more moves — game over. Press Restart to play again.';}
     if(score>best){best=score;try{localStorage.setItem('mga_number_best',String(best));}catch(e){}bestEl.textContent=best;}
   }
   function render(){
@@ -131,6 +131,7 @@
 <footer>
   <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
 </footer>
+<script src="game-controls.js"></script>
 <script src="menu.js"></script>
 <script src="lang.js"></script>
 </body>

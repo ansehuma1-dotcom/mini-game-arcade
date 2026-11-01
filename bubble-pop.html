@@ -94,7 +94,7 @@
   function endGame(){
     running=false;clearInterval(timer);clearInterval(spawnT);
     if(score>best){best=score;try{localStorage.setItem('mga_bubble_best',String(best));}catch(e){}bestEl.textContent=best;}
-    ot.textContent='Time up!'; ox.textContent='You popped '+popped+' bubbles and scored '+score+' points. Play again?';
+    if(window.mgaBeep)window.mgaBeep(300,0.3);ot.textContent='Time up!'; ox.textContent='You popped '+popped+' bubbles and scored '+score+' points. Play again?';
     ov.classList.remove('hidden');
   }
   function start(){
@@ -111,7 +111,7 @@
     var x=(cx-r.left)*900/r.width, y=(cy-r.top)*520/r.height;
     for(var i=bubbles.length-1;i>=0;i--){
       var b=bubbles[i],d=Math.hypot(b.x-x,b.y-y);
-      if(d<=b.r+6){bubbles.splice(i,1);popped++;score+=Math.round(b.r);popEl.textContent=popped;scoreEl.textContent=score;draw();return;}
+      if(d<=b.r+6){bubbles.splice(i,1);popped++;score+=Math.round(b.r);if(window.mgaBeep)window.mgaBeep(660,0.1);popEl.textContent=popped;scoreEl.textContent=score;draw();return;}
     }
   }
   cv.addEventListener('pointerdown',function(e){e.preventDefault();popAt(e.clientX,e.clientY);});
@@ -127,6 +127,7 @@
 <footer>
   <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
 </footer>
+<script src="game-controls.js"></script>
 <script src="menu.js"></script>
 <script src="lang.js"></script>
 </body>

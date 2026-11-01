@@ -94,7 +94,7 @@
     obs=obs.filter(function(o){
       if(o.y>520)return false;
       if(o.y+50>430&&o.y<490&&o.lane===px&&inv===0){
-        lives--;livesEl.textContent='❤️'.repeat(Math.max(0,lives))||'—';inv=60;return false;
+        lives--;if(window.mgaBeep)window.mgaBeep(140,0.25);livesEl.textContent='❤️'.repeat(Math.max(0,lives))||'—';inv=60;return false;
       }
       return true;
     });
@@ -135,6 +135,7 @@
 <footer>
   <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
 </footer>
+<script src="game-controls.js"></script>
 <script src="menu.js"></script>
 <script src="lang.js"></script>
 </body>

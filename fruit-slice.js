@@ -25,7 +25,6 @@
 
   var items = [], particles = [], trail = [];
   var lastSpawn = 0, lastTick = 0, elapsed = 0;
-  var soundOn = false, audioCtx = null;
 
   var FRUITS = [
     { name: 'Watermelon', color: '#22c55e', inner: '#ef4444' },
@@ -35,19 +34,7 @@
     { name: 'Plum', color: '#7c3aed', inner: '#a78bfa' }
   ];
 
-  function beep(freq, dur) {
-    if (!soundOn) return;
-    try {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      var o = audioCtx.createOscillator(), g = audioCtx.createGain();
-      o.type = 'sine'; o.frequency.value = freq;
-      g.gain.setValueAtTime(0.12, audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
-      o.connect(g); g.connect(audioCtx.destination);
-      o.start(); o.stop(audioCtx.currentTime + dur);
-    } catch (e) { /* sound is optional */ }
-  }
+  function beep(freq, dur) { try { if (window.mgaBeep) window.mgaBeep(freq, dur); } catch (e) {} }
 
   function resize() {
     var rect = canvas.getBoundingClientRect();
@@ -244,11 +231,6 @@
     paused = !paused;
     pauseBtn.textContent = paused ? 'Resume' : 'Pause';
     if (!paused) requestAnimationFrame(loop);
-  });
-  soundBtn.addEventListener('click', function () {
-    soundOn = !soundOn;
-    soundBtn.textContent = soundOn ? 'Sound: On' : 'Sound: Off';
-    if (soundOn) beep(440, 0.1);
   });
   document.addEventListener('keydown', function (e) {
     if (e.key === 's' || e.key === 'S') startGame();

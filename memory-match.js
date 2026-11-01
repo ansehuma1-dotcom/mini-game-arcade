@@ -55,6 +55,7 @@
     startTimer();
     btn.textContent = card.sym;
     btn.classList.add('flipped');
+    if (window.mgaBeep) window.mgaBeep(400, 0.08);
     if (!first) { first = card; return; }
     moves += 1;
     movesEl.textContent = moves;
@@ -62,6 +63,7 @@
       first.matched = true; card.matched = true;
       first.el.classList.add('matched'); card.el.classList.add('matched');
       first.el.disabled = true; card.el.disabled = true;
+      if (window.mgaBeep) window.mgaBeep(700, 0.12);
       first = null; pairs += 1;
       pairsEl.textContent = pairs + ' / 8';
       if (pairs === 8) win();

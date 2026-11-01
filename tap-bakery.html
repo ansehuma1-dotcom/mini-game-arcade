@@ -77,12 +77,12 @@
       b.disabled=cookies<u.cost*(owned[i]+1);
       b.addEventListener('click',function(){
         var price=u.cost*(owned[i]+1);
-        if(cookies>=price){cookies-=price;owned[i]++;u.buy();render();}
+        if(cookies>=price){cookies-=price;owned[i]++;u.buy();if(window.mgaBeep)window.mgaBeep(700,0.12);render();}
       });
       shop.appendChild(b);
     });
   }
-  document.getElementById('bakeBtn').addEventListener('click',function(){cookies+=perClick;render();});
+  document.getElementById('bakeBtn').addEventListener('click',function(){cookies+=perClick;if(window.mgaBeep)window.mgaBeep(500,0.08);render();});
   document.getElementById('restartBtn').addEventListener('click',function(){cookies=0;perClick=1;perSec=0;owned=[0,0,0,0];render();});
   setInterval(function(){if(perSec>0){cookies+=perSec;render();}},1000);
   render();
@@ -94,6 +94,7 @@
 <footer>
   <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
 </footer>
+<script src="game-controls.js"></script>
 <script src="menu.js"></script>
 <script src="lang.js"></script>
 </body>
