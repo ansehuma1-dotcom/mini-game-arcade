@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bubble Pop — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Bubble Pop free online: tap rising bubbles before they float away in 60 seconds. No download, works on mobile and desktop.">
+<meta name="keywords" content="bubble pop game, free arcade game, pop bubbles game, mobile tap game">
+<meta property="og:title" content="Bubble Pop — Mini Game Arcade">
+<meta property="og:description" content="Play Bubble Pop free online: tap rising bubbles before they float away in 60 seconds. No download, works on mobile and desktop.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/bubble-pop.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/bubble-pop.html">
+<link rel="stylesheet" href="style.css">
+<style></style>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Bubble Pop</h1>
+  <p data-i18n="bubble_intro">Tap or click the rising bubbles before they float off the top. Bigger bubbles are worth more points. You have 60 seconds.</p>
+
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="popped">Popped:</span> <strong id="popped">0</strong></span>
+    <span><span data-i18n="time">Time:</span> <strong id="time">60</strong>s</span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Bubble Pop game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to pop?</h2>
+      <p id="overlayText">Tap or click a bubble before it floats away. Big bubbles are worth more points.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p><button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button></p>
+  <p class="muted">Controls: click or tap bubbles. Keyboard: press S to start, R to restart.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),popEl=document.getElementById('popped'),
+      timeEl=document.getElementById('time'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),
+      ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_bubble_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var bubbles=[],running=false,timer=null,spawnT=null,timeLeft=60,score=0,popped=0;
+  function resize(){var r=cv.getBoundingClientRect();cv._s=r.width/900;}
+  function spawn(){
+    var r=22+Math.random()*30;
+    bubbles.push({x:40+Math.random()*(900-80),y:540,r:r,vy:0.9+Math.random()*1.4,
+      c:['#38bdf8','#f472b6','#a78bfa','#facc15'][Math.floor(Math.random()*4)]});
+  }
+  function draw(){
+    ctx.clearRect(0,0,900,520);
+    bubbles.forEach(function(b){
+      ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);
+      ctx.fillStyle=b.c;ctx.globalAlpha=0.75;ctx.fill();ctx.globalAlpha=1;
+      ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();
+      ctx.beginPath();ctx.arc(b.x-b.r*0.35,b.y-b.r*0.35,b.r*0.22,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();
+    });
+  }
+  function loop(){
+    if(!running)return;
+    bubbles.forEach(function(b){b.y-=b.vy;});
+    bubbles=bubbles.filter(function(b){return b.y+b.r>0;});
+    draw(); requestAnimationFrame(loop);
+  }
+  function endGame(){
+    running=false;clearInterval(timer);clearInterval(spawnT);
+    if(score>best){best=score;try{localStorage.setItem('mga_bubble_best',String(best));}catch(e){}bestEl.textContent=best;}
+    ot.textContent='Time up!'; ox.textContent='You popped '+popped+' bubbles and scored '+score+' points. Play again?';
+    ov.classList.remove('hidden');
+  }
+  function start(){
+    score=0;popped=0;timeLeft=60;bubbles=[];
+    scoreEl.textContent='0';popEl.textContent='0';timeEl.textContent='60';
+    ov.classList.add('hidden');running=true;resize();
+    clearInterval(timer);clearInterval(spawnT);
+    spawnT=setInterval(spawn,550); spawn(); spawn();
+    timer=setInterval(function(){timeLeft--;timeEl.textContent=timeLeft;if(timeLeft<=0)endGame();},1000);
+    requestAnimationFrame(loop);
+  }
+  function popAt(cx,cy){
+    if(!running)return; var r=cv.getBoundingClientRect();
+    var x=(cx-r.left)*900/r.width, y=(cy-r.top)*520/r.height;
+    for(var i=bubbles.length-1;i>=0;i--){
+      var b=bubbles[i],d=Math.hypot(b.x-x,b.y-y);
+      if(d<=b.r+6){bubbles.splice(i,1);popped++;score+=Math.round(b.r);popEl.textContent=popped;scoreEl.textContent=score;draw();return;}
+    }
+  }
+  cv.addEventListener('pointerdown',function(e){e.preventDefault();popAt(e.clientX,e.clientY);});
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  document.addEventListener('keydown',function(e){if(e.key==='s'||e.key==='S')start();if(e.key==='r'||e.key==='R')start();});
+  window.addEventListener('resize',resize); resize(); draw();
+})();
+</script>
+
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

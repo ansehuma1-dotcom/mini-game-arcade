@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Number Merge — Free Puzzle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Number Merge free online: slide tiles, merge equal numbers, and reach 2048. Arrow keys, swipe, or on-screen controls.">
+<meta name="keywords" content="number merge game, 2048 game, free puzzle game, sliding tiles game">
+<meta property="og:title" content="Number Merge — Mini Game Arcade">
+<meta property="og:description" content="Play Number Merge free online: slide tiles, merge equal numbers, and reach 2048. Arrow keys, swipe, or on-screen controls.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/number-merge.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/number-merge.html">
+<link rel="stylesheet" href="style.css">
+<style></style>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Number Merge</h1>
+  <p data-i18n="number_intro">Slide the tiles with arrows or a swipe. Two equal tiles merge into one bigger tile. Reach 2048 to win — and do not fill the board.</p>
+
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div id="grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:520px;margin:16px auto"></div>
+  <p id="message" aria-live="polite"></p>
+  <p style="text-align:center">
+    <button class="btn small secondary" type="button" data-m="up">▲</button><br>
+    <button class="btn small secondary" type="button" data-m="left">◀</button>
+    <button class="btn small secondary" type="button" data-m="down">▼</button>
+    <button class="btn small secondary" type="button" data-m="right">▶</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: arrow keys or WASD, on-screen arrows, or swipe on the grid. Equal tiles merge into one bigger tile — reach 2048 to win.</p>
+<script>
+(function(){
+  var grid=document.getElementById('grid'),scoreEl=document.getElementById('score'),
+      bestEl=document.getElementById('best'),msg=document.getElementById('message');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_number_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var board,score,over=false,won=false;
+  function emptyCells(){var r=[];for(var i=0;i<16;i++)if(!board[i])r.push(i);return r;}
+  function addTile(){var e=emptyCells();if(!e.length)return;board[e[Math.floor(Math.random()*e.length)]]=Math.random()<0.9?2:4;}
+  function slide(row){
+    var t=row.filter(Boolean),out=[],gained=0;
+    for(var i=0;i<t.length;i++){
+      if(i+1<t.length&&t[i]===t[i+1]){out.push(t[i]*2);gained+=t[i]*2;i++;}
+      else out.push(t[i]);
+    }
+    while(out.length<4)out.push(0);
+    return {row:out,gained:gained};
+  }
+  function move(dir){
+    if(over)return; var before=board.slice(),gained=0;
+    for(var k=0;k<4;k++){
+      var idx=[];
+      for(var j=0;j<4;j++){
+        idx.push(dir==='left'?k*4+j:dir==='right'?k*4+3-j:dir==='up'?j*4+k:(3-j)*4+k);
+      }
+      var r=slide(idx.map(function(i){return board[i];}));
+      gained+=r.gained; idx.forEach(function(ix,n){board[ix]=r.row[n];});
+    }
+    if(board.join()===before.join())return;
+    score+=gained;scoreEl.textContent=score;addTile();render();checkEnd();
+  }
+  function canMove(){
+    if(emptyCells().length)return true;
+    for(var y=0;y<4;y++)for(var x=0;x<4;x++){
+      var v=board[y*4+x];
+      if(x<3&&board[y*4+x+1]===v)return true; if(y<3&&board[(y+1)*4+x]===v)return true;
+    }
+    return false;
+  }
+  function checkEnd(){
+    if(!won&&board.indexOf(2048)>=0){won=true;msg.textContent='You reached 2048 — you win! Keep playing or restart.';}
+    if(!canMove()){over=true;msg.textContent='No more moves — game over. Press Restart to play again.';}
+    if(score>best){best=score;try{localStorage.setItem('mga_number_best',String(best));}catch(e){}bestEl.textContent=best;}
+  }
+  function render(){
+    grid.innerHTML='';
+    board.forEach(function(v){
+      var d=document.createElement('div');
+      d.style.cssText='aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:2px solid #000;border-radius:14px;font-size:1.6rem;font-weight:800;background:'+(v?{2:'#fef3c7',4:'#fde68a',8:'#fca5a5',16:'#f87171',32:'#fb923c',64:'#f97316',128:'#facc15',256:'#eab308',512:'#a3e635',1024:'#4ade80',2048:'#22c55e'}[v]||'#86efac':'#fff');
+      d.textContent=v||''; grid.appendChild(d);
+    });
+  }
+  function start(){board=new Array(16).fill(0);score=0;over=false;won=false;msg.textContent='';
+    scoreEl.textContent='0';addTile();addTile();render();}
+  document.querySelectorAll('[data-m]').forEach(function(b){b.addEventListener('click',function(){move(b.getAttribute('data-m'));});});
+  document.addEventListener('keydown',function(e){
+    var k=e.key.toLowerCase(),m={arrowleft:'left',a:'left',arrowright:'right',d:'right',arrowup:'up',w:'up',arrowdown:'down',s:'down'}[k];
+    if(m){e.preventDefault();move(m);} if(k==='r')start();
+  });
+  var tx=0,ty=0;
+  grid.addEventListener('touchstart',function(e){var t=e.touches[0];tx=t.clientX;ty=t.clientY;},{passive:true});
+  grid.addEventListener('touchend',function(e){var t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;
+    if(Math.abs(dx)>Math.abs(dy)){if(Math.abs(dx)>20)move(dx>0?'right':'left');}
+    else if(Math.abs(dy)>20)move(dy>0?'down':'up');});
+  document.getElementById('restartBtn').addEventListener('click',start);
+  start();
+})();
+</script>
+
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

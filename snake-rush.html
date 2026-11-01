@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Snake Rush — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Snake Rush free online: eat dots, grow longer, avoid walls and yourself. Arrow keys, swipe, or on-screen controls.">
+<meta name="keywords" content="snake game, free arcade game, snake rush game, mobile snake game">
+<meta property="og:title" content="Snake Rush — Mini Game Arcade">
+<meta property="og:description" content="Play Snake Rush free online: eat dots, grow longer, avoid walls and yourself. Arrow keys, swipe, or on-screen controls.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/snake-rush.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/snake-rush.html">
+<link rel="stylesheet" href="style.css">
+<style></style>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Snake Rush</h1>
+  <p data-i18n="snake_intro">Eat the dots to grow longer. Do not hit the wall or your own tail — the snake gets faster as it grows.</p>
+
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="length">Length:</span> <strong id="length">3</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Snake Rush game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to rush?</h2>
+      <p id="overlayText">Eat the dots, grow longer, and do not hit the wall or yourself. Speed rises as you eat.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn small secondary" type="button" data-dir="up">▲</button><br>
+    <button class="btn small secondary" type="button" data-dir="left">◀</button>
+    <button class="btn small secondary" type="button" data-dir="down">▼</button>
+    <button class="btn small secondary" type="button" data-dir="right">▶</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: arrow keys or WASD, on-screen arrows, or swipe on the game area.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),lenEl=document.getElementById('length'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_snake_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var COLS=30,ROWS=17,CELL=30, snake,dir,pend,food,score,running,tick;
+  function placeFood(){
+    while(true){var f={x:Math.floor(Math.random()*COLS),y:Math.floor(Math.random()*ROWS)};
+      if(!snake.some(function(s){return s.x===f.x&&s.y===f.y;})){food=f;return;}}
+  }
+  function draw(){
+    ctx.fillStyle='#0f172a';ctx.fillRect(0,0,900,520);
+    ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(food.x*CELL+15,food.y*CELL+15,11,0,Math.PI*2);ctx.fill();
+    snake.forEach(function(s,i){
+      ctx.fillStyle=i===0?'#22c55e':'#4ade80';
+      ctx.fillRect(s.x*CELL+2,s.y*CELL+2,CELL-4,CELL-4);
+    });
+  }
+  function step(){
+    if(!running)return;
+    if(pend){if(!(pend.x===-dir.x&&pend.y===-dir.y))dir=pend;pend=null;}
+    var head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+    if(head.x<0||head.y<0||head.x>=COLS||head.y>=ROWS||snake.some(function(s){return s.x===head.x&&s.y===head.y;})){
+      running=false;clearInterval(tick);
+      if(score>best){best=score;try{localStorage.setItem('mga_snake_best',String(best));}catch(e){}bestEl.textContent=best;}
+      ot.textContent='Game over!';ox.textContent='Score '+score+' — length '+snake.length+'. Press Start to play again.';
+      ov.classList.remove('hidden');return;
+    }
+    snake.unshift(head);
+    if(head.x===food.x&&head.y===food.y){score+=10;scoreEl.textContent=score;lenEl.textContent=snake.length;placeFood();
+      clearInterval(tick);tick=setInterval(step,Math.max(70,170-snake.length*4));}
+    else snake.pop();
+    draw();
+  }
+  function start(){
+    snake=[{x:8,y:8},{x:7,y:8},{x:6,y:8}];dir={x:1,y:0};pend=null;score=0;
+    scoreEl.textContent='0';lenEl.textContent='3';placeFood();ov.classList.add('hidden');running=true;
+    clearInterval(tick);tick=setInterval(step,170);draw();
+  }
+  function setDir(x,y){if(running)pend={x:x,y:y};}
+  document.querySelectorAll('[data-dir]').forEach(function(b){
+    b.addEventListener('click',function(){var d=b.getAttribute('data-dir');
+      if(d==='up')setDir(0,-1);if(d==='down')setDir(0,1);if(d==='left')setDir(-1,0);if(d==='right')setDir(1,0);});
+  });
+  document.addEventListener('keydown',function(e){
+    var k=e.key.toLowerCase();
+    if(k==='arrowup'||k==='w')setDir(0,-1);if(k==='arrowdown'||k==='s')setDir(0,1);
+    if(k==='arrowleft'||k==='a')setDir(-1,0);if(k==='arrowright'||k==='d')setDir(1,0);
+    if(k==='r')start();if(k===' '&&!running)start();
+    if(['arrowup','arrowdown','arrowleft','arrowright',' '].indexOf(k)>=0)e.preventDefault();
+  });
+  var tx=0,ty=0;
+  cv.addEventListener('touchstart',function(e){var t=e.touches[0];tx=t.clientX;ty=t.clientY;},{passive:true});
+  cv.addEventListener('touchend',function(e){var t=e.changedTouches[0],dx=t.clientX-tx,dy=t.clientY-ty;
+    if(Math.abs(dx)>Math.abs(dy)){setDir(dx>0?1:-1,0);}else if(Math.abs(dy)>10){setDir(0,dy>0?1:-1);}});
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  snake=[{x:8,y:8},{x:7,y:8},{x:6,y:8}];food={x:15,y:8};draw();
+})();
+</script>
+
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mini Game Arcade — Free Browser Games: Fruit Slice, Memory Match & More</title>
-<meta name="description" content="Play free browser games on mobile, tablet or desktop. No download, no sign-up. Fruit Slice arcade game and Memory Match puzzle game, with more quick games coming.">
+<meta name="description" content="Play free browser games on mobile, tablet or desktop. No download, no sign-up. Fruit Slice, Memory Match, Bubble Pop, Snake Rush, Number Merge, Tap Bakery and Neon Tunnel Dash, with more quick games coming.">
 <meta name="keywords" content="free browser games, mini games, fruit slice game, memory match game, puzzle games, arcade games, kids games, games for adults, play games online, mobile games, no download games">
 <meta property="og:title" content="Mini Game Arcade — Free Browser Games">
 <meta property="og:description" content="Free, fast browser games on mobile, tablet and desktop. No download, no sign-up.">
@@ -31,6 +31,8 @@
     <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
     <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
     <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
     <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
     <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
     <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
@@ -45,6 +47,8 @@
     <button type="button" class="filter-btn type-btn active" data-filter="all" data-i18n="all_games">All Games</button>
     <button type="button" class="filter-btn type-btn" data-filter="arcade" data-i18n="arcade">Arcade</button>
     <button type="button" class="filter-btn type-btn" data-filter="puzzle" data-i18n="puzzle">Puzzle</button>
+    <button type="button" class="filter-btn type-btn" data-filter="idle" data-i18n="idle">Idle</button>
+    <button type="button" class="filter-btn type-btn" data-filter="runner" data-i18n="runner">Runner</button>
   </nav>
   <span class="filters-divider" aria-hidden="true">|</span>
   <nav class="filters" aria-label="Filter games by who they are for">
@@ -84,6 +88,76 @@
     </div>
     <h2>Memory Match</h2>
   </section>
+  <section class="card game-card" data-category="arcade" data-audience="all-ages" tabindex="0" aria-label="Bubble Pop">
+    <div class="card-top yellow" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="bubble-thumb.svg" alt="Bubble Pop thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="arcade">Arcade</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="bubble_desc">Tap rising bubbles before they float away. 60 seconds, score for every pop, bigger bubbles worth more.</p>
+        <p><a class="btn" href="bubble-pop.html" data-i18n="play_bubble">Play Bubble Pop</a></p>
+        <p class="muted" data-i18n="bubble_how">How to play: click or tap a bubble to pop it before it leaves the top.</p>
+      </div>
+    </div>
+    <h2>Bubble Pop</h2>
+  </section>
+
+  <section class="card game-card" data-category="arcade" data-audience="all-ages" tabindex="0" aria-label="Snake Rush">
+    <div class="card-top pink" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="snake-thumb.svg" alt="Snake Rush thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="arcade">Arcade</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="snake_desc">Eat dots, grow longer, and avoid walls and your own tail. Speed rises as you eat — keyboard, swipe, or on-screen arrows.</p>
+        <p><a class="btn" href="snake-rush.html" data-i18n="play_snake">Play Snake Rush</a></p>
+        <p class="muted" data-i18n="snake_how">How to play: steer with arrow keys, WASD, swipe, or the on-screen arrows. Eat dots, do not crash.</p>
+      </div>
+    </div>
+    <h2>Snake Rush</h2>
+  </section>
+
+  <section class="card game-card" data-category="puzzle" data-audience="all-ages" tabindex="0" aria-label="Number Merge">
+    <div class="card-top teal" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="number-thumb.svg" alt="Number Merge thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="puzzle">Puzzle</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="number_desc">Slide tiles and merge equal numbers into bigger ones. Reach 2048 to win — arrows, swipe, or on-screen buttons.</p>
+        <p><a class="btn" href="number-merge.html" data-i18n="play_number">Play Number Merge</a></p>
+        <p class="muted" data-i18n="number_how">How to play: slide the board. Two equal tiles merge into one bigger tile. Reach 2048 before the board fills.</p>
+      </div>
+    </div>
+    <h2>Number Merge</h2>
+  </section>
+
+  <section class="card game-card" data-category="idle" data-audience="all-ages" tabindex="0" aria-label="Tap Bakery">
+    <div class="card-top yellow" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="bakery-thumb.svg" alt="Tap Bakery thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="idle">Idle</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="bakery_desc">Tap to bake cookies, buy ovens and helpers, and watch your bakery keep baking every second.</p>
+        <p><a class="btn" href="tap-bakery.html" data-i18n="play_bakery">Play Tap Bakery</a></p>
+        <p class="muted" data-i18n="bakery_how">How to play: tap Bake to earn cookies, then buy an upgrade when you can afford it.</p>
+      </div>
+    </div>
+    <h2>Tap Bakery</h2>
+  </section>
+
+  <section class="card game-card" data-category="runner" data-audience="all-ages" tabindex="0" aria-label="Neon Tunnel Dash">
+    <div class="card-top pink" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="tunnel-thumb.svg" alt="Neon Tunnel Dash thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="runner">Runner</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="tunnel_desc">Steer left and right through a glowing neon tunnel and dodge the blocks. 3 lives, and the tunnel keeps getting faster.</p>
+        <p><a class="btn" href="neon-tunnel-dash.html" data-i18n="play_tunnel">Play Neon Tunnel Dash</a></p>
+        <p class="muted" data-i18n="tunnel_how">How to play: steer with arrow keys, on-screen buttons, or drag on the game area. Dodge every block.</p>
+      </div>
+    </div>
+    <h2>Neon Tunnel Dash</h2>
+  </section>
+
   </div>
   <script>
     (function () {
@@ -139,7 +213,7 @@
       try {
         var params = new URLSearchParams(window.location.search);
         var pt = params.get("type"), pa = params.get("audience");
-        if (pt && ["all", "arcade", "puzzle"].indexOf(pt) >= 0) { typeFilter = pt; setActive(typeBtns, pt); }
+        if (pt && ["all", "arcade", "puzzle", "idle", "runner"].indexOf(pt) >= 0) { typeFilter = pt; setActive(typeBtns, pt); }
         if (pa && ["all", "kids", "adults"].indexOf(pa) >= 0) { audienceFilter = pa; setActive(audienceBtns, pa); }
         if (pt || pa) apply();
       } catch (e) {}
