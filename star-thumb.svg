@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Star Catcher game thumbnail">
+  <rect width="400" height="400" fill="#0f172a"/>
+  <circle cx="60" cy="70" r="3" fill="#fff"/><circle cx="150" cy="40" r="2" fill="#fff"/><circle cx="320" cy="90" r="3" fill="#fff"/><circle cx="250" cy="150" r="2" fill="#fff"/>
+  <g fill="#facc15"><polygon points="200,60 212,96 250,98 219,121 229,158 200,137 171,158 181,121 150,98 188,96"/></g>
+  <g fill="#fde68a"><polygon points="100,170 107,190 128,191 111,204 117,225 100,213 83,225 89,204 72,191 93,190"/></g>
+  <g fill="#fde68a"><polygon points="310,200 316,216 333,217 320,228 325,245 310,235 295,245 300,228 287,217 304,216"/></g>
+  <path d="M130 300 L270 300 L250 360 L150 360 Z" fill="#f97316" stroke="#fff" stroke-width="4"/>
+  <rect x="130" y="295" width="140" height="10" rx="5" fill="#ea580c"/>
+  <text x="200" y="392" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="800" fill="#fff">CATCH!</text>
+</svg>

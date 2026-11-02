@@ -28,11 +28,11 @@ stickman action — adapted here as family-friendly, 1-tap, no-download original
 | 3 | Number Merge | Puzzle | All Ages | Sliding number tiles merging | ✅ |
 | 4 | Tap Bakery | Idle (new) | All Ages | Bakery counter, cookies, tap hand | ✅ |
 | 5 | Neon Tunnel Dash | Runner (new) | All Ages | Glowing tunnel, dodging blocks | ✅ |
-| 6 | Star Catcher | Arcade | Kids | Basket catching falling stars | ☐ |
-| 7 | Word Scramble | Words (new) | All Ages | Jumbled letter tiles forming a word | ☐ |
-| 8 | Tile Match | Puzzle | All Ages | 3-in-a-row colourful tiles | ☐ |
-| 9 | Traffic Dodge | Racing (new) | All Ages | Top-down car dodging traffic | ☐ |
-| 10 | Balloon Pop | Arcade | Kids | Balloons rising, dart popping one | ☐ |
+| 6 | Star Catcher | Arcade | Kids | Basket catching falling stars | ✅ |
+| 7 | Word Scramble | Words (new) | All Ages | Jumbled letter tiles forming a word | ✅ |
+| 8 | Tile Match | Puzzle | All Ages | 3-in-a-row colourful tiles | ✅ |
+| 9 | Traffic Dodge | Racing (new) | All Ages | Top-down car dodging traffic | ✅ |
+| 10 | Balloon Pop | Arcade | Kids | Balloons rising, dart popping one | ✅ |
 | 11 | Mini Sudoku | Puzzle | Adults | 4x4 number grid, highlighted row | ☐ |
 | 12 | Stack Tower | Arcade | All Ages | Tower of swinging blocks stacking | ☐ |
 | 13 | Maze Coins | Arcade | All Ages | Maze path with coins and a hero | ☐ |
@@ -66,7 +66,9 @@ All Ages. Do not create a category for a game that has not shipped.
 ## Daily run checklist
 1. Take the next FIVE (minimum) ☐ games in order; skip none, do not repeat a shipped game. If one fails its gate, publish the next game in the queue the same day to still reach 5 live games that day if possible; otherwise report the shortfall plainly.
 2. Build EACH game as a single original HTML+JS page (same standard header: ☰ left, logo,
-   header links, language right, favicon, menu.js, lang.js) + its own original SVG
+   header links, language right, favicon, menu.js, lang.js, game-controls.js — this
+   auto-inserts the visible Back / Sound on-off / Fullscreen bar above the HUD;
+   add mgaBeep() calls for the game's key sounds) + its own original SVG
    thumbnail file. Add the card (thumbnail + name only, info in .card-info popup,
    plus a visible coloured top strip cycling pink/teal/yellow),
    filter data, menu entry if it is a new category, SEO + sitemap entry with that

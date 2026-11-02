@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mini Game Arcade — Free Browser Games: Fruit Slice, Memory Match & More</title>
-<meta name="description" content="Play free browser games on mobile, tablet or desktop. No download, no sign-up. Fruit Slice, Memory Match, Bubble Pop, Snake Rush, Number Merge, Tap Bakery and Neon Tunnel Dash, with more quick games coming.">
+<meta name="description" content="Play free browser games on mobile, tablet or desktop. No download, no sign-up. Fruit Slice, Memory Match, Bubble Pop, Snake Rush, Number Merge, Tap Bakery, Neon Tunnel Dash, Star Catcher, Word Scramble, Tile Match, Traffic Dodge and Balloon Pop, with more quick games coming.">
 <meta name="keywords" content="free browser games, mini games, fruit slice game, memory match game, puzzle games, arcade games, kids games, games for adults, play games online, mobile games, no download games">
 <meta property="og:title" content="Mini Game Arcade — Free Browser Games">
 <meta property="og:description" content="Free, fast browser games on mobile, tablet and desktop. No download, no sign-up.">
@@ -33,6 +33,8 @@
     <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
     <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
     <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
     <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
     <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
     <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
@@ -49,6 +51,8 @@
     <button type="button" class="filter-btn type-btn" data-filter="puzzle" data-i18n="puzzle">Puzzle</button>
     <button type="button" class="filter-btn type-btn" data-filter="idle" data-i18n="idle">Idle</button>
     <button type="button" class="filter-btn type-btn" data-filter="runner" data-i18n="runner">Runner</button>
+    <button type="button" class="filter-btn type-btn" data-filter="words" data-i18n="words">Words</button>
+    <button type="button" class="filter-btn type-btn" data-filter="racing" data-i18n="racing">Racing</button>
   </nav>
   <span class="filters-divider" aria-hidden="true">|</span>
   <nav class="filters" aria-label="Filter games by who they are for">
@@ -158,6 +162,77 @@
     <h2>Neon Tunnel Dash</h2>
   </section>
 
+
+  <section class="card game-card" data-category="arcade" data-audience="kids" tabindex="0" aria-label="Star Catcher">
+    <div class="card-top teal" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="star-thumb.svg" alt="Star Catcher thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="arcade">Arcade</span> <span class="tag" data-i18n="kids">Kids</span></p>
+        <p data-i18n="star_desc">Move the basket and catch falling stars in 60 seconds. Golden stars are worth 30 points.</p>
+        <p><a class="btn" href="star-catcher.html" data-i18n="play_star">Play Star Catcher</a></p>
+        <p class="muted" data-i18n="star_how">How to play: move the basket with arrow keys, buttons, or drag. Catch stars before they hit the ground.</p>
+      </div>
+    </div>
+    <h2>Star Catcher</h2>
+  </section>
+
+  <section class="card game-card" data-category="words" data-audience="all-ages" tabindex="0" aria-label="Word Scramble">
+    <div class="card-top yellow" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="scramble-thumb.svg" alt="Word Scramble thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="words">Words</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="scramble_desc">Unscramble 10 words and score 10 points per word. Skip a word when you get stuck.</p>
+        <p><a class="btn" href="word-scramble.html" data-i18n="play_scramble">Play Word Scramble</a></p>
+        <p class="muted" data-i18n="scramble_how">How to play: type the unscrambled word and press Check, or Skip to move on.</p>
+      </div>
+    </div>
+    <h2>Word Scramble</h2>
+  </section>
+
+  <section class="card game-card" data-category="puzzle" data-audience="all-ages" tabindex="0" aria-label="Tile Match">
+    <div class="card-top pink" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="tile-thumb.svg" alt="Tile Match thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="puzzle">Puzzle</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="tile_desc">Swap neighbouring tiles and line up 3 or more of a kind to clear them and score.</p>
+        <p><a class="btn" href="tile-match.html" data-i18n="play_tile">Play Tile Match</a></p>
+        <p class="muted" data-i18n="tile_how">How to play: tap a tile, then tap a neighbour to swap. A swap with no match swaps back.</p>
+      </div>
+    </div>
+    <h2>Tile Match</h2>
+  </section>
+
+  <section class="card game-card" data-category="racing" data-audience="all-ages" tabindex="0" aria-label="Traffic Dodge">
+    <div class="card-top teal" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="traffic-thumb.svg" alt="Traffic Dodge thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="racing">Racing</span> <span class="tag" data-i18n="all_ages">All Ages</span></p>
+        <p data-i18n="traffic_desc">Steer between four lanes and dodge the traffic. 3 lives, and the road keeps getting faster.</p>
+        <p><a class="btn" href="traffic-dodge.html" data-i18n="play_traffic">Play Traffic Dodge</a></p>
+        <p class="muted" data-i18n="traffic_how">How to play: steer with arrow keys, on-screen buttons, or drag. Dodge every car.</p>
+      </div>
+    </div>
+    <h2>Traffic Dodge</h2>
+  </section>
+
+  <section class="card game-card" data-category="arcade" data-audience="kids" tabindex="0" aria-label="Balloon Pop">
+    <div class="card-top yellow" aria-hidden="true"></div>
+    <div class="thumb-wrap">
+      <div class="thumb"><img src="balloon-thumb.svg" alt="Balloon Pop thumbnail" loading="lazy"></div>
+      <div class="card-info">
+        <p><span class="tag" data-i18n="arcade">Arcade</span> <span class="tag" data-i18n="kids">Kids</span></p>
+        <p data-i18n="balloon_desc">Pop rising balloons in 60 seconds. Golden balloons are worth 50 — but grey storm balloons cost 10.</p>
+        <p><a class="btn" href="balloon-pop.html" data-i18n="play_balloon">Play Balloon Pop</a></p>
+        <p class="muted" data-i18n="balloon_how">How to play: click or tap a balloon to pop it. Do not pop the grey storm balloons.</p>
+      </div>
+    </div>
+    <h2>Balloon Pop</h2>
+  </section>
+
   </div>
   <script>
     (function () {
@@ -213,7 +288,7 @@
       try {
         var params = new URLSearchParams(window.location.search);
         var pt = params.get("type"), pa = params.get("audience");
-        if (pt && ["all", "arcade", "puzzle", "idle", "runner"].indexOf(pt) >= 0) { typeFilter = pt; setActive(typeBtns, pt); }
+        if (pt && ["all", "arcade", "puzzle", "idle", "runner", "words", "racing"].indexOf(pt) >= 0) { typeFilter = pt; setActive(typeBtns, pt); }
         if (pa && ["all", "kids", "adults"].indexOf(pa) >= 0) { audienceFilter = pa; setActive(audienceBtns, pa); }
         if (pt || pa) apply();
       } catch (e) {}

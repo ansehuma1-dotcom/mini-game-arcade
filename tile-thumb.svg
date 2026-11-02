@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Tile Match game thumbnail">
+  <rect width="400" height="400" fill="#e0f2fe"/>
+  <g stroke="#000" stroke-width="3">
+    <rect x="70" y="70" width="80" height="80" rx="14" fill="#f472b6"/><circle cx="110" cy="110" r="22" fill="#fff"/>
+    <rect x="160" y="70" width="80" height="80" rx="14" fill="#38bdf8"/><polygon points="200,90 218,130 182,130" fill="#fff"/>
+    <rect x="250" y="70" width="80" height="80" rx="14" fill="#facc15"/><rect x="278" y="98" width="24" height="24" fill="#fff"/>
+    <rect x="70" y="160" width="80" height="80" rx="14" fill="#4ade80"/><polygon points="110,180 126,210 94,210" fill="#fff"/>
+    <rect x="160" y="160" width="80" height="80" rx="14" fill="#f472b6"/><circle cx="200" cy="200" r="22" fill="#fff"/>
+    <rect x="250" y="160" width="80" height="80" rx="14" fill="#a78bfa"/><polygon points="290,180 306,210 274,210" fill="#fff"/>
+    <rect x="70" y="250" width="80" height="80" rx="14" fill="#facc15"/><rect x="98" y="278" width="24" height="24" fill="#fff"/>
+    <rect x="160" y="250" width="80" height="80" rx="14" fill="#a78bfa"/><circle cx="200" cy="290" r="22" fill="#fff"/>
+    <rect x="250" y="250" width="80" height="80" rx="14" fill="#38bdf8"/><rect x="278" y="278" width="24" height="24" fill="#fff"/>
+  </g>
+  <text x="200" y="375" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="800" fill="#0f172a">MATCH 3!</text>
+</svg>

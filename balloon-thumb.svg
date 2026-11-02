@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Balloon Pop game thumbnail">
+  <rect width="400" height="400" fill="#bae6fd"/>
+  <g stroke="#64748b" stroke-width="2" fill="none">
+    <path d="M100 230 Q108 260 100 285"/><path d="M200 200 Q208 235 200 260"/><path d="M300 240 Q308 270 300 295"/>
+  </g>
+  <ellipse cx="100" cy="180" rx="48" ry="58" fill="#f472b6" stroke="#000" stroke-width="3"/>
+  <ellipse cx="88" cy="160" rx="12" ry="18" fill="#fff" opacity="0.7"/>
+  <ellipse cx="200" cy="150" rx="52" ry="62" fill="#facc15" stroke="#000" stroke-width="3"/>
+  <ellipse cx="187" cy="128" rx="13" ry="19" fill="#fff" opacity="0.7"/>
+  <ellipse cx="300" cy="190" rx="46" ry="56" fill="#38bdf8" stroke="#000" stroke-width="3"/>
+  <ellipse cx="288" cy="170" rx="11" ry="17" fill="#fff" opacity="0.7"/>
+  <text x="200" y="360" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="800" fill="#0f172a">POP!</text>
+</svg>

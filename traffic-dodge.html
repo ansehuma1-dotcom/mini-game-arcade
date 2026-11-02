@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Traffic Dodge — Free Racing Game | Mini Game Arcade</title>
+<meta name="description" content="Play Traffic Dodge free online: steer your car between lanes, dodge traffic, survive with 3 lives as the road gets faster.">
+<meta name="keywords" content="traffic dodge game, car dodge game, free racing game">
+<meta property="og:title" content="Traffic Dodge — Mini Game Arcade">
+<meta property="og:description" content="Play Traffic Dodge free online: dodge traffic with 3 lives as the road gets faster.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/traffic-dodge.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/traffic-dodge.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="racing">Racing</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Traffic Dodge</h1>
+  <p data-i18n="traffic_intro">Steer your car between the four lanes and dodge the traffic coming towards you. You have 3 lives, and the road keeps getting faster.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="distance">Distance:</span> <strong id="dist">0</strong>m</span>
+    <span><span data-i18n="lives">Lives:</span> <strong id="lives">❤️❤️❤️</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Traffic Dodge game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to drive?</h2>
+      <p id="overlayText">Steer between lanes and dodge the traffic. You have 3 lives and the road gets faster.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn small secondary" id="leftBtn" type="button">◀ Left</button>
+    <button class="btn small secondary" id="rightBtn" type="button">Right ▶</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: arrow keys, on-screen buttons, or drag on the game area to change lanes.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),distEl=document.getElementById('dist'),livesEl=document.getElementById('lives'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_traffic_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var lanes=[112,337,562,787],px=1,cars=[],running=false,lives=3,dist=0,score=0,speed=4,spawnT=0,inv=0,raf=null,lineY=0;
+  var COLORS=['#ef4444','#3b82f6','#f59e0b','#8b5cf6'];
+  function drawCar(x,y,color,up){
+    ctx.fillStyle=color;ctx.fillRect(x-55,y,110,80);
+    ctx.fillStyle='#111827';ctx.fillRect(x-65,y+12,14,22);ctx.fillRect(x+51,y+12,14,22);ctx.fillRect(x-65,y+48,14,22);ctx.fillRect(x+51,y+48,14,22);
+    ctx.fillStyle='#e5e7eb';ctx.fillRect(x-40,y+18,80,26);
+    ctx.fillStyle='#facc15';ctx.fillRect(x-48,up?y+74:y-4,18,6);ctx.fillRect(x+30,up?y+74:y-4,18,6);
+  }
+  function draw(){
+    ctx.fillStyle='#374151';ctx.fillRect(0,0,900,520);
+    ctx.fillStyle='#22c55e';ctx.fillRect(0,0,30,520);ctx.fillRect(870,0,30,520);
+    ctx.fillStyle='#facc15';
+    [225,450,675].forEach(function(x){for(var y=-40+lineY%80;y<560;y+=80)ctx.fillRect(x-4,y,8,40);});
+    cars.forEach(function(o){drawCar(lanes[o.lane],o.y,o.color,false);});
+    drawCar(lanes[px],420,inv>0?'#facc15':'#06b6d4',true);
+  }
+  function loop(){
+    if(!running)return;
+    dist+=speed;score=Math.floor(dist/10);lineY+=speed;
+    scoreEl.textContent=score;distEl.textContent=Math.floor(dist/10);
+    if(inv>0)inv--;
+    spawnT++;
+    if(spawnT>Math.max(30,72-Math.floor(dist/600))){spawnT=0;var lane=Math.floor(Math.random()*4);cars.push({lane:lane,y:-90,color:COLORS[Math.floor(Math.random()*COLORS.length)]});}
+    cars.forEach(function(o){o.y+=speed;});
+    cars=cars.filter(function(o){
+      if(o.y>560)return false;
+      if(o.y+80>420&&o.y<500&&o.lane===px&&inv===0){
+        lives--;if(window.mgaBeep)window.mgaBeep(140,0.25);livesEl.textContent='❤️'.repeat(Math.max(0,lives))||'—';inv=60;return false;
+      }
+      return true;
+    });
+    if(lives<=0){
+      running=false;
+      if(score>best){best=score;try{localStorage.setItem('mga_traffic_best',String(best));}catch(e){}bestEl.textContent=best;}
+      ot.textContent='Crash!';ox.textContent='You drove '+Math.floor(dist/10)+'m and scored '+score+'. Press Start to try again.';
+      ov.classList.remove('hidden');return;
+    }
+    speed=4+Math.floor(dist/2000);
+    draw();raf=requestAnimationFrame(loop);
+  }
+  function start(){
+    px=1;cars=[];lives=3;dist=0;score=0;speed=4;spawnT=0;inv=0;lineY=0;
+    scoreEl.textContent='0';distEl.textContent='0';livesEl.textContent='❤️❤️❤️';
+    ov.classList.add('hidden');running=true;cancelAnimationFrame(raf);requestAnimationFrame(loop);
+  }
+  function move(d){if(running)px=Math.max(0,Math.min(3,px+d));draw();}
+  document.getElementById('leftBtn').addEventListener('click',function(){move(-1);});
+  document.getElementById('rightBtn').addEventListener('click',function(){move(1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft')move(-1);if(e.key==='ArrowRight')move(1);
+    if(e.key==='s'||e.key==='S')start();if(e.key==='r'||e.key==='R')start();
+  });
+  var dragging=false;
+  cv.addEventListener('pointerdown',function(e){dragging=true;steer(e);});
+  cv.addEventListener('pointermove',function(e){if(dragging)steer(e);});
+  cv.addEventListener('pointerup',function(){dragging=false;});
+  function steer(e){var r=cv.getBoundingClientRect(),x=(e.clientX-r.left)*900/r.width;px=x<225?0:x<450?1:x<675?2:3;draw();}
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

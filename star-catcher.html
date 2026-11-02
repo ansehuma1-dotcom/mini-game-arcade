@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star Catcher — Free Arcade Game for Kids | Mini Game Arcade</title>
+<meta name="description" content="Play Star Catcher free online: move the basket, catch falling stars, avoid missing them. 60 seconds, fun for kids, works on mobile and desktop.">
+<meta name="keywords" content="star catcher game, kids catching game, free arcade game, basket game">
+<meta property="og:title" content="Star Catcher — Mini Game Arcade">
+<meta property="og:description" content="Play Star Catcher free online: move the basket and catch falling stars in 60 seconds.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/star-catcher.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/star-catcher.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Star Catcher</h1>
+  <p data-i18n="star_intro">Move the basket left and right and catch the falling stars. Golden stars are worth 30 points, yellow stars 10. You have 60 seconds.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="caught">Caught:</span> <strong id="caught">0</strong></span>
+    <span><span data-i18n="missed">Missed:</span> <strong id="missed">0</strong></span>
+    <span><span data-i18n="time">Time:</span> <strong id="time">60</strong>s</span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Star Catcher game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to catch stars?</h2>
+      <p id="overlayText">Move the basket and catch the falling stars. Golden stars are worth 30 points.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn small secondary" id="leftBtn" type="button">◀ Left</button>
+    <button class="btn small secondary" id="rightBtn" type="button">Right ▶</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: arrow keys, on-screen buttons, or drag on the game area to move the basket.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),caughtEl=document.getElementById('caught'),
+      missedEl=document.getElementById('missed'),timeEl=document.getElementById('time'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_star_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var bx=450,stars=[],running=false,timer=null,spawnT=null,timeLeft=60,score=0,caught=0,missed=0,raf=null;
+  function drawStar(x,y,r,color){
+    ctx.save();ctx.translate(x,y);ctx.fillStyle=color;ctx.beginPath();
+    for(var i=0;i<10;i++){var a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?r:r*0.45;var px=Math.cos(a)*rr,py=Math.sin(a)*rr;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);}
+    ctx.closePath();ctx.fill();ctx.restore();
+  }
+  function draw(){
+    ctx.fillStyle='#0f172a';ctx.fillRect(0,0,900,520);
+    ctx.fillStyle='#fff';for(var i=0;i<40;i++){ctx.globalAlpha=0.4;ctx.fillRect((i*173)%900,(i*89)%400,2,2);}ctx.globalAlpha=1;
+    stars.forEach(function(s){drawStar(s.x,s.y,s.r,s.gold?'#facc15':'#fde68a');});
+    ctx.fillStyle='#f97316';ctx.beginPath();ctx.moveTo(bx-70,460);ctx.lineTo(bx+70,460);ctx.lineTo(bx+50,510);ctx.lineTo(bx-50,510);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();
+  }
+  function loop(){
+    if(!running)return;
+    stars.forEach(function(s){s.y+=s.vy;});
+    stars=stars.filter(function(s){
+      if(s.y>520){missed++;missedEl.textContent=missed;return false;}
+      if(s.y>450&&s.y<515&&Math.abs(s.x-bx)<75){
+        caught++;score+=s.gold?30:10;if(window.mgaBeep)window.mgaBeep(s.gold?880:660,0.12);
+        caughtEl.textContent=caught;scoreEl.textContent=score;return false;
+      }
+      return true;
+    });
+    draw();raf=requestAnimationFrame(loop);
+  }
+  function endGame(){
+    running=false;clearInterval(timer);clearInterval(spawnT);cancelAnimationFrame(raf);
+    if(score>best){best=score;try{localStorage.setItem('mga_star_best',String(best));}catch(e){}bestEl.textContent=best;}
+    if(window.mgaBeep)window.mgaBeep(300,0.3);
+    ot.textContent='Time up!';ox.textContent='You caught '+caught+' stars, missed '+missed+', and scored '+score+' points. Play again?';
+    ov.classList.remove('hidden');
+  }
+  function spawn(){
+    var gold=Math.random()<0.15;
+    stars.push({x:40+Math.random()*820,y:-30,r:gold?26:20,vy:2+Math.random()*2,gold:gold});
+  }
+  function start(){
+    bx=450;stars=[];score=0;caught=0;missed=0;timeLeft=60;
+    scoreEl.textContent='0';caughtEl.textContent='0';missedEl.textContent='0';timeEl.textContent='60';
+    ov.classList.add('hidden');running=true;
+    clearInterval(timer);clearInterval(spawnT);cancelAnimationFrame(raf);
+    spawnT=setInterval(spawn,650);spawn();
+    timer=setInterval(function(){timeLeft--;timeEl.textContent=timeLeft;if(timeLeft<=0)endGame();},1000);
+    requestAnimationFrame(loop);
+  }
+  function move(d){bx=Math.max(75,Math.min(825,bx+d*45));if(!running)draw();}
+  document.getElementById('leftBtn').addEventListener('click',function(){move(-1);});
+  document.getElementById('rightBtn').addEventListener('click',function(){move(1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft')move(-1);if(e.key==='ArrowRight')move(1);
+    if(e.key==='s'||e.key==='S')start();if(e.key==='r'||e.key==='R')start();
+  });
+  var dragging=false;
+  cv.addEventListener('pointerdown',function(e){dragging=true;steer(e);});
+  cv.addEventListener('pointermove',function(e){if(dragging)steer(e);});
+  cv.addEventListener('pointerup',function(){dragging=false;});
+  function steer(e){var r=cv.getBoundingClientRect();bx=Math.max(75,Math.min(825,(e.clientX-r.left)*900/r.width));draw();}
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balloon Pop — Free Arcade Game for Kids | Mini Game Arcade</title>
+<meta name="description" content="Play Balloon Pop free online: pop rising balloons in 60 seconds, grab golden balloons for 50 points, and do not pop the grey storm balloons.">
+<meta name="keywords" content="balloon pop game, kids popping game, free arcade game">
+<meta property="og:title" content="Balloon Pop — Mini Game Arcade">
+<meta property="og:description" content="Play Balloon Pop free online: pop rising balloons in 60 seconds, but avoid the grey storm balloons.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/balloon-pop.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/balloon-pop.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Balloon Pop</h1>
+  <p data-i18n="balloon_intro">Pop the rising balloons before they float away. Golden balloons are worth 50 points — but do not pop the grey storm balloons, they cost 10 points. You have 60 seconds.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="popped">Popped:</span> <strong id="popped">0</strong></span>
+    <span><span data-i18n="time">Time:</span> <strong id="time">60</strong>s</span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Balloon Pop game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to pop balloons?</h2>
+      <p id="overlayText">Pop the colourful balloons before they float away. Golden balloons are worth 50 — but avoid the grey storm balloons.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p><button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button></p>
+  <p class="muted">Controls: click or tap a balloon to pop it. Keyboard: press S to start, R to restart.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),popEl=document.getElementById('popped'),
+      timeEl=document.getElementById('time'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_balloon_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var balloons=[],running=false,timer=null,spawnT=null,timeLeft=60,score=0,popped=0;
+  function spawn(){
+    var roll=Math.random();
+    var kind=roll<0.12?'gold':roll<0.32?'storm':'normal';
+    var colors=['#f472b6','#38bdf8','#a78bfa','#4ade80','#fb923c'];
+    balloons.push({x:50+Math.random()*800,y:560,r:26+Math.random()*16,vy:1+Math.random()*1.5,
+      c:kind==='gold'?'#facc15':kind==='storm'?'#6b7280':colors[Math.floor(Math.random()*colors.length)],kind:kind});
+  }
+  function draw(){
+    ctx.clearRect(0,0,900,520);
+    balloons.forEach(function(b){
+      ctx.beginPath();ctx.moveTo(b.x,b.y+b.r);ctx.quadraticCurveTo(b.x+8,b.y+b.r+28,b.x,b.y+b.r+48);ctx.strokeStyle='#64748b';ctx.lineWidth=2;ctx.stroke();
+      ctx.beginPath();ctx.ellipse(b.x,b.y,b.r,b.r*1.2,0,0,Math.PI*2);ctx.fillStyle=b.c;ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctx.beginPath();ctx.ellipse(b.x-b.r*0.3,b.y-b.r*0.4,b.r*0.22,b.r*0.3,-0.5,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,.75)';ctx.fill();
+      if(b.kind==='storm'){ctx.fillStyle='#fff';ctx.font='bold 20px sans-serif';ctx.textAlign='center';ctx.fillText('☁',b.x,b.y+7);}
+    });
+  }
+  function loop(){
+    if(!running)return;
+    balloons.forEach(function(b){b.y-=b.vy;});
+    balloons=balloons.filter(function(b){return b.y+b.r*1.2+48>0;});
+    draw();requestAnimationFrame(loop);
+  }
+  function endGame(){
+    running=false;clearInterval(timer);clearInterval(spawnT);
+    if(score>best){best=score;try{localStorage.setItem('mga_balloon_best',String(best));}catch(e){}bestEl.textContent=best;}
+    if(window.mgaBeep)window.mgaBeep(300,0.3);
+    ot.textContent='Time up!';ox.textContent='You popped '+popped+' balloons and scored '+score+' points. Play again?';
+    ov.classList.remove('hidden');
+  }
+  function start(){
+    score=0;popped=0;timeLeft=60;balloons=[];
+    scoreEl.textContent='0';popEl.textContent='0';timeEl.textContent='60';
+    ov.classList.add('hidden');running=true;
+    clearInterval(timer);clearInterval(spawnT);
+    spawnT=setInterval(spawn,600);spawn();spawn();
+    timer=setInterval(function(){timeLeft--;timeEl.textContent=timeLeft;if(timeLeft<=0)endGame();},1000);
+    requestAnimationFrame(loop);
+  }
+  function popAt(cx,cy){
+    if(!running)return;var r=cv.getBoundingClientRect();
+    var x=(cx-r.left)*900/r.width,y=(cy-r.top)*520/r.height;
+    for(var i=balloons.length-1;i>=0;i--){
+      var b=balloons[i];
+      var dx=(x-b.x)/b.r,dy=(y-b.y)/(b.r*1.2);
+      if(dx*dx+dy*dy<=1){
+        balloons.splice(i,1);popped++;
+        if(b.kind==='storm'){score=Math.max(0,score-10);if(window.mgaBeep)window.mgaBeep(150,0.25);}
+        else if(b.kind==='gold'){score+=50;if(window.mgaBeep)window.mgaBeep(880,0.15);}
+        else{score+=Math.round(b.r);if(window.mgaBeep)window.mgaBeep(660,0.1);}
+        popEl.textContent=popped;scoreEl.textContent=score;draw();return;
+      }
+    }
+  }
+  cv.addEventListener('pointerdown',function(e){e.preventDefault();popAt(e.clientX,e.clientY);});
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  document.addEventListener('keydown',function(e){if(e.key==='s'||e.key==='S')start();if(e.key==='r'||e.key==='R')start();});
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Word Scramble game thumbnail">
+  <rect width="400" height="400" fill="#fef3c7"/>
+  <g font-family="sans-serif" font-size="52" font-weight="800" text-anchor="middle">
+    <rect x="50" y="110" width="70" height="70" rx="12" fill="#f472b6" stroke="#000" stroke-width="3"/><text x="85" y="160" fill="#000">R</text>
+    <rect x="130" y="110" width="70" height="70" rx="12" fill="#38bdf8" stroke="#000" stroke-width="3"/><text x="165" y="160" fill="#000">O</text>
+    <rect x="210" y="110" width="70" height="70" rx="12" fill="#facc15" stroke="#000" stroke-width="3"/><text x="245" y="160" fill="#000">C</text>
+    <rect x="290" y="110" width="70" height="70" rx="12" fill="#4ade80" stroke="#000" stroke-width="3"/><text x="325" y="160" fill="#000">K</text>
+    <rect x="90" y="200" width="70" height="70" rx="12" fill="#a78bfa" stroke="#000" stroke-width="3"/><text x="125" y="250" fill="#000">E</text>
+    <rect x="170" y="200" width="70" height="70" rx="12" fill="#fb923c" stroke="#000" stroke-width="3"/><text x="205" y="250" fill="#000">T</text>
+    <rect x="250" y="200" width="70" height="70" rx="12" fill="#f472b6" stroke="#000" stroke-width="3"/><text x="285" y="250" fill="#000">?</text>
+  </g>
+  <text x="200" y="340" text-anchor="middle" font-family="sans-serif" font-size="28" font-weight="800" fill="#0f172a">UNSCRAMBLE IT!</text>
+</svg>
