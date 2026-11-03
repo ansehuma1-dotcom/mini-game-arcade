@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Math Sprint — Free Puzzle Game for Kids | Mini Game Arcade</title>
+<meta name="description" content="Play Math Sprint free online: solve as many sums as you can in 60 seconds. Works on mobile and desktop.">
+<meta name="keywords" content="math game for kids, arithmetic game, free puzzle game">
+<meta property="og:title" content="Math Sprint — Mini Game Arcade">
+<meta property="og:description" content="Play Math Sprint free online: 60 seconds of quick sums.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/math-sprint.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/math-sprint.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Math Sprint</h1>
+  <p data-i18n="math_intro">Solve as many sums as you can in 60 seconds. Each correct answer is 10 points — keep your streak going for bonus points.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="correct">Correct:</span> <strong id="correct">0</strong></span>
+    <span><span data-i18n="streak">Streak:</span> <strong id="streak">0</strong></span>
+    <span><span data-i18n="time">Time:</span> <strong id="time">60</strong>s</span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <div id="setup">
+      <h2>Ready to sprint?</h2>
+      <p>60 seconds, quick sums, 10 points each — plus 5 bonus points for every 5 in a row.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+    <div id="play" class="hidden">
+      <h2 id="problem" style="font-size:2.4rem">—</h2>
+      <p><input id="answer" type="text" inputmode="numeric" autocomplete="off" placeholder="Your answer" style="font-size:1.4rem;padding:12px;border:2px solid #000;border-radius:12px;max-width:240px;width:80%;text-align:center"></p>
+      <p>
+        <button class="btn" id="checkBtn" type="button">Check</button>
+        <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+      </p>
+      <p id="feedback" aria-live="polite" style="font-weight:700;min-height:1.5em"></p>
+    </div>
+    <div id="done" class="hidden">
+      <h2>Time up!</h2>
+      <p id="doneText"></p>
+      <button class="btn" id="againBtn" type="button">Play Again</button>
+    </div>
+  </div>
+  <p class="muted">Controls: type your answer and press Enter or Check.</p>
+<script>
+(function(){
+  var sEl=document.getElementById('score'),cEl=document.getElementById('correct'),stEl=document.getElementById('streak'),tEl=document.getElementById('time'),bestEl=document.getElementById('best'),
+      setup=document.getElementById('setup'),play=document.getElementById('play'),done=document.getElementById('done'),
+      prob=document.getElementById('problem'),ans=document.getElementById('answer'),fb=document.getElementById('feedback'),doneText=document.getElementById('doneText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_math_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var score=0,correct=0,streak=0,timeLeft=60,timer=null,answer=0;
+  function newProblem(){
+    var kind=Math.floor(Math.random()*3),a,b;
+    if(kind===0){a=2+Math.floor(Math.random()*48);b=2+Math.floor(Math.random()*48);prob.textContent=a+' + '+b+' = ?';answer=a+b;}
+    else if(kind===1){a=10+Math.floor(Math.random()*80);b=2+Math.floor(Math.random()*(a-1));prob.textContent=a+' − '+b+' = ?';answer=a-b;}
+    else{a=2+Math.floor(Math.random()*8);b=2+Math.floor(Math.random()*8);prob.textContent=a+' × '+b+' = ?';answer=a*b;}
+    ans.value='';ans.focus();
+  }
+  function finish(){
+    clearInterval(timer);play.classList.add('hidden');done.classList.remove('hidden');
+    if(score>best){best=score;try{localStorage.setItem('mga_math_best',String(best));}catch(e){}bestEl.textContent=best;}
+    doneText.textContent='You solved '+correct+' sums and scored '+score+' points. Best: '+best+'.';
+    if(window.mgaBeep)window.mgaBeep(520,0.25);
+  }
+  function start(){
+    score=0;correct=0;streak=0;timeLeft=60;clearInterval(timer);
+    sEl.textContent='0';cEl.textContent='0';stEl.textContent='0';tEl.textContent='60';fb.textContent='';
+    setup.classList.add('hidden');done.classList.add('hidden');play.classList.remove('hidden');
+    newProblem();
+    timer=setInterval(function(){timeLeft--;tEl.textContent=timeLeft;if(timeLeft<=0)finish();},1000);
+  }
+  function check(){
+    var v=ans.value.trim();if(v==='')return;
+    if(parseInt(v,10)===answer){
+      correct++;streak++;var pts=10+(streak%5===0?5:0);score+=pts;
+      sEl.textContent=score;cEl.textContent=correct;stEl.textContent=streak;
+      fb.textContent=pts===15?'Correct! +15 (streak bonus)':'Correct! +10';
+      if(window.mgaBeep)window.mgaBeep(760,0.12);
+      newProblem();
+    } else {
+      streak=0;stEl.textContent='0';fb.textContent='Not quite — try again.';
+      if(window.mgaBeep)window.mgaBeep(180,0.2);
+      ans.select();
+    }
+  }
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('againBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  document.getElementById('checkBtn').addEventListener('click',check);
+  ans.addEventListener('keydown',function(e){if(e.key==='Enter')check();});
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

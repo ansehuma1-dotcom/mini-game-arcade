@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reaction Tap — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Reaction Tap free online: wait for green, tap as fast as you can, over 5 rounds. Works on mobile and desktop.">
+<meta name="keywords" content="reaction time game, reflex game, free arcade game">
+<meta property="og:title" content="Reaction Tap — Mini Game Arcade">
+<meta property="og:description" content="Play Reaction Tap free online: how fast are your reactions over 5 rounds?">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/reaction-tap.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/reaction-tap.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Reaction Tap</h1>
+  <p data-i18n="reaction_intro">Wait for the panel to turn green, then tap it as fast as you can. 5 rounds — tap too early and that round restarts.</p>
+  <div class="hud">
+    <span><span data-i18n="round">Round:</span> <strong id="round">0 / 5</strong></span>
+    <span><span data-i18n="average">Average:</span> <strong id="avg">—</strong></span>
+    <span><span data-i18n="fastest">Fastest:</span> <strong id="fastest">—</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">—</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <div id="panel" style="min-height:220px;border:3px solid #000;border-radius:16px;background:#dc2626;color:#fff;display:flex;flex-direction:column;justify-content:center;cursor:pointer;user-select:none">
+      <h2 id="panelTitle" style="margin:8px">Tap Start, then wait for green</h2>
+      <p id="panelText" style="margin:8px">Do not tap while the panel is red.</p>
+    </div>
+    <p style="margin-top:12px">
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+    <p id="results" aria-live="polite" style="font-weight:700;min-height:1.5em"></p>
+  </div>
+  <p class="muted">Controls: tap the panel, or press Space when it turns green.</p>
+<script>
+(function(){
+  var panel=document.getElementById('panel'),pt=document.getElementById('panelTitle'),px=document.getElementById('panelText'),
+      roundEl=document.getElementById('round'),avgEl=document.getElementById('avg'),fastEl=document.getElementById('fastest'),bestEl=document.getElementById('best'),res=document.getElementById('results');
+  var best=null; try{best=localStorage.getItem('mga_reaction_best');}catch(e){}
+  if(best)bestEl.textContent=best+' ms';
+  var state='idle',round=0,times=[],waitT=null,goT=0,fouls=0;
+  function setPanel(color,title,text){panel.style.background=color;pt.textContent=title;px.textContent=text;}
+  function showRound(){
+    roundEl.textContent=round+' / 5';
+    state='wait';setPanel('#dc2626','Wait for green…','Do not tap yet — round '+round+' of 5.');
+    clearTimeout(waitT);waitT=setTimeout(function(){state='go';goT=performance.now();setPanel('#16a34a','TAP NOW!','Tap as fast as you can!');},1200+Math.random()*2000);
+  }
+  function finish(){
+    state='done';clearTimeout(waitT);
+    var sum=times.reduce(function(a,b){return a+b;},0);var avg=Math.round(sum/times.length);var fast=Math.min.apply(null,times);
+    avgEl.textContent=avg+' ms';fastEl.textContent=fast+' ms';
+    res.textContent='Done! Average '+avg+' ms, fastest '+fast+' ms'+(fouls?' ('+fouls+' early tap(s)).':'.');
+    setPanel('#FFC900','Your average: '+avg+' ms','Tap Start to play again.');
+    pt.style.color='#000';px.style.color='#000';
+    if(window.mgaBeep)window.mgaBeep(880,0.3);
+    try{if(!best||avg<parseInt(best,10)){localStorage.setItem('mga_reaction_best',String(avg));bestEl.textContent=avg+' ms';}}catch(e){}
+  }
+  function tap(){
+    if(state==='wait'){fouls++;clearTimeout(waitT);setPanel('#dc2626','Too early!','That was an early tap — wait for green again.');state='foul';setTimeout(showRound,900);return;}
+    if(state==='go'){
+      var ms=Math.round(performance.now()-goT);times.push(ms);
+      if(window.mgaBeep)window.mgaBeep(760,0.12);
+      setPanel('#23A094',''+ms+' ms!','Round '+round+' of 5 done.');state='scored';
+      if(round>=5){setTimeout(finish,700);} else {round++;setTimeout(showRound,900);}
+      return;
+    }
+    if(state==='done'||state==='idle')start();
+  }
+  function start(){
+    times=[];round=1;fouls=0;avgEl.textContent='—';fastEl.textContent='—';res.textContent='';pt.style.color='';px.style.color='';
+    showRound();
+  }
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  panel.addEventListener('pointerdown',tap);
+  document.addEventListener('keydown',function(e){if(e.code==='Space'){e.preventDefault();tap();}if(e.key==='r'||e.key==='R')start();});
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

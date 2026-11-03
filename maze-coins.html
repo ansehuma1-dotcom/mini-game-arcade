@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maze Coins — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Maze Coins free online: find your way through a new maze and collect every coin. Works on mobile and desktop.">
+<meta name="keywords" content="maze game, collect coins game, free arcade game">
+<meta property="og:title" content="Maze Coins — Mini Game Arcade">
+<meta property="og:description" content="Play Maze Coins free online: a new maze and 8 coins every game.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/maze-coins.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/maze-coins.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Maze Coins</h1>
+  <p data-i18n="maze_intro">Move through the maze and collect all 8 coins. Every game builds a brand-new maze — fewer moves is better.</p>
+  <div class="hud">
+    <span><span data-i18n="coins">Coins:</span> <strong id="coins">0 / 8</strong></span>
+    <span><span data-i18n="moves">Moves:</span> <strong id="moves">0</strong></span>
+    <span><span data-i18n="time">Time:</span> <strong id="time">0:00</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">—</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="600" height="440" aria-label="Maze Coins game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready for the maze?</h2>
+      <p id="overlayText">Collect all 8 coins. A new maze is built every game.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn small secondary" id="upBtn" type="button">▲</button><br>
+    <button class="btn small secondary" id="leftBtn" type="button">◀</button>
+    <button class="btn small secondary" id="downBtn" type="button">▼</button>
+    <button class="btn small secondary" id="rightBtn" type="button">▶</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: arrow keys, WASD, on-screen buttons, or swipe on the game area.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var cEl=document.getElementById('coins'),mEl=document.getElementById('moves'),tEl=document.getElementById('time'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=null; try{best=localStorage.getItem('mga_maze_best');}catch(e){}
+  if(best)bestEl.textContent=best;
+  var COLS=15,ROWS=11,TS=40,grid=[],px=1,py=1,coins=[],got=0,moves=0,sec=0,timer=null,playing=false;
+  function gen(){
+    grid=[];for(var r=0;r<ROWS;r++){var row=[];for(var c=0;c<COLS;c++)row.push(1);grid.push(row);}
+    var stack=[[1,1]];grid[1][1]=0;
+    while(stack.length){var cur=stack[stack.length-1];var dirs=[[0,2],[0,-2],[2,0],[-2,0]].filter(function(d){var nr=cur[0]+d[0],nc=cur[1]+d[1];return nr>0&&nr<ROWS-1&&nc>0&&nc<COLS-1&&grid[nr][nc]===1;});
+      if(!dirs.length){stack.pop();continue;}
+      var d=dirs[Math.floor(Math.random()*dirs.length)];
+      grid[cur[0]+d[0]/2][cur[1]+d[1]/2]=0;grid[cur[0]+d[0]][cur[1]+d[1]]=0;stack.push([cur[0]+d[0],cur[1]+d[1]]);}
+    var floors=[];for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(grid[r][c]===0&&Math.abs(r-1)+Math.abs(c-1)>8)floors.push([r,c]);
+    coins=[];while(coins.length<8&&floors.length){coins.push(floors.splice(Math.floor(Math.random()*floors.length),1)[0]);}
+  }
+  function draw(){
+    ctx.fillStyle='#111827';ctx.fillRect(0,0,600,440);
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){if(grid[r][c]===1){ctx.fillStyle='#374151';ctx.fillRect(c*TS,r*TS,TS,TS);}else{ctx.fillStyle='#fef9c3';ctx.fillRect(c*TS,r*TS,TS,TS);}}
+    coins.forEach(function(p){var cx=p[1]*TS+20,cy=p[0]*TS+20;ctx.fillStyle='#f59e0b';ctx.beginPath();ctx.arc(cx,cy,11,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#92400e';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='#92400e';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('¢',cx,cy);});
+    ctx.fillStyle='#23A094';ctx.beginPath();ctx.arc(py*TS+20,px*TS+20,14,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(py*TS+16,px*TS+16,3,0,Math.PI*2);ctx.arc(py*TS+24,px*TS+16,3,0,Math.PI*2);ctx.fill();
+  }
+  function tick(){sec++;var m=Math.floor(sec/60),s=sec%60;tEl.textContent=m+':'+(s<10?'0':'')+s;}
+  function finish(){
+    playing=false;clearInterval(timer);
+    var t=tEl.textContent;ot.textContent='All coins collected!';ox.textContent='You collected 8 coins in '+moves+' moves and '+t+'. Play again for a new maze?';
+    ov.classList.remove('hidden');if(window.mgaBeep)window.mgaBeep(880,0.3);
+    try{if(!best||moves<parseInt(best,10)){localStorage.setItem('mga_maze_best',String(moves));bestEl.textContent=moves;}}catch(e){}
+  }
+  function move(dr,dc){
+    if(!playing)return;
+    var nr=px+dr,nc=py+dc;
+    if(nr<0||nr>=ROWS||nc<0||nc>=COLS||grid[nr][nc]===1)return;
+    px=nr;py=nc;moves++;mEl.textContent=moves;
+    var idx=-1;coins.forEach(function(p,i){if(p[0]===px&&p[1]===py)idx=i;});
+    if(idx>=0){coins.splice(idx,1);got++;cEl.textContent=got+' / 8';if(window.mgaBeep)window.mgaBeep(760,0.12);if(got===8){draw();finish();return;}}
+    draw();
+  }
+  function start(){
+    gen();px=1;py=1;got=0;moves=0;sec=0;clearInterval(timer);timer=setInterval(tick,1000);
+    cEl.textContent='0 / 8';mEl.textContent='0';tEl.textContent='0:00';ov.classList.add('hidden');playing=true;draw();
+  }
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  document.getElementById('upBtn').addEventListener('click',function(){move(-1,0);});
+  document.getElementById('downBtn').addEventListener('click',function(){move(1,0);});
+  document.getElementById('leftBtn').addEventListener('click',function(){move(0,-1);});
+  document.getElementById('rightBtn').addEventListener('click',function(){move(0,1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowUp'||e.key==='w'||e.key==='W')move(-1,0);
+    if(e.key==='ArrowDown'||e.key==='s'||e.key==='S')move(1,0);
+    if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A')move(0,-1);
+    if(e.key==='ArrowRight'||e.key==='d'||e.key==='D')move(0,1);
+    if(e.key==='r'||e.key==='R')start();
+  });
+  var sx=0,sy=0;
+  cv.addEventListener('pointerdown',function(e){sx=e.clientX;sy=e.clientY;});
+  cv.addEventListener('pointerup',function(e){var dx=e.clientX-sx,dy=e.clientY-sy;if(Math.abs(dx)<20&&Math.abs(dy)<20)return;if(Math.abs(dx)>Math.abs(dy))move(0,dx>0?1:-1);else move(dy>0?1:-1,0);});
+  gen();draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+</body>
+</html>

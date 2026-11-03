@@ -33,11 +33,11 @@ stickman action — adapted here as family-friendly, 1-tap, no-download original
 | 8 | Tile Match | Puzzle | All Ages | 3-in-a-row colourful tiles | ✅ |
 | 9 | Traffic Dodge | Racing (new) | All Ages | Top-down car dodging traffic | ✅ |
 | 10 | Balloon Pop | Arcade | Kids | Balloons rising, dart popping one | ✅ |
-| 11 | Mini Sudoku | Puzzle | Adults | 4x4 number grid, highlighted row | ☐ |
-| 12 | Stack Tower | Arcade | All Ages | Tower of swinging blocks stacking | ☐ |
-| 13 | Maze Coins | Arcade | All Ages | Maze path with coins and a hero | ☐ |
-| 14 | Reaction Tap | Arcade | All Ages | Big target button, stopwatch | ☐ |
-| 15 | Math Sprint | Puzzle | Kids | Numbers and a lightning bolt | ☐ |
+| 11 | Mini Sudoku | Puzzle | Adults | 4x4 number grid, highlighted row | ✅ |
+| 12 | Stack Tower | Arcade | All Ages | Tower of swinging blocks stacking | ✅ |
+| 13 | Maze Coins | Arcade | All Ages | Maze path with coins and a hero | ✅ |
+| 14 | Reaction Tap | Arcade | All Ages | Big target button, stopwatch | ✅ |
+| 15 | Math Sprint | Puzzle | Kids | Numbers and a lightning bolt | ✅ |
 | 16 | Sky Flapper | Runner | All Ages | Original bird flapping between pipes | ☐ |
 | 17 | Solitaire Sprint | Cards (new) | Adults | Card fan, ace on top | ☐ |
 | 18 | Merge Defenders | Strategy (new) | All Ages | Towers merging on a path, enemies | ☐ |
