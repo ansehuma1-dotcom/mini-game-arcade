@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colour Memory — Free Puzzle Game for Kids | Mini Game Arcade</title>
+<meta name="description" content="Play Colour Memory free online: watch the colour pads light up in sequence, then repeat the pattern. Works on mobile and desktop.">
+<meta name="keywords" content="colour memory game, simon style game, free puzzle game for kids">
+<meta property="og:title" content="Colour Memory — Mini Game Arcade">
+<meta property="og:description" content="Play Colour Memory free online: watch the sequence, then repeat it.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/colour-memory.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/colour-memory.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Colour Memory</h1>
+  <p data-i18n="colour_intro">Watch the pads light up, then tap them back in the same order. Each round adds one more colour.</p>
+  <div class="hud">
+    <span><span data-i18n="level">Level:</span> <strong id="level">0</strong></span>
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Press Start, then watch carefully.</p>
+    <div id="pads" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:420px;margin:0 auto">
+      <button type="button" class="pad" data-pad="0" style="background:#ef4444;min-height:120px;border:3px solid #000;border-radius:16px;font-size:1.4rem;font-weight:700">🔴</button>
+      <button type="button" class="pad" data-pad="1" style="background:#22c55e;min-height:120px;border:3px solid #000;border-radius:16px;font-size:1.4rem;font-weight:700">🟢</button>
+      <button type="button" class="pad" data-pad="2" style="background:#3b82f6;min-height:120px;border:3px solid #000;border-radius:16px;font-size:1.4rem;font-weight:700">🔵</button>
+      <button type="button" class="pad" data-pad="3" style="background:#FFC900;min-height:120px;border:3px solid #000;border-radius:16px;font-size:1.4rem;font-weight:700">🟡</button>
+    </div>
+    <p style="margin-top:16px">
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap a pad, or press keys 1 to 4.</p>
+<script>
+(function(){
+  var pads=document.querySelectorAll('.pad');
+  var lvEl=document.getElementById('level'),sEl=document.getElementById('score'),bestEl=document.getElementById('best'),status=document.getElementById('status');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_colour_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var seq=[],pos=0,score=0,playing=false,watching=false;
+  var freq=[440,554,659,784];
+  function light(i,ms){
+    var p=pads[i];p.style.opacity='0.35';p.style.transform='scale(0.96)';
+    if(window.mgaBeep)window.mgaBeep(freq[i],0.25);
+    setTimeout(function(){p.style.opacity='1';p.style.transform='scale(1)';},ms||450);
+  }
+  function playSeq(){
+    watching=true;pos=0;status.textContent='Watch…';
+    seq.forEach(function(v,i){setTimeout(function(){light(v,500);if(i===seq.length-1){setTimeout(function(){watching=false;status.textContent='Your turn — repeat the pattern.';},550);}},i*650);});
+  }
+  function nextRound(){
+    seq.push(Math.floor(Math.random()*4));
+    lvEl.textContent=seq.length;playSeq();
+  }
+  function start(){
+    seq=[];pos=0;score=0;sEl.textContent='0';playing=true;nextRound();
+  }
+  function endGame(){
+    playing=false;
+    if(score>best){best=score;try{localStorage.setItem('mga_colour_best',String(best));}catch(e){}bestEl.textContent=best;}
+    status.textContent='Game over! You reached level '+seq.length+' and scored '+score+' points. Press Start to play again.';
+    if(window.mgaBeep)window.mgaBeep(200,0.3);
+  }
+  function press(i){
+    if(!playing||watching)return;
+    light(i,300);
+    if(i===seq[pos]){pos++;score+=10;sEl.textContent=score;
+      if(pos===seq.length){status.textContent='Correct! Next round…';setTimeout(nextRound,700);}
+    } else {endGame();}
+  }
+  pads.forEach(function(p){p.addEventListener('click',function(){press(parseInt(p.getAttribute('data-pad'),10));});});
+  document.addEventListener('keydown',function(e){var n=parseInt(e.key,10);if(n>=1&&n<=4)press(n-1);});
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+</body>
+</html>

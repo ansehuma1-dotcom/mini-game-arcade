@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jungle Jump — Free Runner Game for Kids | Mini Game Arcade</title>
+<meta name="description" content="Play Jungle Jump free online: jump over logs and vines, grab coins, and run as far as you can. Works on mobile and desktop.">
+<meta name="keywords" content="jungle runner game, jumping game for kids, free runner game">
+<meta property="og:title" content="Jungle Jump — Mini Game Arcade">
+<meta property="og:description" content="Play Jungle Jump free online: jump the logs, grab the coins, run far.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/jungle-jump.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/jungle-jump.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="runner">Runner</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Jungle Jump</h1>
+  <p data-i18n="jungle_intro">Tap or press Space to jump over logs and vines. Grab coins for 10 points each — you have 3 lives.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="coins">Coins:</span> <strong id="coins">0</strong></span>
+    <span><span data-i18n="lives">Lives:</span> <strong id="lives">3</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Jungle Jump game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to run?</h2>
+      <p id="overlayText">Tap, click Jump, or press Space to jump over logs. Coins are worth 10 points each.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn" id="jumpBtn" type="button">Jump</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: tap the game area, click Jump, or press Space / Arrow Up.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var sEl=document.getElementById('score'),cEl=document.getElementById('coins'),lEl=document.getElementById('lives'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_jungle_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var GROUND=440,py=GROUND,vy=0,onGround=true,obs=[],coinsArr=[],score=0,coinN=0,lives=3,running=false,raf=null,frame=0,speed=4,inv=0;
+  function draw(){
+    ctx.fillStyle='#a7f3d0';ctx.fillRect(0,0,900,520);
+    ctx.fillStyle='#65a30d';ctx.fillRect(0,GROUND+40,900,80);
+    ctx.fillStyle='#166534';ctx.fillRect(0,0,900,30);
+    obs.forEach(function(o){ctx.fillStyle='#78350f';ctx.fillRect(o.x,GROUND+10-o.h,50,o.h);ctx.fillStyle='#92400e';ctx.fillRect(o.x,GROUND+10-o.h,50,8);});
+    coinsArr.forEach(function(c){ctx.fillStyle='#FFC900';ctx.beginPath();ctx.arc(c.x,c.y,14,0,7);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.beginPath();ctx.arc(c.x,c.y,14,0,7);ctx.stroke();});
+    ctx.fillStyle=inv>0&&Math.floor(inv/4)%2===0?'#fca5a5':'#FF90E8';
+    ctx.fillRect(110,py,44,40);ctx.fillStyle='#000';ctx.fillRect(140,py+8,10,10);
+    ctx.fillStyle='#78350f';ctx.fillRect(110,py+40,44,6);
+  }
+  function loop(){
+    if(!running)return;
+    frame++;if(inv>0)inv--;
+    vy+=0.9;py+=vy;if(py>=GROUND){py=GROUND;vy=0;onGround=true;}
+    if(frame%110===0){obs.push({x:900,h:30+Math.random()*30,hit:false});}
+    if(frame%170===0){coinsArr.push({x:900,y:GROUND-70-Math.random()*60,taken:false});}
+    speed=Math.min(9,4+frame/900);
+    obs.forEach(function(o){o.x-=speed;});
+    coinsArr.forEach(function(c){c.x-=speed;});
+    obs=obs.filter(function(o){return o.x>-60;});
+    coinsArr=coinsArr.filter(function(c){return c.x>-30&&!c.taken;});
+    coinsArr.forEach(function(c){
+      if(!c.taken&&Math.abs(c.x-132)<36&&Math.abs(c.y-(py+20))<44){c.taken=true;coinN++;score+=10;cEl.textContent=coinN;sEl.textContent=score;if(window.mgaBeep)window.mgaBeep(990,0.1);}
+    });
+    obs.forEach(function(o){
+      if(!o.hit&&o.x<154&&o.x+50>110&&py+40>GROUND+10-o.h){
+        o.hit=true;lives--;lEl.textContent=lives;inv=60;if(window.mgaBeep)window.mgaBeep(180,0.25);
+        if(lives<=0){endGame();return;}
+      }
+    });
+    if(frame%60===0){score+=1;sEl.textContent=score;}
+    draw();raf=requestAnimationFrame(loop);
+  }
+  function endGame(){
+    running=false;cancelAnimationFrame(raf);
+    if(score>best){best=score;try{localStorage.setItem('mga_jungle_best',String(best));}catch(e){}bestEl.textContent=best;}
+    ot.textContent='Run over!';ox.textContent='You scored '+score+' points and collected '+coinN+' coins. Best: '+best+'. Play again?';
+    ov.classList.remove('hidden');if(window.mgaBeep)window.mgaBeep(220,0.3);
+  }
+  function jump(){if(!running||!onGround)return;vy=-17;onGround=false;if(window.mgaBeep)window.mgaBeep(520,0.08);}
+  function start(){
+    py=GROUND;vy=0;onGround=true;obs=[];coinsArr=[];score=0;coinN=0;lives=3;frame=0;speed=4;inv=0;
+    sEl.textContent='0';cEl.textContent='0';lEl.textContent='3';ov.classList.add('hidden');running=true;
+    cancelAnimationFrame(raf);requestAnimationFrame(loop);
+  }
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  document.getElementById('jumpBtn').addEventListener('click',jump);
+  cv.addEventListener('pointerdown',jump);
+  document.addEventListener('keydown',function(e){if(e.code==='Space'||e.code==='ArrowUp'){e.preventDefault();jump();}if(e.key==='r'||e.key==='R')start();});
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+</body>
+</html>
