@@ -38,11 +38,11 @@ stickman action — adapted here as family-friendly, 1-tap, no-download original
 | 13 | Maze Coins | Arcade | All Ages | Maze path with coins and a hero | ✅ |
 | 14 | Reaction Tap | Arcade | All Ages | Big target button, stopwatch | ✅ |
 | 15 | Math Sprint | Puzzle | Kids | Numbers and a lightning bolt | ✅ |
-| 16 | Sky Flapper | Runner | All Ages | Original bird flapping between pipes | ☐ |
-| 17 | Solitaire Sprint | Cards (new) | Adults | Card fan, ace on top | ☐ |
-| 18 | Merge Defenders | Strategy (new) | All Ages | Towers merging on a path, enemies | ☐ |
-| 19 | Colour Memory | Puzzle | Kids | Colour pads lighting in sequence | ☐ |
-| 20 | Jungle Jump | Runner | Kids | Character jumping over vines/logs | ☐ |
+| 16 | Sky Flapper | Runner | All Ages | Original bird flapping between pipes | ✅ |
+| 17 | Solitaire Sprint | Cards (new) | Adults | Card fan, ace on top | ✅ |
+| 18 | Merge Defenders | Strategy (new) | All Ages | Towers merging on a path, enemies | ✅ |
+| 19 | Colour Memory | Puzzle | Kids | Colour pads lighting in sequence | ✅ |
+| 20 | Jungle Jump | Runner | Kids | Character jumping over vines/logs | ✅ |
 | 21 | Gem Drop | Puzzle | All Ages | Falling gems lining up in a well | ☐ |
 | 22 | Tap Tiles | Arcade | All Ages | Music tiles lighting, tap in rhythm | ☐ |
 | 23 | Mole Tap | Arcade | Kids | Moles popping up, tap fast | ☐ |
