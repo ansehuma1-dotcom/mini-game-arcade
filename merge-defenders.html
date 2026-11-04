@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Merge Defenders — Free Strategy Game | Mini Game Arcade</title>
+<meta name="description" content="Play Merge Defenders free online: place towers beside the road, merge matching towers into stronger ones, and stop every wave. Works on mobile and desktop.">
+<meta name="keywords" content="tower defence game, merge towers game, free strategy game">
+<meta property="og:title" content="Merge Defenders — Mini Game Arcade">
+<meta property="og:description" content="Play Merge Defenders free online: place, merge and defend against the waves.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/merge-defenders.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/merge-defenders.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="strategy">Strategy</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Merge Defenders</h1>
+  <p data-i18n="merge_intro">Tap an empty grass square to build a tower (20 coins). Tap a tower, then tap another tower of the same level to merge them into a stronger one. Then start the next wave.</p>
+  <div class="hud">
+    <span><span data-i18n="coins">Coins:</span> <strong id="coins">50</strong></span>
+    <span><span data-i18n="wave">Wave:</span> <strong id="wave">0</strong></span>
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="lives">Lives:</span> <strong id="lives">5</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Merge Defenders game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to defend?</h2>
+      <p id="overlayText">Build towers on the grass, merge matching levels, and stop the waves marching down the road.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn" id="waveBtn" type="button">Start Wave</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p id="msg" class="muted" style="text-align:center" aria-live="polite">Build a tower first, then start Wave 1.</p>
+  <p class="muted">Controls: tap a grass square to build, tap a tower then a matching tower to merge.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var cEl=document.getElementById('coins'),wEl=document.getElementById('wave'),sEl=document.getElementById('score'),lEl=document.getElementById('lives'),msg=document.getElementById('msg'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var COLS=10,ROWS=5,CW=90,CH=104,ROAD=2;
+  var towers=[],enemies=[],shots=[],coins=50,wave=0,score=0,lives=5,running=false,raf=null,sel=null,spawnQueue=0,spawnT=0,waveActive=false,over=false;
+  function cellXY(c,r){return {x:c*CW+45,y:r*CH+52};}
+  function towerAt(c,r){for(var i=0;i<towers.length;i++)if(towers[i].c===c&&towers[i].r===r)return towers[i];return null;}
+  function draw(){
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){
+      ctx.fillStyle=(r===ROAD)?'#78716c':((c+r)%2===0?'#86efac':'#4ade80');
+      ctx.fillRect(c*CW,r*CH,CW,CH);
+      ctx.strokeStyle='rgba(0,0,0,0.15)';ctx.strokeRect(c*CW,r*CH,CW,CH);
+    }
+    ctx.fillStyle='#000';ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+    ctx.fillText('START',45,ROAD*CH+58);ctx.fillText('BASE',855,ROAD*CH+58);
+    towers.forEach(function(t){
+      var p=cellXY(t.c,t.r);
+      ctx.fillStyle=['#FF90E8','#FFC900','#23A094','#60a5fa','#a78bfa'][Math.min(t.level-1,4)];
+      ctx.beginPath();ctx.arc(p.x,p.y,26,0,7);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.beginPath();ctx.arc(p.x,p.y,26,0,7);ctx.stroke();
+      ctx.fillStyle='#000';ctx.font='bold 20px sans-serif';ctx.fillText('L'+t.level,p.x,p.y+7);
+      if(sel===t){ctx.strokeStyle='#FFC900';ctx.lineWidth=4;ctx.beginPath();ctx.arc(p.x,p.y,32,0,7);ctx.stroke();}
+    });
+    shots.forEach(function(s){ctx.strokeStyle='#facc15';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(s.x1,s.y1);ctx.lineTo(s.x2,s.y2);ctx.stroke();});
+    enemies.forEach(function(e){
+      ctx.fillStyle='#dc2626';ctx.beginPath();ctx.arc(e.x,e.y,18,0,7);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.beginPath();ctx.arc(e.x,e.y,18,0,7);ctx.stroke();
+      ctx.fillStyle='#000';ctx.fillRect(e.x-18,e.y-30,36,6);ctx.fillStyle='#22c55e';ctx.fillRect(e.x-18,e.y-30,36*Math.max(e.hp,0)/e.maxhp,6);
+    });
+  }
+  function update(){
+    if(spawnQueue>0){spawnT--;if(spawnT<=0){enemies.push({x:-20,y:ROAD*CH+52,hp:20+wave*12,maxhp:20+wave*12,speed:1+wave*0.12,reward:8});spawnQueue--;spawnT=50;}}
+    towers.forEach(function(t){
+      t.cd=(t.cd||0)-1;if(t.cd>0)return;
+      var p=cellXY(t.c,t.r),best=null,bd=1e9;
+      enemies.forEach(function(e){var d=Math.hypot(e.x-p.x,e.y-p.y);if(d<150+t.level*20&&d<bd){bd=d;best=e;}});
+      if(best){best.hp-=4+t.level*4;t.cd=30;shots.push({x1:p.x,y1:p.y,x2:best.x,y2:best.y,ttl:6});if(window.mgaBeep)window.mgaBeep(700,0.05);}
+    });
+    shots.forEach(function(s){s.ttl--;});shots=shots.filter(function(s){return s.ttl>0;});
+    enemies.forEach(function(e){e.x+=e.speed;});
+    var kept=[];
+    enemies.forEach(function(e){
+      if(e.hp<=0){coins+=e.reward;score+=10+wave*2;}
+      else if(e.x>900){lives--;if(window.mgaBeep)window.mgaBeep(180,0.25);}
+      else kept.push(e);
+    });
+    enemies=kept;
+    cEl.textContent=coins;wEl.textContent=wave;sEl.textContent=score;lEl.textContent=lives;
+    if(lives<=0){endGame(false);return;}
+    if(waveActive&&spawnQueue===0&&enemies.length===0){
+      waveActive=false;coins+=20;msg.textContent='Wave '+wave+' cleared! +20 coins. Build or merge, then start the next wave.';
+      if(window.mgaBeep)window.mgaBeep(990,0.2);
+    }
+    draw();raf=requestAnimationFrame(update);
+  }
+  function endGame(win){
+    running=false;cancelAnimationFrame(raf);over=true;
+    ot.textContent='Base overrun!';ox.textContent='You survived to wave '+wave+' and scored '+score+' points. Play again?';
+    ov.classList.remove('hidden');
+  }
+  function start(){
+    towers=[];enemies=[];shots=[];coins=50;wave=0;score=0;lives=5;sel=null;spawnQueue=0;waveActive=false;over=false;
+    cEl.textContent='50';wEl.textContent='0';sEl.textContent='0';lEl.textContent='5';
+    msg.textContent='Build a tower first, then start Wave 1.';
+    ov.classList.add('hidden');running=true;cancelAnimationFrame(raf);requestAnimationFrame(update);draw();
+  }
+  function startWave(){
+    if(!running||over)return;
+    if(waveActive){msg.textContent='Wave '+wave+' is still running.';return;}
+    if(towers.length===0){msg.textContent='Build at least one tower first (tap a grass square).';return;}
+    wave++;waveActive=true;spawnQueue=4+wave;spawnT=0;wEl.textContent=wave;
+    msg.textContent='Wave '+wave+' incoming!';
+    if(window.mgaBeep)window.mgaBeep(520,0.15);
+  }
+  function clickBoard(e){
+    if(!running||over)return;
+    var rect=cv.getBoundingClientRect();
+    var x=(e.clientX-rect.left)*(900/rect.width),y=(e.clientY-rect.top)*(520/rect.height);
+    var c=Math.floor(x/CW),r=Math.floor(y/CH);
+    if(c<0||c>=COLS||r<0||r>=ROWS)return;
+    if(r===ROAD){msg.textContent='The road is for enemies — build on the grass.';return;}
+    var t=towerAt(c,r);
+    if(!t){
+      if(sel){sel=null;msg.textContent='Selection cleared.';draw();return;}
+      if(coins<20){msg.textContent='Not enough coins — a tower costs 20. Defeat enemies to earn more.';return;}
+      coins-=20;towers.push({c:c,r:r,level:1,cd:0});cEl.textContent=coins;
+      msg.textContent='Tower built! Tap it, then tap another level 1 tower to merge.';
+      if(window.mgaBeep)window.mgaBeep(660,0.1);draw();return;
+    }
+    if(!sel){sel=t;msg.textContent='Tower level '+t.level+' selected — tap another level '+t.level+' tower to merge, or tap grass to cancel.';draw();return;}
+    if(sel===t){sel=null;msg.textContent='Selection cleared.';draw();return;}
+    if(sel.level===t.level&&t.level<5){
+      towers=towers.filter(function(x){return x!==sel;});
+      t.level++;sel=null;score+=25;sEl.textContent=score;
+      msg.textContent='Merged! Now a level '+t.level+' tower.';
+      if(window.mgaBeep)window.mgaBeep(880,0.15);
+    } else {msg.textContent='Only two towers of the same level can merge.';sel=null;}
+    draw();
+  }
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  document.getElementById('waveBtn').addEventListener('click',startWave);
+  cv.addEventListener('pointerdown',clickBoard);
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+</body>
+</html>

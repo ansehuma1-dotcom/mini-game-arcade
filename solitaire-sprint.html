@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solitaire Sprint — Free Card Game for Adults | Mini Game Arcade</title>
+<meta name="description" content="Play Solitaire Sprint free online: build the four foundations from Ace to King against the clock. Works on mobile and desktop.">
+<meta name="keywords" content="solitaire card game, patience card game, free card game">
+<meta property="og:title" content="Solitaire Sprint — Mini Game Arcade">
+<meta property="og:description" content="Play Solitaire Sprint free online: build Ace to King on all four foundations.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/solitaire-sprint.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/solitaire-sprint.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+.sol-board{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.sol-col{min-width:74px;flex:1;max-width:110px}
+.sol-slot{border:2px dashed #999;border-radius:10px;min-height:96px;padding:4px;background:#f8fafc}
+.sol-card{border:2px solid #000;border-radius:10px;padding:8px 4px;text-align:center;font-weight:700;background:#fff;cursor:pointer;margin-bottom:6px;min-height:52px}
+.sol-card.red{color:#dc2626}.sol-card.back{background:#23A094;color:#fff}
+.sol-card.sel{outline:4px solid #FFC900;background:#fef3c7}
+.sol-card:disabled{cursor:default}
+</style>
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="cards">Cards</p> <p class="tag" data-i18n="adults">Adults</p>
+  <h1>Solitaire Sprint</h1>
+  <p data-i18n="solitaire_intro">Build all four foundations from Ace to King. Move cards down in alternating colours on the tableau, and tap the deck to draw.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="moves">Moves:</span> <strong id="moves">0</strong></span>
+    <span><span data-i18n="time">Time:</span> <strong id="time">0</strong>s</span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">—</strong></span>
+  </div>
+  <div class="card">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap a card to select it, then tap where it should go.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:14px">
+      <button type="button" class="btn small" id="stockBtn">🂠 Deck (<span id="stockN">24</span>)</button>
+      <div id="waste" class="sol-slot" style="min-width:74px"></div>
+      <div id="foundations" style="display:flex;gap:8px"></div>
+    </div>
+    <div id="tableau" class="sol-board"></div>
+    <p style="text-align:center;margin-top:16px">
+      <button class="btn" id="dealBtn" type="button">New Deal</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap a face-up card to select it, then tap a column, a foundation, or the waste card. Tap the deck to draw a card.</p>
+<script>
+(function(){
+  var SUITS=['♠','♥','♦','♣'],RED={ '♥':1,'♦':1 },NAMES={1:'A',11:'J',12:'Q',13:'K'};
+  var sEl=document.getElementById('score'),mEl=document.getElementById('moves'),tEl=document.getElementById('time'),bestEl=document.getElementById('best'),status=document.getElementById('status');
+  var best='—'; try{best=localStorage.getItem('mga_solitaire_best')||'—';}catch(e){}
+  bestEl.textContent=best;
+  var cols=[],found=[[],[],[],[]],stock=[],waste=[],sel=null,score=0,moves=0,seconds=0,timer=null,won=false;
+  function mkDeck(){var d=[];SUITS.forEach(function(s){for(var r=1;r<=13;r++)d.push({r:r,s:s,up:false});});for(var i=d.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=d[i];d[i]=d[j];d[j]=t;}return d;}
+  function label(c){return (NAMES[c.r]||c.r)+c.s;}
+  function canCol(runTop,destTop){
+    if(!destTop)return true;
+    return destTop.r===runTop.r+1&&!!RED[destTop.s]!==!!RED[runTop.s];
+  }
+  function runOk(col,idx){
+    for(var i=idx;i<col.length-1;i++){
+      if(!col[i].up||!col[i+1].up)return false;
+      if(col[i].r!==col[i+1].r+1||!!RED[col[i].s]===!!RED[col[i+1].s])return false;
+    }
+    return col[idx].up;
+  }
+  function render(){
+    document.getElementById('stockN').textContent=stock.length;
+    var w=document.getElementById('waste');w.innerHTML='';
+    if(waste.length){var wc=waste[waste.length-1];var b=document.createElement('button');b.type='button';b.className='sol-card'+(RED[wc.s]?' red':'');b.textContent=label(wc);b.onclick=function(){selectWaste();};w.appendChild(b);}
+    else w.innerHTML='<span class="muted">—</span>';
+    var f=document.getElementById('foundations');f.innerHTML='';
+    found.forEach(function(pile,fi){
+      var slot=document.createElement('div');slot.className='sol-slot';slot.style.minWidth='74px';
+      if(pile.length){var c=pile[pile.length-1];var cb=document.createElement('button');cb.type='button';cb.className='sol-card'+(RED[c.s]?' red':'');cb.textContent=label(c);slot.appendChild(cb);}
+      else slot.innerHTML='<span class="muted">A–K</span>';
+      slot.onclick=function(){tryFoundation(fi);};f.appendChild(slot);
+    });
+    var tab=document.getElementById('tableau');tab.innerHTML='';
+    cols.forEach(function(col,ci){
+      var wrap=document.createElement('div');wrap.className='sol-col';
+      var slot=document.createElement('div');slot.className='sol-slot';
+      col.forEach(function(c,idx){
+        var b=document.createElement('button');b.type='button';
+        if(c.up){b.className='sol-card'+(RED[c.s]?' red':'')+(sel&&sel.from==='col'&&sel.col===ci&&sel.idx===idx?' sel':'');b.textContent=label(c);}
+        else{b.className='sol-card back';b.textContent='🂠';}
+        b.onclick=function(){clickTableau(ci,idx);};slot.appendChild(b);
+      });
+      slot.onclick=function(e){if(e.target===slot)tryColumn(ci);};
+      wrap.appendChild(slot);tab.appendChild(wrap);
+    });
+    sEl.textContent=score;mEl.textContent=moves;
+  }
+  function flipTop(col){var t=col[col.length-1];if(t&&!t.up){t.up=true;score+=5;}}
+  function clearSel(){sel=null;}
+  function selectWaste(){
+    if(!waste.length)return;
+    if(sel&&sel.from==='waste'){clearSel();}
+    else sel={from:'waste'};
+    render();
+  }
+  function clickTableau(ci,idx){
+    var col=cols[ci];
+    if(!col[idx].up)return;
+    if(sel&&sel.from==='col'&&sel.col===ci&&sel.idx===idx){clearSel();render();return;}
+    if(sel){tryColumn(ci);return;}
+    if(runOk(col,idx)){sel={from:'col',col:ci,idx:idx};render();}
+    else status.textContent='That run is not in order — pick a card that starts a descending, alternating-colour run.';
+  }
+  function tryColumn(ci){
+    if(!sel)return;
+    var dest=cols[ci],run,runTop;
+    if(sel.from==='col'){run=cols[sel.col].slice(sel.idx);runTop=run[0];}
+    else{run=[waste[waste.length-1]];runTop=run[0];}
+    var destTop=dest.length?dest[dest.length-1]:null;
+    if(sel.from==='col'&&sel.col===ci){clearSel();render();return;}
+    if(!canCol(runTop,destTop)){status.textContent='That move is not allowed — drop on a card one rank higher in the opposite colour, or on an empty column.';clearSel();render();return;}
+    if(sel.from==='col'){cols[sel.col].splice(sel.idx);flipTop(cols[sel.col]);}
+    else waste.pop();
+    dest.push.apply(dest,run);moves++;clearSel();status.textContent='Moved.';if(window.mgaBeep)window.mgaBeep(660,0.1);render();checkWin();
+  }
+  function tryFoundation(fi){
+    if(!sel)return;
+    var card;
+    if(sel.from==='col'){var col=cols[sel.col];if(sel.idx!==col.length-1){status.textContent='Only the top card of a column can go to a foundation.';clearSel();render();return;}card=col[col.length-1];}
+    else card=waste[waste.length-1];
+    var pile=found[fi];
+    if((pile.length===0&&card.r===1&&card.s===SUITS[fi])||(pile.length>0&&pile[pile.length-1].s===card.s&&pile[pile.length-1].r===card.r-1)){
+      if(sel.from==='col'){cols[sel.col].pop();flipTop(cols[sel.col]);}else waste.pop();
+      pile.push(card);moves++;score+=15;clearSel();status.textContent='To the foundation!';if(window.mgaBeep)window.mgaBeep(880,0.12);render();checkWin();
+    } else {status.textContent='Foundations build Ace to King in the matching suit.';clearSel();render();}
+  }
+  function checkWin(){
+    if(found.every(function(p){return p.length===13;})){
+      won=true;clearInterval(timer);
+      var t=seconds;try{localStorage.setItem('mga_solitaire_best',t+'s');}catch(e){}bestEl.textContent=t+'s';
+      status.textContent='You win! All four foundations complete in '+t+' seconds, score '+score+'. Deal again?';
+      if(window.mgaBeep)window.mgaBeep(990,0.25);
+    }
+  }
+  function deal(){
+    var d=mkDeck();cols=[];for(var c=0;c<7;c++){var col=[];for(var k=0;k<=c;k++){var card=d.pop();card.up=(k===c);col.push(card);}cols.push(col);}
+    stock=d;waste=[];found=[[],[],[],[]];sel=null;score=0;moves=0;seconds=0;won=false;
+    clearInterval(timer);timer=setInterval(function(){if(!won){seconds++;tEl.textContent=seconds;}},1000);
+    tEl.textContent='0';status.textContent='Tap a card to select it, then tap where it should go.';
+    render();
+  }
+  document.getElementById('stockBtn').addEventListener('click',function(){
+    if(stock.length){waste.push(stock.pop());if(window.mgaBeep)window.mgaBeep(440,0.08);}
+    else if(waste.length){stock=waste.reverse();waste=[];}
+    clearSel();render();
+  });
+  document.getElementById('dealBtn').addEventListener('click',deal);
+  document.getElementById('restartBtn').addEventListener('click',deal);
+  deal();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+</body>
+</html>
