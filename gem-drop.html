@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gem Drop — Free Puzzle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Gem Drop free online: drop gems into columns and clear 3 or more of the same colour in a row, column or diagonal.">
+<meta name="keywords" content="gem drop game, match 3 puzzle game, free puzzle game">
+<meta property="og:title" content="Gem Drop — Mini Game Arcade">
+<meta property="og:description" content="Play Gem Drop free online: drop gems into columns and clear 3 or more of the same colour in a row, column or diagonal.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/gem-drop.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/gem-drop.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Gem Drop</h1>
+  <p data-i18n="gem_intro">Pick a column and drop the gem. Line up 3 or more gems of the same colour in a row, column or diagonal to clear them.</p>
+  <div class="hud">
+    <span><span data-i18n="next">Next:</span> <strong id="nextGem" style="display:inline-block;width:20px;height:20px;border-radius:50%;border:2px solid #000;vertical-align:middle;background:#ef4444"></strong></span>
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+    <span><span data-i18n="cleared">Cleared:</span> <strong id="cleared">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Pick a column to drop the gem.</p>
+    <div id="colBtns" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:420px;margin:0 auto 6px"></div>
+    <div id="board" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;max-width:420px;margin:0 auto"></div>
+    <p style="margin-top:16px">
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap a column button, or press Left/Right to choose a column and Space or Down to drop.</p>
+<script>
+(function(){
+  var COLS=6,ROWS=8;
+  var COLORS=['#ef4444','#22c55e','#3b82f6','#FFC900','#a855f7'];
+  var boardEl=document.getElementById('board'),colEl=document.getElementById('colBtns');
+  var sEl=document.getElementById('score'),bestEl=document.getElementById('best'),clEl=document.getElementById('cleared'),nextEl=document.getElementById('nextGem'),status=document.getElementById('status');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_gem_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var grid,score,cleared,next,sel,over;
+  var cells=[];
+  for(var r=0;r<ROWS;r++){for(var c=0;c<COLS;c++){
+    var d=document.createElement('div');
+    d.style.cssText='aspect-ratio:1;border:2px solid #000;border-radius:10px;background:#fff';
+    boardEl.appendChild(d);cells.push(d);
+  }}
+  for(var c=0;c<COLS;c++){
+    (function(col){
+      var b=document.createElement('button');
+      b.type='button';b.className='btn small';b.textContent='▼';
+      b.setAttribute('aria-label','Drop in column '+(col+1));
+      b.addEventListener('click',function(){drop(col);});
+      colEl.appendChild(b);
+    })(c);
+  }
+  function paint(){
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){
+      var v=grid[r][c];
+      cells[r*COLS+c].style.background=v===null?'#fff':COLORS[v];
+    }
+    nextEl.style.background=COLORS[next];
+    var btns=colEl.querySelectorAll('button');
+    for(var i=0;i<COLS;i++){btns[i].style.outline=i===sel?'4px solid #23A094':'none';}
+  }
+  function findLines(){
+    var mark={};
+    var dirs=[[1,0],[0,1],[1,1],[1,-1]];
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){
+      var v=grid[r][c];if(v===null)continue;
+      dirs.forEach(function(d){
+        var pr=r-d[0],pc=c-d[1];
+        if(pr>=0&&pr<ROWS&&pc>=0&&pc<COLS&&grid[pr][pc]===v)return;
+        var run=[];
+        var rr=r,cc=c;
+        while(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS&&grid[rr][cc]===v){run.push(rr+','+cc);rr+=d[0];cc+=d[1];}
+        if(run.length>=3)run.forEach(function(k){mark[k]=true;});
+      });
+    }
+    return Object.keys(mark);
+  }
+  function gravity(){
+    for(var c=0;c<COLS;c++){
+      var stack=[];
+      for(var r=ROWS-1;r>=0;r--)if(grid[r][c]!==null)stack.push(grid[r][c]);
+      for(var r=ROWS-1;r>=0;r--)grid[r][c]=stack[ROWS-1-r]!==undefined?stack[ROWS-1-r]:null;
+    }
+  }
+  function settle(){
+    var total=0;
+    while(true){
+      var lines=findLines();
+      if(!lines.length)break;
+      total+=lines.length;
+      lines.forEach(function(k){var p=k.split(',');grid[parseInt(p[0],10)][parseInt(p[1],10)]=null;});
+      gravity();
+    }
+    if(total>0){
+      score+=total*10;cleared+=total;
+      sEl.textContent=score;clEl.textContent=cleared;
+      if(window.mgaBeep)window.mgaBeep(880,0.2);
+      if(score>best){best=score;try{localStorage.setItem('mga_gem_best',String(best));}catch(e){}bestEl.textContent=best;}
+    }
+    return total;
+  }
+  function drop(col){
+    if(over)return;
+    sel=col;
+    if(grid[0][col]!==null){status.textContent='That column is full — pick another one.';if(window.mgaBeep)window.mgaBeep(180,0.15);paint();return;}
+    var row=ROWS-1;
+    while(row>0&&grid[row][col]!==null)row--;
+    grid[row][col]=next;
+    next=Math.floor(Math.random()*COLORS.length);
+    if(window.mgaBeep)window.mgaBeep(520,0.12);
+    settle();
+    var full=true;
+    for(var c=0;c<COLS;c++)if(grid[0][c]===null)full=false;
+    if(full){
+      over=true;
+      status.textContent='Game over! The board filled up. You scored '+score+' points. Press Restart to play again.';
+      if(window.mgaBeep)window.mgaBeep(200,0.3);
+    } else {
+      status.textContent='Nice drop! Pick the next column.';
+    }
+    paint();
+  }
+  function reset(){
+    grid=[];for(var r=0;r<ROWS;r++){grid.push([]);for(var c=0;c<COLS;c++)grid[r].push(null);}
+    score=0;cleared=0;over=false;sel=0;
+    next=Math.floor(Math.random()*COLORS.length);
+    sEl.textContent='0';clEl.textContent='0';
+    status.textContent='Pick a column to drop the gem.';
+    paint();
+  }
+  document.getElementById('restartBtn').addEventListener('click',reset);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){sel=(sel+COLS-1)%COLS;paint();}
+    else if(e.key==='ArrowRight'){sel=(sel+1)%COLS;paint();}
+    else if(e.key===' '||e.key==='ArrowDown'){e.preventDefault();drop(sel);}
+  });
+  reset();
+})();
+</script>
+
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+</body>
+</html>

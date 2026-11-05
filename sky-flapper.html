@@ -86,14 +86,15 @@
   }
   function loop(){
     if(!running)return;
-    frame++;bird.vy+=0.45;bird.y+=bird.vy;
+    frame++;bird.vy+=0.32;bird.y+=bird.vy;
+    if(bird.y-bird.r<0){bird.y=bird.r;bird.vy=0;}
     if(frame%150===0){var gy=120+Math.random()*260;pipes.push({x:900,gapY:gy,scored:false});}
     pipes.forEach(function(p){p.x-=speed;});
     pipes=pipes.filter(function(p){return p.x>-80;});
     pipes.forEach(function(p){
       if(!p.scored&&p.x+70<bird.x-bird.r){p.scored=true;score++;sEl.textContent=score;if(window.mgaBeep)window.mgaBeep(880,0.1);}
     });
-    var hit=bird.y-bird.r<=0||bird.y+bird.r>=500;
+    var hit=bird.y+bird.r>=500;
     pipes.forEach(function(p){
       if(bird.x+bird.r>p.x&&bird.x-bird.r<p.x+70&&(bird.y-bird.r<p.gapY-70||bird.y+bird.r>p.gapY+70))hit=true;
     });
@@ -103,10 +104,10 @@
   function endGame(){
     running=false;cancelAnimationFrame(raf);
     if(score>best){best=score;try{localStorage.setItem('mga_sky_best',String(best));}catch(e){}bestEl.textContent=best;}
-    ot.textContent='Game over!';ox.textContent='You scored '+score+' points. Best: '+best+'. Play again?';
+    ot.textContent='Game over!';ox.textContent='You scored '+score+' point'+(score===1?'':'s')+'. Best: '+best+'. Play again?';
     ov.classList.remove('hidden');if(window.mgaBeep)window.mgaBeep(200,0.3);
   }
-  function flap(){if(!running)return;bird.vy=-8;if(window.mgaBeep)window.mgaBeep(520,0.08);}
+  function flap(){if(!running)return;bird.vy=-8.5;if(window.mgaBeep)window.mgaBeep(520,0.08);}
   function start(){
     bird={x:180,y:260,vy:0,r:20};pipes=[];score=0;frame=0;
     sEl.textContent='0';ov.classList.add('hidden');running=true;

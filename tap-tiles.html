@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tap Tiles — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Tap Tiles free online: tap falling tiles in the hit zone before they pass. 3 misses ends the game, speed rises as you score.">
+<meta name="keywords" content="tap tiles game, rhythm tap game, free arcade game">
+<meta property="og:title" content="Tap Tiles — Mini Game Arcade">
+<meta property="og:description" content="Play Tap Tiles free online: tap falling tiles in the hit zone before they pass. 3 misses ends the game, speed rises as you score.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/tap-tiles.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/tap-tiles.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Tap Tiles</h1>
+  <p data-i18n="tiles_intro">Tiles fall down 4 lanes. Tap a tile while it is in the glowing hit zone near the bottom. 3 misses and the game ends.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+    <span><span data-i18n="missed">Missed:</span> <strong id="missed">0</strong>/3</span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Press Start, then tap the tiles in the hit zone.</p>
+    <canvas id="game" width="400" height="480" style="max-width:100%;border:3px solid #000;border-radius:16px;background:#fef9c3;touch-action:none"></canvas>
+    <p style="margin-top:16px">
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap or click a tile in the hit zone, or press D F J K (or 1 to 4) for lanes 1 to 4.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var sEl=document.getElementById('score'),bestEl=document.getElementById('best'),mEl=document.getElementById('missed'),status=document.getElementById('status');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_tiles_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var W=400,H=480,LANE=100,ZONE_TOP=390,ZONE_BOT=450,TILE_H=70;
+  var tiles=[],score=0,missed=0,playing=false,spawnT=0,speed=120,last=0,raf=0;
+  var colors=['#ef4444','#22c55e','#3b82f6','#FFC900'];
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<4;i++){ctx.fillStyle=i%2?'#fef9c3':'#fdf0a0';ctx.fillRect(i*LANE,0,LANE,H);ctx.strokeStyle='#000';ctx.strokeRect(i*LANE,0,LANE,H);}
+    ctx.fillStyle='rgba(35,160,148,0.35)';ctx.fillRect(0,ZONE_TOP,W,ZONE_BOT-ZONE_TOP);
+    ctx.strokeStyle='#23A094';ctx.lineWidth=3;ctx.strokeRect(0,ZONE_TOP,W,ZONE_BOT-ZONE_TOP);ctx.lineWidth=1;
+    tiles.forEach(function(t){
+      ctx.fillStyle=colors[t.lane];ctx.strokeStyle='#000';ctx.lineWidth=2;
+      ctx.beginPath();ctx.roundRect(t.lane*LANE+8,t.y,LANE-16,TILE_H,12);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#000';ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.fillText('♪',t.lane*LANE+LANE/2,t.y+TILE_H/2+8);
+    });
+  }
+  function loop(ts){
+    if(!playing)return;
+    if(!last)last=ts;
+    var dt=(ts-last)/1000;last=ts;
+    speed=Math.min(320,120+score*0.6);
+    spawnT-=dt;
+    if(spawnT<=0){
+      var lane=Math.floor(Math.random()*4);
+      tiles.push({lane:lane,y:-TILE_H});
+      spawnT=Math.max(0.55,1.1-score*0.002);
+    }
+    tiles.forEach(function(t){t.y+=speed*dt;});
+    var kept=[];
+    tiles.forEach(function(t){
+      if(t.y>ZONE_BOT+10){missed++;mEl.textContent=missed;if(window.mgaBeep)window.mgaBeep(160,0.2);
+        if(missed>=3){endGame();} }
+      else kept.push(t);
+    });
+    tiles=kept;
+    draw();
+    if(playing)raf=requestAnimationFrame(loop);
+  }
+  function endGame(){
+    playing=false;cancelAnimationFrame(raf);
+    if(score>best){best=score;try{localStorage.setItem('mga_tiles_best',String(best));}catch(e){}bestEl.textContent=best;}
+    status.textContent='Game over! You scored '+score+' points. Press Start to play again.';
+    if(window.mgaBeep)window.mgaBeep(200,0.3);
+  }
+  function start(){
+    tiles=[];score=0;missed=0;playing=true;spawnT=0.5;last=0;
+    sEl.textContent='0';mEl.textContent='0';
+    status.textContent='Go! Tap the tiles in the glowing zone.';
+    cancelAnimationFrame(raf);raf=requestAnimationFrame(loop);
+  }
+  function hitLane(lane){
+    if(!playing)return;
+    for(var i=0;i<tiles.length;i++){
+      var t=tiles[i];
+      if(t.lane===lane&&t.y+TILE_H>=ZONE_TOP&&t.y<=ZONE_BOT){
+        tiles.splice(i,1);score+=10;sEl.textContent=score;
+        if(window.mgaBeep)window.mgaBeep(660,0.12);
+        draw();return;
+      }
+    }
+  }
+  function laneFromX(x){
+    var r=cv.getBoundingClientRect();
+    var px=(x-r.left)*(W/r.width);
+    return Math.max(0,Math.min(3,Math.floor(px/LANE)));
+  }
+  cv.addEventListener('pointerdown',function(e){e.preventDefault();hitLane(laneFromX(e.clientX));});
+  var keyMap={d:0,f:1,j:2,k:3,'1':0,'2':1,'3':2,'4':3};
+  document.addEventListener('keydown',function(e){
+    var k=e.key.toLowerCase();
+    if(keyMap.hasOwnProperty(k))hitLane(keyMap[k]);
+  });
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  draw();
+})();
+</script>
+
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect Dots — Free Puzzle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Connect Dots free online: tap dots 1 to 20 in order and reveal a star. Gentle mistakes counter, no time pressure.">
+<meta name="keywords" content="connect the dots game, dot to dot game, free kids game">
+<meta property="og:title" content="Connect Dots — Mini Game Arcade">
+<meta property="og:description" content="Play Connect Dots free online: tap dots 1 to 20 in order and reveal a star. Gentle mistakes counter, no time pressure.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/connect-dots.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/connect-dots.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Connect Dots</h1>
+  <p data-i18n="dots_intro">Tap the dots in number order, 1 to 20, and watch a star appear. A wrong dot only adds to your mistakes.</p>
+  <div class="hud">
+    <span><span data-i18n="mistakes">Mistakes:</span> <strong id="mistakes">0</strong></span>
+    <span><span data-i18n="score">Score:</span> <strong id="done">0</strong>/20</span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap dot 1 to start.</p>
+    <canvas id="game" width="400" height="320" style="max-width:100%;border:3px solid #000;border-radius:16px;background:#fef9c3;touch-action:none"></canvas>
+    <p style="margin-top:16px">
+      <button class="btn small secondary" id="resetBtn" type="button" data-i18n="restart">Restart</button>
+      <button class="btn small secondary" id="againBtn" type="button" style="display:none">Play Again</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap or click the dots in order. Touch works too.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var mEl=document.getElementById('mistakes'),dEl=document.getElementById('done'),status=document.getElementById('status'),again=document.getElementById('againBtn');
+  var CX=200,CY=160,RO=130,RI=55;
+  var pts=[];
+  for(var i=0;i<10;i++){
+    var ang=-Math.PI/2+i*Math.PI/5;
+    var rad=i%2===0?RO:RI;
+    var vx=CX+Math.cos(ang)*rad,vy=CY+Math.sin(ang)*rad;
+    pts.push([vx,vy]);
+    var j=(i+1)%10;
+    var ang2=-Math.PI/2+j*Math.PI/5;
+    var rad2=j%2===0?RO:RI;
+    var wx=CX+Math.cos(ang2)*rad2,wy=CY+Math.sin(ang2)*rad2;
+    pts.push([(vx+wx)/2,(vy+wy)/2]);
+  }
+  var next=1,mistakes=0,done=false,shake=0;
+  function draw(){
+    ctx.clearRect(0,0,400,320);
+    ctx.strokeStyle='#23A094';ctx.lineWidth=3;ctx.lineCap='round';
+    for(var i=1;i<next-1;i++){
+      ctx.beginPath();ctx.moveTo(pts[i-1][0],pts[i-1][1]);ctx.lineTo(pts[i][0],pts[i][1]);ctx.stroke();
+    }
+    if(done){
+      ctx.fillStyle='#FFC900';ctx.beginPath();
+      for(var k=0;k<10;k++){
+        var p=pts[k*2];
+        if(k===0)ctx.moveTo(p[0],p[1]);else ctx.lineTo(p[0],p[1]);
+      }
+      ctx.closePath();ctx.fill();ctx.strokeStyle='#000';ctx.stroke();
+    }
+    for(var n=0;n<20;n++){
+      var x=pts[n][0],y=pts[n][1];
+      var isDone=n+1<next;
+      ctx.fillStyle=isDone?'#23A094':(n+1===next?'#FF90E8':'#fff');
+      ctx.strokeStyle='#000';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(x,y,16,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#000';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.fillText(String(n+1),x,y+5);
+    }
+  }
+  function tapAt(cx,cy){
+    if(done)return;
+    var r=cv.getBoundingClientRect();
+    var x=(cx-r.left)*(400/r.width),y=(cy-r.top)*(320/r.height);
+    for(var n=0;n<20;n++){
+      var dx=x-pts[n][0],dy=y-pts[n][1];
+      if(dx*dx+dy*dy<=26*26){
+        if(n+1===next){
+          next++;dEl.textContent=(next-1);
+          if(window.mgaBeep)window.mgaBeep(660,0.12);
+          if(next>20){
+            done=true;
+            status.textContent='⭐ You did it! The star is complete. Press Play Again for a new star.';
+            again.style.display='inline-block';
+            if(window.mgaBeep)window.mgaBeep(880,0.4);
+          } else {
+            status.textContent='Good! Now tap dot '+next+'.';
+          }
+        } else {
+          mistakes++;mEl.textContent=mistakes;
+          status.textContent='Not that one — try dot '+next+'.';
+          if(window.mgaBeep)window.mgaBeep(180,0.15);
+          cv.style.transform='translateX(6px)';
+          setTimeout(function(){cv.style.transform='translateX(0)';},120);
+        }
+        draw();return;
+      }
+    }
+  }
+  function reset(){
+    next=1;mistakes=0;done=false;
+    mEl.textContent='0';dEl.textContent='0';
+    status.textContent='Tap dot 1 to start.';
+    again.style.display='none';
+    draw();
+  }
+  cv.addEventListener('pointerdown',function(e){e.preventDefault();tapAt(e.clientX,e.clientY);});
+  document.getElementById('resetBtn').addEventListener('click',reset);
+  again.addEventListener('click',reset);
+  draw();
+})();
+</script>
+
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+</body>
+</html>

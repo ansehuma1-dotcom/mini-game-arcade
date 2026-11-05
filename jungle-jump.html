@@ -98,7 +98,8 @@
     });
     obs.forEach(function(o){
       if(!o.hit&&o.x<154&&o.x+50>110&&py+40>GROUND+10-o.h){
-        o.hit=true;lives--;lEl.textContent=lives;inv=60;if(window.mgaBeep)window.mgaBeep(180,0.25);
+        o.hit=true;
+        if(inv<=0){lives--;lEl.textContent=lives;inv=60;if(window.mgaBeep)window.mgaBeep(180,0.25);}
         if(lives<=0){endGame();return;}
       }
     });

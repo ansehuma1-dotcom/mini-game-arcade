@@ -70,7 +70,7 @@
   var lvEl=document.getElementById('level'),sEl=document.getElementById('score'),bestEl=document.getElementById('best'),status=document.getElementById('status');
   var best=0; try{best=parseInt(localStorage.getItem('mga_colour_best')||'0',10)||0;}catch(e){}
   bestEl.textContent=best;
-  var seq=[],pos=0,score=0,playing=false,watching=false;
+  var seq=[],pos=0,score=0,playing=false,watching=false,timers=[];
   var freq=[440,554,659,784];
   function light(i,ms){
     var p=pads[i];p.style.opacity='0.35';p.style.transform='scale(0.96)';
@@ -79,14 +79,15 @@
   }
   function playSeq(){
     watching=true;pos=0;status.textContent='Watch…';
-    seq.forEach(function(v,i){setTimeout(function(){light(v,500);if(i===seq.length-1){setTimeout(function(){watching=false;status.textContent='Your turn — repeat the pattern.';},550);}},i*650);});
+    seq.forEach(function(v,i){timers.push(setTimeout(function(){light(v,500);if(i===seq.length-1){timers.push(setTimeout(function(){watching=false;status.textContent='Your turn — repeat the pattern.';},550));}},i*650));});
   }
   function nextRound(){
     seq.push(Math.floor(Math.random()*4));
     lvEl.textContent=seq.length;playSeq();
   }
   function start(){
-    seq=[];pos=0;score=0;sEl.textContent='0';playing=true;nextRound();
+    timers.forEach(function(id){clearTimeout(id);});timers=[];
+    seq=[];pos=0;score=0;sEl.textContent='0';lvEl.textContent='0';playing=true;nextRound();
   }
   function endGame(){
     playing=false;
