@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star Blaster — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Star Blaster free online: pilot your ship, blast the falling asteroids and survive as long as you can.">
+<meta name="keywords" content="star blaster game, space shooter game, free arcade game, asteroid game">
+<meta property="og:title" content="Star Blaster — Mini Game Arcade">
+<meta property="og:description" content="Play Star Blaster free online: pilot your ship, blast the falling asteroids and survive as long as you can.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/star-blaster.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/star-blaster.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Star Blaster</h1>
+  <p data-i18n="blaster_intro">Pilot your ship through the asteroid field. Blast asteroids for points and dodge the ones you miss. 3 lives — the field gets busier.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="lives">Lives:</span> <strong id="lives">❤️❤️❤️</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Star Blaster game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to launch?</h2>
+      <p id="overlayText">Move with the arrow keys, the buttons below, or drag on the sky. Space or tap fires. Blast asteroids before they hit you.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn small secondary" id="leftBtn" type="button">◀ Left</button>
+    <button class="btn small secondary" id="fireBtn" type="button">💥 Fire</button>
+    <button class="btn small secondary" id="rightBtn" type="button">Right ▶</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: Left/Right arrow keys, on-screen buttons, or drag on the game area to move. Space, Fire button or tap shoots.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_blaster_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var W=900,H=520,SHIP_Y=460;
+  var running=false,raf=null,shipX=450,shipVX=0,score=0,lives=3,inv=0,spawnT=0,elapsed=0;
+  var bullets=[],rocks=[],stars=[],booms=[];
+  for(var i=0;i<70;i++)stars.push({x:Math.random()*W,y:Math.random()*H,s:Math.random()*2+0.5});
+  function drawShip(x){
+    ctx.save();ctx.translate(x,SHIP_Y);
+    ctx.fillStyle=inv>0&&Math.floor(inv/6)%2===0?'#facc15':'#06b6d4';
+    ctx.beginPath();ctx.moveTo(0,-34);ctx.lineTo(26,22);ctx.lineTo(10,14);ctx.lineTo(-10,14);ctx.lineTo(-26,22);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#e5e7eb';ctx.beginPath();ctx.arc(0,-8,8,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#f97316';ctx.beginPath();ctx.moveTo(-8,20);ctx.lineTo(0,34+Math.random()*8);ctx.lineTo(8,20);ctx.closePath();ctx.fill();
+    ctx.restore();
+  }
+  function drawRock(r){
+    ctx.save();ctx.translate(r.x,r.y);ctx.rotate(r.rot);
+    ctx.fillStyle='#9ca3af';ctx.beginPath();
+    for(var i=0;i<8;i++){var a=i/8*Math.PI*2,rr=r.r*(0.75+((i*37)%10)/40);var px=Math.cos(a)*rr,py=Math.sin(a)*rr;i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);}
+    ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#4b5563';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#6b7280';ctx.beginPath();ctx.arc(-r.r*0.3,-r.r*0.2,r.r*0.25,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+  function draw(){
+    ctx.fillStyle='#0f172a';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#fff';
+    stars.forEach(function(s){ctx.globalAlpha=0.4+s.s*0.3;ctx.fillRect(s.x,s.y,s.s,s.s);});
+    ctx.globalAlpha=1;
+    rocks.forEach(drawRock);
+    ctx.fillStyle='#FFC900';
+    bullets.forEach(function(b){ctx.fillRect(b.x-3,b.y-14,6,16);});
+    booms.forEach(function(b){
+      ctx.fillStyle='rgba(249,115,22,'+(1-b.age/20)+')';
+      ctx.beginPath();ctx.arc(b.x,b.y,10+b.age*2.4,0,Math.PI*2);ctx.fill();
+    });
+    drawShip(shipX);
+  }
+  function fire(){
+    if(!running)return;
+    bullets.push({x:shipX,y:SHIP_Y-36});
+    if(window.mgaBeep)window.mgaBeep(700,0.08);
+  }
+  function loop(){
+    if(!running)return;
+    elapsed++;
+    shipX+=shipVX;shipVX*=0.85;
+    shipX=Math.max(30,Math.min(W-30,shipX));
+    if(inv>0)inv--;
+    spawnT++;
+    var rate=Math.max(26,62-Math.floor(elapsed/240));
+    if(spawnT>rate){spawnT=0;rocks.push({x:40+Math.random()*(W-80),y:-30,r:16+Math.random()*22,vy:1.6+Math.random()*1.6+elapsed/900,rot:Math.random()*6,vx:(Math.random()-0.5)*1.2});}
+    bullets.forEach(function(b){b.y-=11;});
+    bullets=bullets.filter(function(b){return b.y>-20;});
+    rocks.forEach(function(r){r.y+=r.vy;r.x+=r.vx;r.rot+=0.01;});
+    rocks=rocks.filter(function(r){
+      if(r.y>H+40)return false;
+      var hit=false;
+      bullets=bullets.filter(function(b){
+        if(!hit&&Math.hypot(b.x-r.x,b.y-r.y)<r.r+10){
+          hit=true;return false;
+        }
+        return true;
+      });
+      if(hit){
+        score+=r.r>28?20:10;scoreEl.textContent=score;
+        booms.push({x:r.x,y:r.y,age:0});
+        if(window.mgaBeep)window.mgaBeep(520,0.12);
+        return false;
+      }
+      if(inv===0&&Math.hypot(shipX-r.x,SHIP_Y-r.y)<r.r+24){
+        lives--;inv=90;
+        if(window.mgaBeep)window.mgaBeep(140,0.3);
+        livesEl.textContent='❤️'.repeat(Math.max(0,lives))||'—';
+        booms.push({x:shipX,y:SHIP_Y,age:0});
+        if(lives<=0){
+          running=false;
+          if(score>best){best=score;try{localStorage.setItem('mga_blaster_best',String(best));}catch(e){}bestEl.textContent=best;}
+          ot.textContent='Ship destroyed!';ox.textContent='You scored '+score+' points. Best is '+best+'. Press Start to fly again.';
+          ov.classList.remove('hidden');draw();return false;
+        }
+        return false;
+      }
+      return true;
+    });
+    booms.forEach(function(b){b.age++;});
+    booms=booms.filter(function(b){return b.age<20;});
+    draw();raf=requestAnimationFrame(loop);
+  }
+  function start(){
+    shipX=450;shipVX=0;score=0;lives=3;inv=0;spawnT=0;elapsed=0;
+    bullets=[];rocks=[];booms=[];
+    scoreEl.textContent='0';livesEl.textContent='❤️❤️❤️';
+    ov.classList.add('hidden');running=true;cancelAnimationFrame(raf);requestAnimationFrame(loop);
+  }
+  document.getElementById('leftBtn').addEventListener('click',function(){shipVX-=4;});
+  document.getElementById('rightBtn').addEventListener('click',function(){shipVX+=4;});
+  document.getElementById('fireBtn').addEventListener('click',fire);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){e.preventDefault();shipVX-=4;}
+    if(e.key==='ArrowRight'){e.preventDefault();shipVX+=4;}
+    if(e.key===' '){e.preventDefault();fire();}
+    if(e.key==='s'||e.key==='S'||e.key==='r'||e.key==='R')start();
+  });
+  var dragging=false;
+  cv.addEventListener('pointerdown',function(e){dragging=true;dragMove(e);fire();});
+  cv.addEventListener('pointermove',function(e){if(dragging)dragMove(e);});
+  cv.addEventListener('pointerup',function(){dragging=false;});
+  function dragMove(e){if(!running)return;var r=cv.getBoundingClientRect();shipX=(e.clientX-r.left)*W/r.width;}
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+</body>
+</html>

@@ -43,16 +43,16 @@ stickman action — adapted here as family-friendly, 1-tap, no-download original
 | 18 | Merge Defenders | Strategy (new) | All Ages | Towers merging on a path, enemies | ✅ |
 | 19 | Colour Memory | Puzzle | Kids | Colour pads lighting in sequence | ✅ |
 | 20 | Jungle Jump | Runner | Kids | Character jumping over vines/logs | ✅ |
-| 21 | Gem Drop | Puzzle | All Ages | Falling gems lining up in a well | ☐ |
-| 22 | Tap Tiles | Arcade | All Ages | Music tiles lighting, tap in rhythm | ☐ |
-| 23 | Mole Tap | Arcade | Kids | Moles popping up, tap fast | ☐ |
-| 24 | Sliding Puzzle | Puzzle | All Ages | Sliding number tiles into order | ☐ |
-| 25 | Connect Dots | Puzzle | Kids | Dots connected in number order | ☐ |
-| 26 | Drift Turn | Racing | All Ages | Car drifting around corners | ☐ |
-| 27 | Bow Aim | Arcade | All Ages | Bow aiming at round targets | ☐ |
-| 28 | Star Blaster | Arcade | All Ages | Ship dodging and blasting asteroids | ☐ |
-| 29 | Harvest Tap | Idle | All Ages | Farm crops growing, tap to harvest | ☐ |
-| 30 | Quiz Quest | Words | All Ages | Question card with 4 answers | ☐ |
+| 21 | Gem Drop | Puzzle | All Ages | Falling gems lining up in a well | ✅ |
+| 22 | Tap Tiles | Arcade | All Ages | Music tiles lighting, tap in rhythm | ✅ |
+| 23 | Mole Tap | Arcade | Kids | Moles popping up, tap fast | ✅ |
+| 24 | Sliding Puzzle | Puzzle | All Ages | Sliding number tiles into order | ✅ |
+| 25 | Connect Dots | Puzzle | Kids | Dots connected in number order | ✅ |
+| 26 | Drift Turn | Racing | All Ages | Car drifting around corners | ✅ |
+| 27 | Bow Aim | Arcade | All Ages | Bow aiming at round targets | ✅ |
+| 28 | Star Blaster | Arcade | All Ages | Ship dodging and blasting asteroids | ✅ |
+| 29 | Harvest Tap | Idle | All Ages | Farm crops growing, tap to harvest | ✅ |
+| 30 | Quiz Quest | Words | All Ages | Question card with 4 answers | ✅ |
 | 31 | Parking Puzzle | Puzzle | Adults | Cars sliding out of a jammed lot | ☐ |
 | 32 | Block Drop | Puzzle | All Ages | Blocks dropping and clearing lines | ☐ |
 | 33 | Bubble Match | Puzzle | All Ages | Matching coloured bubbles in a row | ☐ |

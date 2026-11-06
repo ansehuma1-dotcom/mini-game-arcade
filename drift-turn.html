@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drift Turn — Free Racing Game | Mini Game Arcade</title>
+<meta name="description" content="Play Drift Turn free online: steer your car around a winding road, drift through the corners and collect coins.">
+<meta name="keywords" content="drift turn game, racing game, free racing game, car game">
+<meta property="og:title" content="Drift Turn — Mini Game Arcade">
+<meta property="og:description" content="Play Drift Turn free online: steer your car around a winding road, drift through the corners and collect coins.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/drift-turn.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/drift-turn.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="racing">Racing</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Drift Turn</h1>
+  <p data-i18n="drift_intro">Steer your car around the winding road. Stay on the tarmac, drift through the corners and grab the coins. 3 lives — the road gets faster.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="distance">Distance:</span> <strong id="dist">0</strong>m</span>
+    <span><span data-i18n="coins">Coins:</span> <strong id="coins">0</strong></span>
+    <span><span data-i18n="lives">Lives:</span> <strong id="lives">❤️❤️❤️</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Drift Turn game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to drift?</h2>
+      <p id="overlayText">Steer with the arrow keys, the buttons below, or drag on the road. Stay on the tarmac and collect coins.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn small secondary" id="leftBtn" type="button">◀ Left</button>
+    <button class="btn small secondary" id="rightBtn" type="button">Right ▶</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: Left/Right arrow keys, on-screen buttons, or drag on the game area to steer. Off the road for too long costs a life.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),distEl=document.getElementById('dist'),coinsEl=document.getElementById('coins'),
+      livesEl=document.getElementById('lives'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_drift_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var W=900,H=520,CAR_Y=430,ROAD_HALF=135;
+  var running=false,raf=null,carX=450,carVX=0,dist=0,score=0,coins=0,lives=3,speed=5,offT=0,inv=0,spawnT=0,coinList=[];
+  function roadCX(y){return 450+170*Math.sin((y+dist)*0.0035);}
+  function draw(){
+    ctx.fillStyle='#4ade80';ctx.fillRect(0,0,W,H);
+    // road slices
+    for(var y=0;y<H;y+=8){
+      var cx=roadCX(y);
+      ctx.fillStyle='#374151';ctx.fillRect(cx-ROAD_HALF,y,ROAD_HALF*2,8);
+    }
+    // centre dashes
+    ctx.fillStyle='#facc15';
+    for(var y=0;y<H;y+=8){
+      var cy=((y+Math.floor(dist))%64);
+      if(cy<28){var cx=roadCX(y);ctx.fillRect(cx-4,y,8,8);}
+    }
+    // coins
+    coinList.forEach(function(c){
+      ctx.fillStyle='#FFC900';ctx.beginPath();ctx.arc(c.x,c.y,14,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#000';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('C',c.x,c.y+1);
+    });
+    // car
+    var cx=roadCX(CAR_Y);
+    var tilt=Math.max(-0.3,Math.min(0.3,carVX*0.02));
+    ctx.save();ctx.translate(carX,CAR_Y);ctx.rotate(tilt);
+    ctx.fillStyle=inv>0&&Math.floor(inv/6)%2===0?'#facc15':'#ef4444';
+    ctx.beginPath();ctx.roundRect(-26,-42,52,84,12);ctx.fill();
+    ctx.fillStyle='#111827';ctx.fillRect(-32,-28,10,18);ctx.fillRect(22,-28,10,18);ctx.fillRect(-32,12,10,18);ctx.fillRect(22,12,10,18);
+    ctx.fillStyle='#e5e7eb';ctx.fillRect(-18,-22,36,22);
+    ctx.fillStyle='#facc15';ctx.fillRect(-20,36,12,5);ctx.fillRect(8,36,12,5);
+    ctx.restore();
+    if(offT>0){
+      ctx.fillStyle='#ef4444';ctx.font='bold 20px sans-serif';ctx.textAlign='center';
+      ctx.fillText('OFF ROAD!',450,60);
+    }
+  }
+  function loop(){
+    if(!running)return;
+    dist+=speed;score=Math.floor(dist/10)+coins*25;
+    scoreEl.textContent=score;distEl.textContent=Math.floor(dist/10);
+    carX+=carVX;carVX*=0.88;
+    carX=Math.max(20,Math.min(W-20,carX));
+    if(inv>0)inv--;
+    var cx=roadCX(CAR_Y);
+    if(Math.abs(carX-cx)>ROAD_HALF-18&&inv===0){
+      offT++;
+      if(offT>55){
+        lives--;offT=0;inv=90;
+        if(window.mgaBeep)window.mgaBeep(140,0.3);
+        livesEl.textContent='❤️'.repeat(Math.max(0,lives))||'—';
+        carX=roadCX(CAR_Y);
+        if(lives<=0){
+          running=false;
+          if(score>best){best=score;try{localStorage.setItem('mga_drift_best',String(best));}catch(e){}bestEl.textContent=best;}
+          ot.textContent='Out of lives!';ox.textContent='You drove '+Math.floor(dist/10)+'m, collected '+coins+' coins and scored '+score+'. Press Start to try again.';
+          ov.classList.remove('hidden');draw();return;
+        }
+      }
+    } else offT=0;
+    spawnT++;
+    if(spawnT>50){spawnT=0;var sy=-20;var scx=roadCX(sy);coinList.push({x:scx+(Math.random()*160-80),y:sy});}
+    coinList.forEach(function(c){c.y+=speed;});
+    coinList=coinList.filter(function(c){
+      if(c.y>H+20)return false;
+      var dx=c.x-carX,dy=c.y-CAR_Y;
+      if(dx*dx+dy*dy<38*38){
+        coins++;coinsEl.textContent=coins;
+        if(window.mgaBeep)window.mgaBeep(880,0.12);
+        return false;
+      }
+      return true;
+    });
+    speed=5+Math.floor(dist/2500);
+    draw();raf=requestAnimationFrame(loop);
+  }
+  function start(){
+    carX=450;carVX=0;dist=0;score=0;coins=0;lives=3;speed=5;offT=0;inv=0;spawnT=0;coinList=[];
+    scoreEl.textContent='0';distEl.textContent='0';coinsEl.textContent='0';livesEl.textContent='❤️❤️❤️';
+    ov.classList.add('hidden');running=true;cancelAnimationFrame(raf);requestAnimationFrame(loop);
+  }
+  function steer(d){if(running)carVX+=d*2.2;}
+  document.getElementById('leftBtn').addEventListener('click',function(){steer(-1);});
+  document.getElementById('rightBtn').addEventListener('click',function(){steer(1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){e.preventDefault();steer(-1);}
+    if(e.key==='ArrowRight'){e.preventDefault();steer(1);}
+    if(e.key==='s'||e.key==='S'||e.key==='r'||e.key==='R')start();
+  });
+  var dragging=false;
+  cv.addEventListener('pointerdown',function(e){dragging=true;dragSteer(e);});
+  cv.addEventListener('pointermove',function(e){if(dragging)dragSteer(e);});
+  cv.addEventListener('pointerup',function(){dragging=false;});
+  function dragSteer(e){if(!running)return;var r=cv.getBoundingClientRect();carX=(e.clientX-r.left)*W/r.width;}
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+</body>
+</html>

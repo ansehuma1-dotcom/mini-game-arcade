@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bow Aim — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Bow Aim free online: aim your bow, loose 10 arrows and hit the moving round targets. Bullseye scores 50.">
+<meta name="keywords" content="bow aim game, archery game, free arcade game, target game">
+<meta property="og:title" content="Bow Aim — Mini Game Arcade">
+<meta property="og:description" content="Play Bow Aim free online: aim your bow, loose 10 arrows and hit the moving round targets. Bullseye scores 50.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/bow-aim.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/bow-aim.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Bow Aim</h1>
+  <p data-i18n="bow_intro">Aim with your mouse or finger, then click or tap to loose an arrow. The targets drift up and down. Bullseye is 50 points — you have 10 arrows.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="arrows">Arrows:</span> <strong id="arrows">10</strong></span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="game-wrap">
+    <canvas id="game" width="900" height="520" aria-label="Bow Aim game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to shoot?</h2>
+      <p id="overlayText">Move your mouse or finger to aim, then click or tap to shoot. Outer ring 10, middle ring 25, bullseye 50.</p>
+      <button class="btn" id="startBtn" type="button">Start Game</button>
+    </div>
+  </div>
+  <p style="text-align:center">
+    <button class="btn small secondary" id="aimUpBtn" type="button">▲ Aim up</button>
+    <button class="btn small secondary" id="aimDownBtn" type="button">▼ Aim down</button>
+    <button class="btn small secondary" id="shootBtn" type="button">🏹 Shoot</button>
+    <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+  </p>
+  <p class="muted">Controls: move the mouse or drag on the game area to aim, click or tap to shoot. Up/Down keys adjust the aim, Space shoots.</p>
+<script>
+(function(){
+  var cv=document.getElementById('game'),ctx=cv.getContext('2d');
+  var scoreEl=document.getElementById('score'),arrowsEl=document.getElementById('arrows'),bestEl=document.getElementById('best'),
+      ov=document.getElementById('overlay'),ot=document.getElementById('overlayTitle'),ox=document.getElementById('overlayText');
+  var best=0; try{best=parseInt(localStorage.getItem('mga_bow_best')||'0',10)||0;}catch(e){}
+  bestEl.textContent=best;
+  var W=900,H=520,BOWX=70,BOWY=400;
+  var running=false,raf=null,score=0,arrows=10,aimX=500,aimY=200,angle=-0.35,t=0;
+  var arrow=null,hits=[];
+  var targets=[
+    {x:560,baseY:150,amp:70,ph:0,r:58,speed:0.011},
+    {x:720,baseY:280,amp:90,ph:2.1,r:48,speed:0.014},
+    {x:850,baseY:160,amp:60,ph:4.2,r:40,speed:0.018}
+  ];
+  function targetY(tr){return tr.baseY+tr.amp*Math.sin(t*tr.speed*60+tr.ph);}
+  function drawTarget(tr){
+    var y=targetY(tr);
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(tr.x,y,tr.r,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='#000';ctx.lineWidth=3;ctx.stroke();
+    ctx.fillStyle='#ef4444';ctx.beginPath();ctx.arc(tr.x,y,tr.r*0.66,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(tr.x,y,tr.r*0.36,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#FFC900';ctx.beginPath();ctx.arc(tr.x,y,tr.r*0.18,0,Math.PI*2);ctx.fill();
+  }
+  function draw(){
+    // sky + ground
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#bfe8ff');g.addColorStop(1,'#e8f7ff');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#4ade80';ctx.fillRect(0,460,W,60);
+    targets.forEach(drawTarget);
+    // aim line (dotted)
+    if(running&&!arrow){
+      ctx.strokeStyle='rgba(0,0,0,0.35)';ctx.setLineDash([6,8]);ctx.lineWidth=2;
+      ctx.beginPath();ctx.moveTo(BOWX,BOWY);ctx.lineTo(BOWX+Math.cos(angle)*260,BOWY+Math.sin(angle)*260);ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    // bow
+    ctx.save();ctx.translate(BOWX,BOWY);ctx.rotate(angle);
+    ctx.strokeStyle='#8b5a2b';ctx.lineWidth=6;ctx.beginPath();ctx.arc(0,0,46,-1.1,1.1);ctx.stroke();
+    ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.beginPath();
+    ctx.moveTo(46*Math.cos(-1.1),46*Math.sin(-1.1));ctx.lineTo(0,0);ctx.lineTo(46*Math.cos(1.1),46*Math.sin(1.1));ctx.stroke();
+    ctx.restore();
+    // arrow in flight
+    if(arrow){
+      var a=Math.atan2(arrow.vy,arrow.vx);
+      ctx.save();ctx.translate(arrow.x,arrow.y);ctx.rotate(a);
+      ctx.strokeStyle='#8b5a2b';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(-26,0);ctx.lineTo(20,0);ctx.stroke();
+      ctx.fillStyle='#374151';ctx.beginPath();ctx.moveTo(28,0);ctx.lineTo(16,-7);ctx.lineTo(16,7);ctx.closePath();ctx.fill();
+      ctx.fillStyle='#ef4444';ctx.beginPath();ctx.moveTo(-26,0);ctx.lineTo(-34,-6);ctx.lineTo(-34,6);ctx.closePath();ctx.fill();
+      ctx.restore();
+    }
+    // hit markers
+    hits.forEach(function(h){
+      ctx.fillStyle=h.text.indexOf('50')>=0?'#FFC900':'#fff';
+      ctx.font='bold 22px sans-serif';ctx.textAlign='center';
+      ctx.fillText(h.text,h.x,h.y);
+    });
+    ctx.fillStyle='#000';ctx.font='bold 18px sans-serif';ctx.textAlign='left';
+    ctx.fillText('🏹 '+arrows+' arrows left',16,30);
+  }
+  function loop(){
+    if(!running)return;
+    t++;
+    if(arrow){
+      arrow.x+=arrow.vx;arrow.y+=arrow.vy;arrow.vy+=0.22;
+      var hit=false;
+      targets.forEach(function(tr){
+        var y=targetY(tr),d=Math.hypot(arrow.x-tr.x,arrow.y-tr.y);
+        if(!hit&&d<=tr.r){
+          hit=true;
+          var pts=d<=tr.r*0.18?50:d<=tr.r*0.36?25:10;
+          score+=pts;scoreEl.textContent=score;
+          hits.push({x:tr.x,y:y-tr.r-12,text:'+'+pts+(pts===50?' Bullseye!':'')});
+          if(window.mgaBeep)window.mgaBeep(pts===50?990:660,0.15);
+          setTimeout(function(){hits.shift();},1200);
+        }
+      });
+      if(!hit&&(arrow.x>W+30||arrow.y>H+10||arrow.x<0)){
+        arrow=null;
+        if(arrows<=0)endGame();
+      }
+      if(hit)arrow=null;
+    }
+    draw();raf=requestAnimationFrame(loop);
+  }
+  function endGame(){
+    running=false;
+    if(score>best){best=score;try{localStorage.setItem('mga_bow_best',String(best));}catch(e){}bestEl.textContent=best;}
+    ot.textContent='Out of arrows!';
+    ox.textContent='You scored '+score+' points. Best is '+best+'. Press Start to play again.';
+    ov.classList.remove('hidden');
+  }
+  function shoot(){
+    if(!running||arrow||arrows<=0)return;
+    arrows--;arrowsEl.textContent=arrows;
+    var sp=17;
+    arrow={x:BOWX+Math.cos(angle)*50,y:BOWY+Math.sin(angle)*50,vx:Math.cos(angle)*sp,vy:Math.sin(angle)*sp};
+    if(window.mgaBeep)window.mgaBeep(300,0.1);
+  }
+  function aimAt(px,py){
+    aimX=px;aimY=py;
+    angle=Math.atan2(py-BOWY,px-BOWX);
+    if(angle>0.5)angle=0.5;if(angle<-1.4)angle=-1.4;
+    draw();
+  }
+  function start(){
+    score=0;arrows=10;arrow=null;hits=[];t=0;angle=-0.35;
+    scoreEl.textContent='0';arrowsEl.textContent='10';
+    ov.classList.add('hidden');running=true;cancelAnimationFrame(raf);requestAnimationFrame(loop);
+  }
+  cv.addEventListener('pointermove',function(e){
+    if(!running)return;var r=cv.getBoundingClientRect();
+    aimAt((e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height);
+  });
+  cv.addEventListener('pointerdown',function(e){
+    if(!running)return;var r=cv.getBoundingClientRect();
+    aimAt((e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height);shoot();
+  });
+  document.getElementById('aimUpBtn').addEventListener('click',function(){angle=Math.max(-1.4,angle-0.12);draw();});
+  document.getElementById('aimDownBtn').addEventListener('click',function(){angle=Math.min(0.5,angle+0.12);draw();});
+  document.getElementById('shootBtn').addEventListener('click',shoot);
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowUp'){e.preventDefault();angle=Math.max(-1.4,angle-0.12);draw();}
+    if(e.key==='ArrowDown'){e.preventDefault();angle=Math.min(0.5,angle+0.12);draw();}
+    if(e.key===' '){e.preventDefault();shoot();}
+    if(e.key==='s'||e.key==='S'||e.key==='r'||e.key==='R')start();
+  });
+  document.getElementById('startBtn').addEventListener('click',start);
+  document.getElementById('restartBtn').addEventListener('click',start);
+  draw();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+</body>
+</html>

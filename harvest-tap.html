@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harvest Tap — Free Idle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Harvest Tap free online: grow crops, tap to harvest coins, buy upgrades and build your farm. Your farm saves itself.">
+<meta name="keywords" content="harvest tap game, idle farm game, free idle game, farming game">
+<meta property="og:title" content="Harvest Tap — Mini Game Arcade">
+<meta property="og:description" content="Play Harvest Tap free online: grow crops, tap to harvest coins, buy upgrades and build your farm.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/harvest-tap.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/harvest-tap.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="idle">Idle</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Harvest Tap</h1>
+  <p data-i18n="harvest_intro">Your crops grow on their own. Tap a ripe crop to harvest coins, then spend coins on better tools, faster growth and an auto-harvester. Your farm saves itself.</p>
+  <div class="hud">
+    <span><span data-i18n="coins">Coins:</span> <strong id="coins">0</strong></span>
+    <span><span data-i18n="per_tap">Per tap:</span> <strong id="perTap">1</strong></span>
+    <span><span data-i18n="harvested">Harvested:</span> <strong id="harvested">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap a ripe crop to harvest it!</p>
+    <div id="plots" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:480px;margin:0 auto"></div>
+    <h2 style="margin-top:24px">Upgrades</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn small" id="upTools" type="button">🛠 Better Tools — <span id="toolsCost">20</span> coins (Lv <span id="toolsLv">0</span>)</button>
+      <button class="btn small" id="upSpeed" type="button">☀️ Faster Growth — <span id="speedCost">30</span> coins (Lv <span id="speedLv">0</span>)</button>
+      <button class="btn small" id="upAuto" type="button">🤖 Auto Harvester — <span id="autoCost">100</span> coins (Lv <span id="autoLv">0</span>)</button>
+    </div>
+    <p style="margin-top:16px">
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap or click a ripe crop (🌽) to harvest. Crops regrow by themselves. Upgrades cost coins and make your farm faster.</p>
+<script>
+(function(){
+  var SAVE_KEY='mga_harvest_save';
+  var coinsEl=document.getElementById('coins'),perTapEl=document.getElementById('perTap'),harvEl=document.getElementById('harvested'),
+      status=document.getElementById('status'),plotsEl=document.getElementById('plots');
+  var STAGES=['🌱','🌿','🌽'];
+  var BASE_GROW=6000; // ms to full growth
+  var state={coins:0,perTap:1,harvested:0,tools:0,speed:0,auto:0,plots:[]};
+  function load(){
+    try{
+      var raw=localStorage.getItem(SAVE_KEY);
+      if(raw){var s=JSON.parse(raw);if(s&&typeof s.coins==='number'){state=s;}}
+    }catch(e){}
+    if(!state.plots||state.plots.length!==6){
+      state.plots=[];
+      for(var i=0;i<6;i++)state.plots.push({p:Math.random()*0.5});
+    }
+  }
+  function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){}}
+  function growMs(){return Math.max(1500,BASE_GROW*Math.pow(0.8,state.speed));}
+  function toolCost(){return 20*Math.pow(2,state.tools);}
+  function speedCost(){return 30*Math.pow(2,state.speed);}
+  function autoCost(){return 100*Math.pow(2,state.auto);}
+  var plotEls=[];
+  function buildPlots(){
+    plotsEl.innerHTML='';plotEls=[];
+    for(var i=0;i<6;i++){
+      (function(idx){
+        var b=document.createElement('button');
+        b.type='button';
+        b.style.cssText='font-size:2.6rem;min-height:96px;border:2px solid #000;border-radius:14px;background:#dcfce7;cursor:pointer';
+        b.setAttribute('aria-label','Crop plot '+(idx+1));
+        b.addEventListener('click',function(){harvest(idx);});
+        plotsEl.appendChild(b);plotEls.push(b);
+      })(i);
+    }
+  }
+  function paint(){
+    coinsEl.textContent=state.coins;
+    perTapEl.textContent=state.perTap;
+    harvEl.textContent=state.harvested;
+    document.getElementById('toolsCost').textContent=toolCost();
+    document.getElementById('toolsLv').textContent=state.tools;
+    document.getElementById('speedCost').textContent=speedCost();
+    document.getElementById('speedLv').textContent=state.speed;
+    document.getElementById('autoCost').textContent=autoCost();
+    document.getElementById('autoLv').textContent=state.auto;
+    for(var i=0;i<6;i++){
+      var p=state.plots[i].p;
+      var stage=p>=1?2:p>=0.45?1:0;
+      plotEls[i].textContent=STAGES[stage];
+      plotEls[i].style.background=p>=1?'#fef08a':'#dcfce7';
+      plotEls[i].style.opacity=stage===0?0.75:1;
+    }
+  }
+  function harvest(idx){
+    var p=state.plots[idx];
+    if(p.p<1){status.textContent='Not ripe yet — wait for it to turn into corn!';return;}
+    p.p=0;
+    state.coins+=state.perTap;state.harvested++;
+    status.textContent='Harvested! +'+state.perTap+' coin'+(state.perTap>1?'s':'')+'.';
+    if(window.mgaBeep)window.mgaBeep(880,0.12);
+    paint();save();
+  }
+  function buy(kind){
+    var cost=kind==='tools'?toolCost():kind==='speed'?speedCost():autoCost();
+    if(state.coins<cost){status.textContent='Not enough coins yet — keep harvesting!';if(window.mgaBeep)window.mgaBeep(180,0.15);return;}
+    state.coins-=cost;
+    if(kind==='tools'){state.tools++;state.perTap++;}
+    else if(kind==='speed'){state.speed++;}
+    else{state.auto++;}
+    status.textContent='Upgrade bought! Your farm is better now.';
+    if(window.mgaBeep)window.mgaBeep(660,0.15);
+    paint();save();
+  }
+  document.getElementById('upTools').addEventListener('click',function(){buy('tools');});
+  document.getElementById('upSpeed').addEventListener('click',function(){buy('speed');});
+  document.getElementById('upAuto').addEventListener('click',function(){buy('auto');});
+  document.getElementById('restartBtn').addEventListener('click',function(){
+    state={coins:0,perTap:1,harvested:0,tools:0,speed:0,auto:0,plots:[]};
+    for(var i=0;i<6;i++)state.plots.push({p:0});
+    status.textContent='Fresh farm! Tap a ripe crop to harvest it!';
+    paint();save();
+  });
+  setInterval(function(){
+    var gm=growMs(),changed=false;
+    for(var i=0;i<6;i++){
+      var p=state.plots[i];
+      if(p.p<1){p.p=Math.min(1,p.p+500/gm);changed=true;}
+    }
+    if(state.auto>0){
+      for(var j=0;j<6;j++){
+        if(state.plots[j].p>=1){
+          state.plots[j].p=0;state.coins+=state.perTap;state.harvested++;
+        }
+      }
+    }
+    if(changed){paint();save();}
+  },500);
+  load();buildPlots();paint();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+</body>
+</html>
