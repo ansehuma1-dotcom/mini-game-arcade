@@ -162,7 +162,8 @@
     nextBtn.onclick=next;
     show();
   }
-  nextBtn.addEventListener('click',next);
+  // Note: nextBtn uses the onclick property only (set by start()/finish()).
+  // Do NOT also addEventListener('click') here — that would fire next() twice per click.
   document.getElementById('restartBtn').addEventListener('click',start);
   document.addEventListener('keydown',function(e){
     if(answered)return;
