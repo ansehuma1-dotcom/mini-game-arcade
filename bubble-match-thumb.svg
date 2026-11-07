@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Bubble Match game thumbnail">
+  <rect width="400" height="400" fill="#FF90E8"/>
+  <circle cx="60" cy="60" r="26" fill="#fff" opacity="0.5"/>
+  <circle cx="350" cy="50" r="18" fill="#fff" opacity="0.5"/>
+  <circle cx="360" cy="330" r="24" fill="#fff" opacity="0.5"/>
+  <g>
+    <circle cx="80" cy="120" r="34" fill="#ef4444"/><circle cx="160" cy="120" r="34" fill="#f59e0b"/><circle cx="240" cy="120" r="34" fill="#22c55e"/><circle cx="320" cy="120" r="34" fill="#3b82f6"/>
+    <circle cx="80" cy="200" r="34" fill="#a855f7"/><circle cx="160" cy="200" r="34" fill="#22c55e"/><circle cx="240" cy="200" r="34" fill="#22c55e"/><circle cx="320" cy="200" r="34" fill="#22c55e"/>
+    <circle cx="80" cy="280" r="34" fill="#f59e0b"/><circle cx="160" cy="280" r="34" fill="#3b82f6"/><circle cx="240" cy="280" r="34" fill="#ef4444"/><circle cx="320" cy="280" r="34" fill="#a855f7"/>
+  </g>
+  <g fill="#fff" opacity="0.7">
+    <circle cx="70" cy="110" r="9"/><circle cx="150" cy="110" r="9"/><circle cx="230" cy="110" r="9"/><circle cx="310" cy="110" r="9"/>
+    <circle cx="70" cy="190" r="9"/><circle cx="150" cy="190" r="9"/><circle cx="230" cy="190" r="9"/><circle cx="310" cy="190" r="9"/>
+    <circle cx="70" cy="270" r="9"/><circle cx="150" cy="270" r="9"/><circle cx="230" cy="270" r="9"/><circle cx="310" cy="270" r="9"/>
+  </g>
+  <rect x="140" y="178" width="220" height="44" rx="22" fill="#FFC900" stroke="#000" stroke-width="3"/>
+  <text x="250" y="208" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="800" fill="#000">MATCH 3!</text>
+  <text x="200" y="392" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="800" fill="#fff">POP THE ROW!</text>
+</svg>

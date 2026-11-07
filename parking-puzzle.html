@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parking Puzzle — Free Puzzle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Parking Puzzle free online: slide the cars out of the way and drive the red car out of the jammed parking lot.">
+<meta name="keywords" content="parking puzzle game, sliding block puzzle, free puzzle game, rush hour puzzle">
+<meta property="og:title" content="Parking Puzzle — Mini Game Arcade">
+<meta property="og:description" content="Play Parking Puzzle free online: slide the cars out of the way and drive the red car out of the jammed parking lot.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/parking-puzzle.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/parking-puzzle.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="adults">Adults</p>
+  <h1>Parking Puzzle</h1>
+  <p data-i18n="parking_intro">The lot is jammed! Slide the cars along their rows and columns to clear a path, then drive the red car out the exit on the right.</p>
+  <div class="hud">
+    <span><span data-i18n="moves">Moves:</span> <strong id="moves">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap a car to select it, then slide it with the arrows.</p>
+    <div id="board" style="position:relative;width:100%;max-width:420px;aspect-ratio:1/1;margin:0 auto;background:#94a3b8;border:2px solid #000;border-radius:16px;overflow:hidden"></div>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn small secondary" id="upBtn" type="button" aria-label="Move up">▲</button>
+      <button class="btn small secondary" id="leftBtn" type="button" aria-label="Move left">◀</button>
+      <button class="btn small secondary" id="downBtn" type="button" aria-label="Move down">▼</button>
+      <button class="btn small secondary" id="rightBtn" type="button" aria-label="Move right">▶</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap a car to select it (the red car starts selected), then use the arrow keys or the on-screen arrows to slide it along its row or column. Drive the red car out the green exit on the right.</p>
+<script>
+(function(){
+  var board=document.getElementById('board'),movesEl=document.getElementById('moves'),status=document.getElementById('status');
+  var SIZE=6;
+  // h: 1 = horizontal (slides left/right), 0 = vertical (slides up/down)
+  var LEVEL=[
+    {id:'R',emoji:'🚗',color:'#e11d48',row:2,col:0,len:2,h:1},
+    {id:'A',emoji:'🚙',color:'#3b82f6',row:0,col:2,len:2,h:0},
+    {id:'B',emoji:'🚕',color:'#f59e0b',row:0,col:4,len:3,h:0},
+    {id:'C',emoji:'🚗',color:'#22c55e',row:1,col:0,len:2,h:1},
+    {id:'D',emoji:'🚙',color:'#8b5cf6',row:3,col:3,len:2,h:0},
+    {id:'E',emoji:'🚕',color:'#14b8a6',row:4,col:0,len:3,h:1},
+    {id:'F',emoji:'🚗',color:'#ec4899',row:4,col:5,len:2,h:0},
+    {id:'G',emoji:'🚙',color:'#eab308',row:5,col:3,len:2,h:1},
+    {id:'H',emoji:'🚕',color:'#64748b',row:3,col:4,len:2,h:1}
+  ];
+  var cars=[],selected='R',moves=0,won=false,carEls={};
+  function buildBoard(){
+    board.innerHTML='';
+    var exit=document.createElement('div');
+    exit.style.cssText='position:absolute;right:0;top:33.333%;width:8px;height:16.667%;background:#22c55e';
+    exit.title='Exit';
+    board.appendChild(exit);
+    for(var i=0;i<LEVEL.length;i++){
+      (function(def){
+        var el=document.createElement('button');
+        el.type='button';
+        el.style.cssText='position:absolute;border:2px solid #000;border-radius:10px;cursor:pointer;font-size:1.6rem;display:flex;align-items:center;justify-content:center;padding:0;background:'+def.color;
+        el.textContent=def.emoji;
+        el.setAttribute('aria-label','Car '+def.id);
+        el.addEventListener('click',function(){
+          if(won)return;
+          selected=def.id;paint();
+          if(window.mgaBeep)window.mgaBeep(440,0.06);
+        });
+        board.appendChild(el);
+        carEls[def.id]=el;
+      })(LEVEL[i]);
+    }
+  }
+  function reset(){
+    cars=LEVEL.map(function(c){return {id:c.id,emoji:c.emoji,color:c.color,row:c.row,col:c.col,len:c.len,h:c.h};});
+    selected='R';moves=0;won=false;
+    status.textContent='Tap a car to select it, then slide it with the arrows.';
+    paint();
+  }
+  function covers(car,r,c){
+    if(car.h){return r===car.row&&c>=car.col&&c<car.col+car.len;}
+    return c===car.col&&r>=car.row&&r<car.row+car.len;
+  }
+  function empty(r,c,ignoreId){
+    for(var i=0;i<cars.length;i++){
+      if(cars[i].id===ignoreId)continue;
+      if(covers(cars[i],r,c))return false;
+    }
+    return true;
+  }
+  function findCar(id){
+    for(var i=0;i<cars.length;i++)if(cars[i].id===id)return cars[i];
+    return null;
+  }
+  function tryMove(dx,dy){
+    if(won)return;
+    var car=findCar(selected);
+    if(!car)return;
+    var dir=car.h?dx:dy;
+    if(dir===0)return;
+    var ok=false;
+    if(car.h){
+      if(dir>0&&car.col+car.len<SIZE&&empty(car.row,car.col+car.len,car.id)){car.col++;ok=true;}
+      else if(dir<0&&car.col>0&&empty(car.row,car.col-1,car.id)){car.col--;ok=true;}
+    }else{
+      if(dir>0&&car.row+car.len<SIZE&&empty(car.row+car.len,car.col,car.id)){car.row++;ok=true;}
+      else if(dir<0&&car.row>0&&empty(car.row-1,car.col,car.id)){car.row--;ok=true;}
+    }
+    if(!ok){if(window.mgaBeep)window.mgaBeep(160,0.08);return;}
+    moves++;
+    paint();
+    if(window.mgaBeep)window.mgaBeep(520,0.08);
+    if(car.id==='R'&&car.col===SIZE-car.len){
+      won=true;
+      status.textContent='You did it! The red car is out in '+moves+' moves. Tap Restart to play again.';
+      if(window.mgaBeep)window.mgaBeep(880,0.3);
+    }
+  }
+  function paint(){
+    movesEl.textContent=moves;
+    for(var i=0;i<cars.length;i++){
+      var car=cars[i],el=carEls[car.id];
+      el.style.left=(car.col/SIZE*100)+'%';
+      el.style.top=(car.row/SIZE*100)+'%';
+      el.style.width=(car.h?car.len:1)/SIZE*100+'%';
+      el.style.height=(car.h?1:car.len)/SIZE*100+'%';
+      el.style.outline=(car.id===selected)?'4px solid #FFC900':'none';
+      el.style.zIndex=(car.id===selected)?2:1;
+    }
+  }
+  document.getElementById('leftBtn').addEventListener('click',function(){tryMove(-1,0);});
+  document.getElementById('rightBtn').addEventListener('click',function(){tryMove(1,0);});
+  document.getElementById('upBtn').addEventListener('click',function(){tryMove(0,-1);});
+  document.getElementById('downBtn').addEventListener('click',function(){tryMove(0,1);});
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();if(window.mgaBeep)window.mgaBeep(660,0.1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){tryMove(-1,0);e.preventDefault();}
+    else if(e.key==='ArrowRight'){tryMove(1,0);e.preventDefault();}
+    else if(e.key==='ArrowUp'){tryMove(0,-1);e.preventDefault();}
+    else if(e.key==='ArrowDown'){tryMove(0,1);e.preventDefault();}
+  });
+  buildBoard();reset();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+</body>
+</html>

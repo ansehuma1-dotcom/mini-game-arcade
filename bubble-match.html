@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bubble Match — Free Puzzle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Bubble Match free online: swap bubbles to match 3 or more in a row. 60 seconds on the clock — how high can you score?">
+<meta name="keywords" content="bubble match game, match 3 game, free puzzle game, bubble swap game">
+<meta property="og:title" content="Bubble Match — Mini Game Arcade">
+<meta property="og:description" content="Play Bubble Match free online: swap bubbles to match 3 or more in a row. 60 seconds on the clock — how high can you score?">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/bubble-match.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/bubble-match.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Bubble Match</h1>
+  <p data-i18n="bubblematch_intro">Swap next-door bubbles to line up 3 or more of the same colour. Matches clear, bubbles cascade down and new ones fall in. 60 seconds — beat your best score!</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="time_left">Time left:</span> <strong id="timeLeft">60</strong>s</span>
+    <span><span data-i18n="best">Best:</span> <strong id="best">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap two bubbles next to each other to swap them!</p>
+    <div id="grid" style="display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:420px;margin:0 auto"></div>
+    <p style="margin-top:16px">
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap one bubble, then tap a bubble next to it to swap them. Matches of 3 or more in a row or column clear and score 10 points per bubble. You have 60 seconds.</p>
+<script>
+(function(){
+  var ROWS=8,COLS=8,COLORS=6,TIME_LIMIT=60;
+  var EMOJI=['🔴','🟠','🟡','🟢','🔵','🟣'];
+  var gridEl=document.getElementById('grid'),scoreEl=document.getElementById('score'),
+      timeEl=document.getElementById('timeLeft'),bestEl=document.getElementById('best'),status=document.getElementById('status');
+  var BEST_KEY='mga_bubblematch_best';
+  var board,score,best,timeLeft,over,busy,sel,timer=null,buttons=[];
+  try{best=parseInt(localStorage.getItem(BEST_KEY),10)||0;}catch(e){best=0;}
+  function randColor(){return Math.floor(Math.random()*COLORS);}
+  function pickAvoid(r,c){
+    var bad={};
+    if(c>=2&&board[r][c-1]===board[r][c-2])bad[board[r][c-1]]=1;
+    if(r>=2&&board[r-1][c]===board[r-2][c])bad[board[r-1][c]]=1;
+    var v=randColor(),tries=0;
+    while(bad[v]&&tries<10){v=randColor();tries++;}
+    return v;
+  }
+  function buildBoard(){
+    board=[];
+    for(var r=0;r<ROWS;r++){
+      var row=[];
+      for(var c=0;c<COLS;c++)row.push(0);
+      board.push(row);
+    }
+    for(var rr=0;rr<ROWS;rr++)for(var cc=0;cc<COLS;cc++)board[rr][cc]=pickAvoid(rr,cc);
+  }
+  function buildButtons(){
+    gridEl.innerHTML='';buttons=[];
+    for(var r=0;r<ROWS;r++){
+      buttons.push([]);
+      for(var c=0;c<COLS;c++){
+        (function(rr,cc){
+          var b=document.createElement('button');
+          b.type='button';
+          b.style.cssText='font-size:1.7rem;min-height:46px;border:2px solid #000;border-radius:10px;background:#fff;cursor:pointer;padding:0;line-height:1';
+          b.setAttribute('aria-label','Bubble row '+(rr+1)+' column '+(cc+1));
+          b.addEventListener('click',function(){tap(rr,cc);});
+          gridEl.appendChild(b);buttons[rr][cc]=b;
+        })(r,c);
+      }
+    }
+  }
+  function reset(){
+    buildBoard();
+    score=0;timeLeft=TIME_LIMIT;over=false;busy=false;sel=null;
+    status.textContent='Tap two bubbles next to each other to swap them!';
+    if(timer)clearInterval(timer);
+    timer=setInterval(function(){
+      if(over)return;
+      timeLeft--;
+      if(timeLeft<=0){
+        timeLeft=0;over=true;
+        clearInterval(timer);
+        if(score>best){best=score;try{localStorage.setItem(BEST_KEY,String(best));}catch(e){}}
+        status.textContent="Time's up! Final score "+score+'. Best '+best+'. Press Restart to play again.';
+        if(window.mgaBeep)window.mgaBeep(140,0.4);
+      }
+      paint();
+    },1000);
+    paint();
+  }
+  function paint(){
+    scoreEl.textContent=score;
+    timeEl.textContent=timeLeft;
+    bestEl.textContent=best;
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){
+      var b=buttons[r][c];
+      b.textContent=EMOJI[board[r][c]];
+      b.style.outline=(sel&&sel.r===r&&sel.c===c)?'4px solid #FFC900':'none';
+      b.style.background=(sel&&sel.r===r&&sel.c===c)?'#fef08a':'#fff';
+    }
+  }
+  function tap(r,c){
+    if(over||busy)return;
+    if(!sel){sel={r:r,c:c};paint();if(window.mgaBeep)window.mgaBeep(440,0.05);return;}
+    if(sel.r===r&&sel.c===c){sel=null;paint();return;}
+    var dr=Math.abs(sel.r-r),dc=Math.abs(sel.c-c);
+    if(dr+dc!==1){sel={r:r,c:c};paint();return;}
+    var r1=sel.r,c1=sel.c;
+    sel=null;
+    swapCells(r1,c1,r,c);
+    paint();
+    if(findMatches().length>0){
+      if(window.mgaBeep)window.mgaBeep(660,0.1);
+      resolveLoop();
+    }else{
+      busy=true;
+      setTimeout(function(){
+        swapCells(r1,c1,r,c);
+        busy=false;paint();
+        if(window.mgaBeep)window.mgaBeep(180,0.08);
+      },220);
+    }
+  }
+  function swapCells(r1,c1,r2,c2){
+    var t=board[r1][c1];board[r1][c1]=board[r2][c2];board[r2][c2]=t;
+  }
+  function findMatches(){
+    var hits={};
+    for(var r=0;r<ROWS;r++){
+      var run=1;
+      for(var c=1;c<=COLS;c++){
+        if(c<COLS&&board[r][c]===board[r][c-1])run++;
+        else{
+          if(run>=3)for(var k=c-run;k<c;k++)hits[r+','+k]=1;
+          run=1;
+        }
+      }
+    }
+    for(var c2=0;c2<COLS;c2++){
+      var run2=1;
+      for(var r2=1;r2<=ROWS;r2++){
+        if(r2<ROWS&&board[r2][c2]===board[r2-1][c2])run2++;
+        else{
+          if(run2>=3)for(var k=r2-run2;k<r2;k++)hits[k+','+c2]=1;
+          run2=1;
+        }
+      }
+    }
+    return Object.keys(hits);
+  }
+  function resolveLoop(){
+    busy=true;
+    var hits=findMatches();
+    if(hits.length===0){
+      busy=false;
+      if(!hasMove()){shuffleBoard();status.textContent='No moves left — the board was shuffled!';}
+      paint();
+      return;
+    }
+    score+=hits.length*10;
+    for(var i=0;i<hits.length;i++){
+      var parts=hits[i].split(',');
+      board[parseInt(parts[0],10)][parseInt(parts[1],10)]=-1;
+    }
+    if(window.mgaBeep)window.mgaBeep(880,0.12);
+    paint();
+    setTimeout(function(){
+      gravity();
+      paint();
+      setTimeout(resolveLoop,220);
+    },220);
+  }
+  function gravity(){
+    for(var c=0;c<COLS;c++){
+      var write=ROWS-1;
+      for(var r=ROWS-1;r>=0;r--){
+        if(board[r][c]!==-1){board[write][c]=board[r][c];write--;}
+      }
+      for(var r2=write;r2>=0;r2--)board[r2][c]=randColor();
+    }
+  }
+  function wouldMatch(r1,c1,r2,c2){
+    swapCells(r1,c1,r2,c2);
+    var m=findMatches().length>0;
+    swapCells(r1,c1,r2,c2);
+    return m;
+  }
+  function hasMove(){
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++){
+      if(c+1<COLS&&wouldMatch(r,c,r,c+1))return true;
+      if(r+1<ROWS&&wouldMatch(r,c,r+1,c))return true;
+    }
+    return false;
+  }
+  function shuffleBoard(){
+    var tries=0;
+    do{
+      buildBoard();
+      tries++;
+    }while(!hasMove()&&tries<20);
+  }
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();if(window.mgaBeep)window.mgaBeep(660,0.1);});
+  buildButtons();reset();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+</body>
+</html>

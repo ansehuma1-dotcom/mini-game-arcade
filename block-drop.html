@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Block Drop — Free Puzzle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Block Drop free online: drop falling blocks, fit them together and clear full lines before the well fills up.">
+<meta name="keywords" content="block drop game, falling blocks game, free puzzle game, tetris style game">
+<meta property="og:title" content="Block Drop — Mini Game Arcade">
+<meta property="og:description" content="Play Block Drop free online: drop falling blocks, fit them together and clear full lines before the well fills up.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/block-drop.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/block-drop.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Block Drop</h1>
+  <p data-i18n="block_intro">Blocks fall into the well. Fit them together to clear full lines before the stack reaches the top.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="lines">Lines:</span> <strong id="lines">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Clear full lines to score!</p>
+    <canvas id="game" width="300" height="480" aria-label="Block Drop game area" style="max-width:300px;height:auto;background:#1e1b4b;border:2px solid #000;border-radius:16px"></canvas>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn small secondary" id="leftBtn" type="button" aria-label="Move left">◀</button>
+      <button class="btn small secondary" id="rightBtn" type="button" aria-label="Move right">▶</button>
+      <button class="btn small secondary" id="rotBtn" type="button" aria-label="Rotate">↻</button>
+      <button class="btn small secondary" id="downBtn" type="button" aria-label="Drop faster">▼</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: Left/Right arrows to move, Down to drop faster, Up or Space to rotate. On touch screens use the buttons below the well.</p>
+<script>
+(function(){
+  var COLS=10,ROWS=16,CELL=30;
+  var canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+  var scoreEl=document.getElementById('score'),linesEl=document.getElementById('lines'),status=document.getElementById('status');
+  var SHAPES={
+    I:{m:[[1,1,1,1]],c:'#22d3ee'},
+    O:{m:[[1,1],[1,1]],c:'#facc15'},
+    T:{m:[[0,1,0],[1,1,1]],c:'#a78bfa'},
+    S:{m:[[0,1,1],[1,1,0]],c:'#34d399'},
+    Z:{m:[[1,1,0],[0,1,1]],c:'#f87171'},
+    J:{m:[[1,0,0],[1,1,1]],c:'#60a5fa'},
+    L:{m:[[0,0,1],[1,1,1]],c:'#fb923c'}
+  };
+  var KEYS=['I','O','T','S','Z','J','L'];
+  var POINTS=[0,100,300,500,800];
+  var grid,cur,score,lines,level,over,timer=null;
+  function emptyGrid(){
+    var g=[];
+    for(var r=0;r<ROWS;r++){var row=[];for(var c=0;c<COLS;c++)row.push('');g.push(row);}
+    return g;
+  }
+  function dropMs(){return Math.max(150,800-(level-1)*70);}
+  function startTimer(){
+    if(timer)clearInterval(timer);
+    timer=setInterval(function(){step();},dropMs());
+  }
+  function reset(){
+    grid=emptyGrid();score=0;lines=0;level=1;over=false;
+    status.textContent='Clear full lines to score!';
+    spawn();
+    paint();startTimer();
+  }
+  function spawn(){
+    var k=KEYS[Math.floor(Math.random()*KEYS.length)];
+    var shape=SHAPES[k];
+    cur={m:shape.m,c:shape.c,x:3,y:0};
+    if(k==='I')cur.x=3;
+    if(collides(cur.m,cur.x,cur.y)){
+      over=true;
+      status.textContent='Game over! Score '+score+' with '+lines+' lines. Press Restart to play again.';
+      if(timer)clearInterval(timer);
+      if(window.mgaBeep)window.mgaBeep(140,0.4);
+    }
+  }
+  function collides(m,px,py){
+    for(var r=0;r<m.length;r++){
+      for(var c=0;c<m[r].length;c++){
+        if(!m[r][c])continue;
+        var x=px+c,y=py+r;
+        if(x<0||x>=COLS||y>=ROWS)return true;
+        if(y>=0&&grid[y][x])return true;
+      }
+    }
+    return false;
+  }
+  function rotate(m){
+    var out=[];
+    for(var c=0;c<m[0].length;c++){
+      var row=[];
+      for(var r=m.length-1;r>=0;r--)row.push(m[r][c]);
+      out.push(row);
+    }
+    return out;
+  }
+  function tryRotate(){
+    if(over||!cur)return;
+    var rm=rotate(cur.m);
+    var kicks=[0,-1,1,-2,2];
+    for(var i=0;i<kicks.length;i++){
+      if(!collides(rm,cur.x+kicks[i],cur.y)){cur.m=rm;cur.x+=kicks[i];paint();if(window.mgaBeep)window.mgaBeep(500,0.05);return;}
+    }
+  }
+  function move(dx){
+    if(over||!cur)return;
+    if(!collides(cur.m,cur.x+dx,cur.y)){cur.x+=dx;paint();}
+  }
+  function step(){
+    if(over||!cur)return;
+    if(!collides(cur.m,cur.x,cur.y+1)){cur.y++;paint();}
+    else lock();
+  }
+  function lock(){
+    for(var r=0;r<cur.m.length;r++){
+      for(var c=0;c<cur.m[r].length;c++){
+        if(cur.m[r][c]&&cur.y+r>=0)grid[cur.y+r][cur.x+c]=cur.c;
+      }
+    }
+    if(window.mgaBeep)window.mgaBeep(300,0.06);
+    clearLines();
+    spawn();
+    paint();
+  }
+  function clearLines(){
+    var cleared=0;
+    for(var r=ROWS-1;r>=0;r--){
+      var full=true;
+      for(var c=0;c<COLS;c++)if(!grid[r][c]){full=false;break;}
+      if(full){
+        grid.splice(r,1);
+        var row=[];for(var i=0;i<COLS;i++)row.push('');
+        grid.unshift(row);
+        cleared++;r++;
+      }
+    }
+    if(cleared>0){
+      score+=POINTS[cleared];
+      lines+=cleared;
+      var nl=Math.floor(lines/10)+1;
+      if(nl!==level){level=nl;startTimer();}
+      status.textContent=cleared===1?'Nice! 1 line cleared.':cleared+' lines cleared! +'+POINTS[cleared]+' points.';
+      if(window.mgaBeep)window.mgaBeep(760,0.15);
+    }
+  }
+  function drawCell(x,y,color){
+    ctx.fillStyle=color;
+    ctx.fillRect(x*CELL+1,y*CELL+1,CELL-2,CELL-2);
+    ctx.fillStyle='rgba(255,255,255,0.25)';
+    ctx.fillRect(x*CELL+1,y*CELL+1,CELL-2,6);
+  }
+  function paint(){
+    scoreEl.textContent=score;
+    linesEl.textContent=lines;
+    ctx.fillStyle='#1e1b4b';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle='rgba(255,255,255,0.08)';
+    ctx.lineWidth=1;
+    for(var gx=0;gx<=COLS;gx++){ctx.beginPath();ctx.moveTo(gx*CELL,0);ctx.lineTo(gx*CELL,ROWS*CELL);ctx.stroke();}
+    for(var gy=0;gy<=ROWS;gy++){ctx.beginPath();ctx.moveTo(0,gy*CELL);ctx.lineTo(COLS*CELL,gy*CELL);ctx.stroke();}
+    for(var r=0;r<ROWS;r++)for(var c=0;c<COLS;c++)if(grid[r][c])drawCell(c,r,grid[r][c]);
+    if(cur&&!over){
+      for(var pr=0;pr<cur.m.length;pr++)for(var pc=0;pc<cur.m[pr].length;pc++)
+        if(cur.m[pr][pc])drawCell(cur.x+pc,cur.y+pr,cur.c);
+    }
+    if(over){
+      ctx.fillStyle='rgba(0,0,0,0.6)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='#fff';
+      ctx.font='bold 26px sans-serif';
+      ctx.textAlign='center';
+      ctx.fillText('GAME OVER',canvas.width/2,canvas.height/2-10);
+      ctx.font='16px sans-serif';
+      ctx.fillText('Score '+score+' — press Restart',canvas.width/2,canvas.height/2+22);
+    }
+  }
+  document.getElementById('leftBtn').addEventListener('click',function(){move(-1);});
+  document.getElementById('rightBtn').addEventListener('click',function(){move(1);});
+  document.getElementById('rotBtn').addEventListener('click',function(){tryRotate();});
+  document.getElementById('downBtn').addEventListener('click',function(){step();});
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();if(window.mgaBeep)window.mgaBeep(660,0.1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){move(-1);e.preventDefault();}
+    else if(e.key==='ArrowRight'){move(1);e.preventDefault();}
+    else if(e.key==='ArrowDown'){step();e.preventDefault();}
+    else if(e.key==='ArrowUp'||e.key===' '){tryRotate();e.preventDefault();}
+  });
+  reset();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+</body>
+</html>
