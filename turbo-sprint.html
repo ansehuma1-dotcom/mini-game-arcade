@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Turbo Sprint — Free Racing Game | Mini Game Arcade</title>
+<meta name="description" content="Play Turbo Sprint free online: steer your race car through traffic, grab nitro canisters and boost to top speed. One crash ends the race.">
+<meta name="keywords" content="turbo sprint game, racing game, car game, free racing game">
+<meta property="og:title" content="Turbo Sprint — Mini Game Arcade">
+<meta property="og:description" content="Play Turbo Sprint free online: steer your race car through traffic, grab nitro canisters and boost to top speed.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/turbo-sprint.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/turbo-sprint.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="racing">Racing</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Turbo Sprint</h1>
+  <p data-i18n="turbo_intro">Race down the highway! Weave through traffic and grab nitro canisters to boost your speed. The faster you go, the more you score — but one crash ends the race.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="speed">Speed:</span> <strong id="speed">0</strong></span>
+    <span><span data-i18n="nitro">Nitro:</span> <strong id="nitro">—</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Steer with the arrow keys or drag on the road!</p>
+    <canvas id="game" width="400" height="520" aria-label="Turbo Sprint game area" style="max-width:400px;height:auto;border:2px solid #000;border-radius:16px"></canvas>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn" id="leftBtn" type="button">◀ Left</button>
+      <button class="btn" id="rightBtn" type="button">Right ▶</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: steer with the Left/Right arrow keys, the on-screen buttons, or drag on the road. Dodge the traffic cars and collect nitro canisters for a speed boost. A crash ends the race.</p>
+<script>
+(function(){
+  var canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+  var scoreEl=document.getElementById('score'),speedEl=document.getElementById('speed'),nitroEl=document.getElementById('nitro'),status=document.getElementById('status');
+  var W=400,H=520,LANES=[110,200,290],PLAYER_Y=430;
+  var TRAFFIC_COLORS=['#f59e0b','#3b82f6','#8b5cf6','#ec4899','#14b8a6'];
+  var lane,px,traffic,nitros,distance,speed,boostUntil,over,lastTraffic,lastNitro,startAt,frame,roadOff;
+  function reset(){
+    lane=1;px=LANES[1];traffic=[];nitros=[];distance=0;speed=4;boostUntil=0;
+    over=false;lastTraffic=0;lastNitro=0;startAt=Date.now();frame=0;roadOff=0;
+    status.textContent='Steer with the arrow keys or drag on the road!';
+    paintHud();
+  }
+  function paintHud(){
+    scoreEl.textContent=Math.floor(distance/10);
+    speedEl.textContent=Math.round(speed*18);
+    nitroEl.textContent=Date.now()<boostUntil?Math.ceil((boostUntil-Date.now())/1000)+'s':'—';
+  }
+  function steer(dir){
+    if(over)return;
+    lane=Math.max(0,Math.min(2,lane+dir));
+  }
+  function spawnTraffic(){
+    var l=Math.floor(Math.random()*3);
+    for(var i=0;i<traffic.length;i++){
+      if(traffic[i].lane===l&&traffic[i].y<140)return;
+    }
+    traffic.push({lane:l,y:-70,color:TRAFFIC_COLORS[Math.floor(Math.random()*TRAFFIC_COLORS.length)],slow:0.45+Math.random()*0.15});
+  }
+  function spawnNitro(){
+    var l=Math.floor(Math.random()*3);
+    nitros.push({lane:l,y:-40});
+  }
+  function crash(){
+    over=true;
+    status.textContent='Crash! Score '+Math.floor(distance/10)+'. Press Restart to race again.';
+    if(window.mgaBeep)window.mgaBeep(140,0.4);
+    paintHud();
+  }
+  function update(){
+    frame++;
+    if(over)return;
+    var now=Date.now();
+    var elapsed=(now-startAt)/1000;
+    speed=Math.min(9,4+elapsed*0.08)*(now<boostUntil?1.6:1);
+    roadOff=(roadOff+speed)%40;
+    distance+=speed*(now<boostUntil?2:1);
+    px+=(LANES[lane]-px)*0.25;
+    if(now-lastTraffic>Math.max(520,1150-elapsed*12)){spawnTraffic();lastTraffic=now;}
+    if(now-lastNitro>4200+Math.random()*1500){spawnNitro();lastNitro=now;}
+    for(var i=traffic.length-1;i>=0;i--){
+      var t=traffic[i];
+      t.y+=speed*t.slow+1.2;
+      if(t.y>H+80){traffic.splice(i,1);continue;}
+      if(Math.abs(LANES[t.lane]-px)<38&&Math.abs(t.y-PLAYER_Y)<58){crash();return;}
+    }
+    for(var j=nitros.length-1;j>=0;j--){
+      var n=nitros[j];
+      n.y+=speed+1;
+      if(n.y>H+40){nitros.splice(j,1);continue;}
+      if(Math.abs(LANES[n.lane]-px)<38&&Math.abs(n.y-PLAYER_Y)<58){
+        nitros.splice(j,1);
+        boostUntil=Date.now()+3000;
+        distance+=500;
+        if(window.mgaBeep)window.mgaBeep(990,0.15);
+        paintHud();
+      }
+    }
+    paintHud();
+  }
+  function drawCar(x,y,color,player){
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.fillStyle=color;
+    ctx.beginPath();
+    ctx.roundRect(-19,-34,38,68,8);
+    ctx.fill();
+    ctx.fillStyle='#111827';
+    ctx.beginPath();ctx.roundRect(-15,-20,30,20,4);ctx.fill();
+    ctx.fillStyle=player?'#fde68a':'#e5e7eb';
+    ctx.beginPath();ctx.roundRect(-13,8,26,12,3);ctx.fill();
+    ctx.fillStyle='#fef9c3';
+    ctx.fillRect(-15,-34,8,5);ctx.fillRect(7,-34,8,5);
+    ctx.fillStyle='#ef4444';
+    ctx.fillRect(-15,29,8,5);ctx.fillRect(7,29,8,5);
+    if(player){
+      ctx.fillStyle='#fff';ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+      ctx.fillText('7',0,-24);
+    }
+    ctx.restore();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#16a34a';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#374151';ctx.fillRect(60,0,280,H);
+    ctx.fillStyle='#facc15';
+    for(var ly=-40+roadOff;ly<H;ly+=40){
+      ctx.fillRect(155,ly,5,22);
+      ctx.fillRect(240,ly,5,22);
+    }
+    ctx.fillStyle='#fff';
+    ctx.fillRect(60,0,4,H);ctx.fillRect(336,0,4,H);
+    for(var i=0;i<nitros.length;i++){
+      var n=nitros[i];
+      ctx.fillStyle='#22d3ee';ctx.strokeStyle='#0e7490';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(LANES[n.lane],n.y,14,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#0e7490';ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+      ctx.fillText('N',LANES[n.lane],n.y+5);
+    }
+    for(var t=0;t<traffic.length;t++)drawCar(LANES[traffic[t].lane],traffic[t].y,traffic[t].color,false);
+    if(Date.now()<boostUntil){
+      ctx.fillStyle='rgba(249,115,22,0.85)';
+      ctx.beginPath();ctx.moveTo(px-12,PLAYER_Y+34);ctx.lineTo(px,PLAYER_Y+58);ctx.lineTo(px+12,PLAYER_Y+34);ctx.closePath();ctx.fill();
+    }
+    drawCar(px,PLAYER_Y,'#dc2626',true);
+    if(over){
+      ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#fff';ctx.font='bold 26px sans-serif';ctx.textAlign='center';
+      ctx.fillText('CRASH!',W/2,240);
+      ctx.font='16px sans-serif';
+      ctx.fillText('Score '+Math.floor(distance/10)+' — press Restart',W/2,275);
+    }
+  }
+  function loop(){update();draw();requestAnimationFrame(loop);}
+  function canvasLane(e){
+    var r=canvas.getBoundingClientRect();
+    var x=(e.clientX-r.left)*(W/r.width);
+    var best=0,bd=1e9;
+    for(var i=0;i<3;i++){var d=Math.abs(LANES[i]-x);if(d<bd){bd=d;best=i;}}
+    lane=best;
+  }
+  canvas.addEventListener('pointerdown',function(e){canvasLane(e);e.preventDefault();});
+  canvas.addEventListener('pointermove',function(e){if(e.buttons)canvasLane(e);});
+  document.getElementById('leftBtn').addEventListener('click',function(){steer(-1);});
+  document.getElementById('rightBtn').addEventListener('click',function(){steer(1);});
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();if(window.mgaBeep)window.mgaBeep(660,0.1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){steer(-1);e.preventDefault();}
+    if(e.key==='ArrowRight'){steer(1);e.preventDefault();}
+  });
+  reset();
+  loop();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+</body>
+</html>

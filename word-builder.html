@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Word Builder — Free Word Game | Mini Game Arcade</title>
+<meta name="description" content="Play Word Builder free online: tap letter tiles to build a real word before the clock runs out. 90 seconds, endless words.">
+<meta name="keywords" content="word builder game, word game, free word game, spelling game">
+<meta property="og:title" content="Word Builder — Mini Game Arcade">
+<meta property="og:description" content="Play Word Builder free online: tap letter tiles to build a real word before the clock runs out.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/word-builder.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/word-builder.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+.tiles{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0;min-height:56px}
+.tile{width:52px;height:52px;font-size:1.5rem;font-weight:800;border:2px solid #000;border-radius:12px;background:#FFC900;cursor:pointer}
+.tile:disabled{opacity:.25;cursor:default}
+.answer{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:14px 0;min-height:56px}
+.answer-slot{width:52px;height:52px;font-size:1.5rem;font-weight:800;border:2px dashed #000;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.answer-slot.filled{border-style:solid;background:#dbeafe}
+.answer-slot.wrong{border-color:#dc2626;background:#fee2e2}
+.answer-slot.right{border-color:#16a34a;background:#dcfce7}
+</style>
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="words">Words</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Word Builder</h1>
+  <p data-i18n="wordbuilder_intro">A word is scrambled into letter tiles. Tap the tiles in the right order to build the real word. Correct words score points and deal a new word — you have 90 seconds.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="time_left">Time left:</span> <strong id="timeLeft">90</strong></span>
+    <span><span data-i18n="words_found">Words:</span> <strong id="wordsFound">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap the letter tiles to build a word!</p>
+    <div class="answer" id="answer" aria-label="Your word"></div>
+    <div class="tiles" id="tiles" aria-label="Letter tiles"></div>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn" id="shuffleBtn" type="button">🔀 Shuffle</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap letter tiles to build the word in the answer row, or type the letters on your keyboard. Tap a letter in the answer to send it back. When the row is full the word is checked. Use Shuffle to mix the tiles again.</p>
+<script>
+(function(){
+  var WORDS=['APPLE','BREAD','CLOUD','DANCE','EAGLE','FISH','GRAPE','HOUSE','IGLOO','JUMP','KITE','LEMON','MOON','NIGHT','OCEAN','PIZZA','QUEEN','RIVER','SUN','TIGER','UMBRA','VOICE','WATER','YOUTH','ZEBRA','BALL','CAKE','DOG','EGG','FROG','GOLD','HAT','ICE','JAM','KING','LION','MILK','NEST','OWL','PIG','RAIN','STAR','TREE','VAN','WOLF','BOX','CAT','SUN','HEN','BUS','ANT','BEE','COW','DUCK','FARM','GLOW','HILL','INK','JOY','KEY','LAMP','MUD','NET','PEN','ROSE','SHIP','TOY','WIND','YARN','BOOK','CAMP','DESK','FIRE','GAME','HERO','JAZZ','LAVA','MINT','NOSE','PARK','RING','SOCK','TENT','VASE','WAVE'];
+  var scoreEl=document.getElementById('score'),timeEl=document.getElementById('timeLeft'),wordsEl=document.getElementById('wordsFound'),status=document.getElementById('status');
+  var tilesEl=document.getElementById('tiles'),answerEl=document.getElementById('answer');
+  var ROUND_MS=90000;
+  var word,tiles,answer,score,wordsFound,over,endAt,timerId,lock;
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}
+    return a;
+  }
+  function pickWord(){
+    var w;
+    do{w=WORDS[Math.floor(Math.random()*WORDS.length)];}while(w===word);
+    return w;
+  }
+  function newWord(){
+    word=pickWord();
+    tiles=shuffle(word.split('')).map(function(ch){return{ch:ch,used:false};});
+    answer=[];
+    lock=false;
+    render();
+  }
+  function render(){
+    tilesEl.innerHTML='';
+    tiles.forEach(function(t,i){
+      var b=document.createElement('button');
+      b.className='tile';b.type='button';b.textContent=t.ch;b.disabled=t.used||over;
+      b.setAttribute('aria-label','Letter '+t.ch);
+      b.addEventListener('click',function(){pickTile(i);});
+      tilesEl.appendChild(b);
+    });
+    answerEl.innerHTML='';
+    for(var i=0;i<word.length;i++){
+      var s=document.createElement('div');
+      s.className='answer-slot';
+      if(answer[i]){s.textContent=answer[i].ch;s.classList.add('filled');}
+      else s.textContent='·';
+      (function(idx){s.addEventListener('click',function(){returnTile(idx);});})(i);
+      answerEl.appendChild(s);
+    }
+  }
+  function pickTile(i){
+    if(over||lock)return;
+    var t=tiles[i];
+    if(t.used)return;
+    t.used=true;answer.push(t);
+    if(window.mgaBeep)window.mgaBeep(600,0.06);
+    render();
+    if(answer.length===word.length)checkWord();
+  }
+  function returnTile(idx){
+    if(over||lock)return;
+    var t=answer[idx];
+    if(!t)return;
+    answer.splice(idx,1);
+    t.used=false;
+    render();
+  }
+  function checkWord(){
+    lock=true;
+    var guess=answer.map(function(t){return t.ch;}).join('');
+    var slots=answerEl.querySelectorAll('.answer-slot');
+    if(guess===word){
+      score+=word.length*10;wordsFound++;
+      status.textContent='Correct! "'+word+'" — +'+(word.length*10)+' points.';
+      if(window.mgaBeep)window.mgaBeep(880,0.15);
+      slots.forEach(function(s){s.classList.add('right');});
+      paintHud();
+      setTimeout(function(){if(!over)newWord();},800);
+    }else{
+      status.textContent='Not quite — try again!';
+      if(window.mgaBeep)window.mgaBeep(180,0.2);
+      slots.forEach(function(s){s.classList.add('wrong');});
+      setTimeout(function(){
+        answer.forEach(function(t){t.used=false;});
+        answer=[];lock=false;render();
+      },700);
+    }
+  }
+  function paintHud(){
+    scoreEl.textContent=score;
+    wordsEl.textContent=wordsFound;
+    var t=Math.max(0,Math.ceil((endAt-Date.now())/1000));
+    timeEl.textContent=t;
+  }
+  function endRound(){
+    over=true;
+    clearInterval(timerId);
+    status.textContent='Time up! You built '+wordsFound+' word(s), score '+score+'. Press Restart to play again.';
+    if(window.mgaBeep)window.mgaBeep(880,0.3);
+    paintHud();render();
+  }
+  function reset(){
+    score=0;wordsFound=0;over=false;lock=false;
+    endAt=Date.now()+ROUND_MS;
+    status.textContent='Tap the letter tiles to build a word!';
+    newWord();
+    paintHud();
+    clearInterval(timerId);
+    timerId=setInterval(function(){
+      paintHud();
+      if(Date.now()>=endAt)endRound();
+    },250);
+  }
+  document.getElementById('shuffleBtn').addEventListener('click',function(){
+    if(over||lock)return;
+    var free=tiles.filter(function(t){return !t.used;});
+    var chars=free.map(function(t){return t.ch;});
+    shuffle(chars);
+    var fi=0;
+    tiles.forEach(function(t){if(!t.used){t.ch=chars[fi];fi++;}});
+    if(window.mgaBeep)window.mgaBeep(500,0.06);
+    render();
+  });
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();if(window.mgaBeep)window.mgaBeep(660,0.1);});
+  document.addEventListener('keydown',function(e){
+    if(over||lock)return;
+    if(e.key==='Backspace'){returnTile(answer.length-1);return;}
+    if(/^[a-zA-Z]$/.test(e.key)){
+      var ch=e.key.toUpperCase();
+      for(var i=0;i<tiles.length;i++){
+        if(!tiles[i].used&&tiles[i].ch===ch){pickTile(i);break;}
+      }
+    }
+  });
+  reset();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+</body>
+</html>

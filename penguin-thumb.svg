@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Penguin Slide game thumbnail">
+  <rect width="400" height="400" fill="#bae6fd"/>
+  <circle cx="330" cy="60" r="30" fill="#fff"/>
+  <path d="M0 130 L80 50 L150 130 Z" fill="#e0f2fe"/>
+  <path d="M110 130 L220 30 L320 130 Z" fill="#e0f2fe"/>
+  <rect x="0" y="280" width="400" height="120" fill="#f8fafc"/>
+  <rect x="0" y="280" width="400" height="8" fill="#dbeafe"/>
+  <path d="M250 280 L258 312 L266 280 Z" fill="#0f172a"/>
+  <path d="M310 280 L318 306 L326 280 Z" fill="#0f172a"/>
+  <path d="M150 0 L170 0 L160 90 Z" fill="#a5f3fc" stroke="#0891b2" stroke-width="3"/>
+  <path d="M210 0 L228 0 L219 70 Z" fill="#a5f3fc" stroke="#0891b2" stroke-width="3"/>
+  <g>
+    <ellipse cx="180" cy="240" rx="42" ry="48" fill="#1f2937"/>
+    <ellipse cx="180" cy="252" rx="26" ry="32" fill="#fff"/>
+    <circle cx="166" cy="208" r="12" fill="#fff"/>
+    <circle cx="194" cy="208" r="12" fill="#fff"/>
+    <circle cx="166" cy="208" r="5" fill="#000"/>
+    <circle cx="194" cy="208" r="5" fill="#000"/>
+    <path d="M172 222 L188 222 L180 232 Z" fill="#f97316"/>
+    <ellipse cx="156" cy="282" rx="16" ry="7" fill="#f97316"/>
+    <ellipse cx="204" cy="282" rx="16" ry="7" fill="#f97316"/>
+  </g>
+  <circle cx="90" cy="330" r="8" fill="#fff"/>
+  <circle cx="320" cy="340" r="10" fill="#fff"/>
+  <circle cx="350" cy="310" r="6" fill="#fff"/>
+  <text x="200" y="392" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="800" fill="#000">SLIDE ON ICE!</text>
+</svg>

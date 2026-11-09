@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tower Siege — Free Strategy Game | Mini Game Arcade</title>
+<meta name="description" content="Play Tower Siege free online: place towers along the path to stop enemies reaching your castle. Survive all 10 waves to win.">
+<meta name="keywords" content="tower siege game, tower defence game, strategy game, free strategy game">
+<meta property="og:title" content="Tower Siege — Mini Game Arcade">
+<meta property="og:description" content="Play Tower Siege free online: place towers along the path to stop enemies reaching your castle. Survive all 10 waves to win.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/tower-siege.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/tower-siege.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="strategy">Strategy</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Tower Siege</h1>
+  <p data-i18n="siege_intro">Enemies are marching on your castle! Build towers on the marked spots to stop them. Earn gold from every enemy you stop and survive all 10 waves to win.</p>
+  <div class="hud">
+    <span><span data-i18n="gold">Gold:</span> <strong id="gold">150</strong></span>
+    <span><span data-i18n="wave">Wave:</span> <strong id="wave">0/10</strong></span>
+    <span><span data-i18n="castle_hp">Castle HP:</span> <strong id="castleHp">10</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap a build spot, then pick a tower — then press Next Wave!</p>
+    <canvas id="game" width="400" height="520" aria-label="Tower Siege game area" style="max-width:400px;height:auto;border:2px solid #000;border-radius:16px"></canvas>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn" id="btnArrow" type="button" disabled>🏹 Arrow · 50g</button>
+      <button class="btn" id="btnFrost" type="button" disabled>❄ Frost · 60g</button>
+      <button class="btn" id="btnCannon" type="button" disabled>💣 Cannon · 100g</button>
+      <button class="btn" id="btnUpgrade" type="button" disabled>⬆ Upgrade · 40g</button>
+      <button class="btn" id="btnWave" type="button" data-i18n="next_wave">Next Wave</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap a dashed build spot on the map, then tap a tower button to build it there. Arrow towers shoot fast, Frost towers slow enemies, Cannon towers hit hard. Tap one of your towers and press Upgrade to make it stronger (+1 damage, up to level 3). Enemies you stop earn 8 gold. If 10 enemies reach the castle, you lose — survive all 10 waves to win.</p>
+<script>
+(function(){
+  var canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+  var goldEl=document.getElementById('gold'),waveEl=document.getElementById('wave'),hpEl=document.getElementById('castleHp'),status=document.getElementById('status');
+  var W=400,H=520,MAX_WAVES=10,CASTLE_MAX=10,UPGRADE_COST=40;
+  var PATH=[{x:-20,y:90},{x:330,y:90},{x:330,y:260},{x:70,y:260},{x:70,y:430},{x:410,y:430}];
+  var SPOT_POS=[{x:120,y:150},{x:250,y:150},{x:250,y:330},{x:150,y:330},{x:390,y:180},{x:120,y:380},{x:330,y:370},{x:200,y:210}];
+  var TYPES={
+    arrow:{cost:50,range:95,dmg:1,rate:450,color:'#23A094',label:'Arrow'},
+    frost:{cost:60,range:85,dmg:0,rate:700,slow:0.5,slowDur:1500,color:'#38bdf8',label:'Frost'},
+    cannon:{cost:100,range:75,dmg:3,rate:1300,color:'#f97316',label:'Cannon'}
+  };
+  var spots,enemies,projectiles,gold,wave,castleHp,over,won,waveActive,spawnQueue,lastSpawn,selected;
+  var btnArrow=document.getElementById('btnArrow'),btnFrost=document.getElementById('btnFrost'),btnCannon=document.getElementById('btnCannon'),btnUpgrade=document.getElementById('btnUpgrade'),btnWave=document.getElementById('btnWave');
+  function reset(){
+    spots=SPOT_POS.map(function(p){return{x:p.x,y:p.y,tower:null};});
+    enemies=[];projectiles=[];gold=150;wave=0;castleHp=CASTLE_MAX;
+    over=false;won=false;waveActive=false;spawnQueue=0;lastSpawn=0;selected=null;
+    status.textContent='Tap a build spot, then pick a tower — then press Next Wave!';
+    refreshButtons();paintHud();
+  }
+  function paintHud(){
+    goldEl.textContent=gold;
+    waveEl.textContent=wave+'/'+MAX_WAVES;
+    hpEl.textContent=castleHp;
+  }
+  function refreshButtons(){
+    var s=selected!==null?spots[selected]:null;
+    var canBuild=s&&!s.tower&&!over;
+    btnArrow.disabled=!canBuild||gold<TYPES.arrow.cost;
+    btnFrost.disabled=!canBuild||gold<TYPES.frost.cost;
+    btnCannon.disabled=!canBuild||gold<TYPES.cannon.cost;
+    var canUp=s&&s.tower&&s.tower.level<3&&!over;
+    btnUpgrade.disabled=!canUp||gold<UPGRADE_COST;
+    btnWave.disabled=waveActive||over;
+  }
+  function buildTower(type){
+    if(selected===null||over)return;
+    var s=spots[selected],t=TYPES[type];
+    if(s.tower||gold<t.cost)return;
+    gold-=t.cost;
+    s.tower={type:type,level:1,nextShot:0};
+    if(window.mgaBeep)window.mgaBeep(660,0.1);
+    status.textContent=t.label+' tower built! Press Next Wave when ready.';
+    paintHud();refreshButtons();
+  }
+  function upgradeTower(){
+    if(selected===null||over)return;
+    var s=spots[selected];
+    if(!s.tower||s.tower.level>=3||gold<UPGRADE_COST)return;
+    gold-=UPGRADE_COST;
+    s.tower.level++;
+    if(window.mgaBeep)window.mgaBeep(760,0.1);
+    status.textContent='Tower upgraded to level '+s.tower.level+'!';
+    paintHud();refreshButtons();
+  }
+  function startWave(){
+    if(waveActive||over)return;
+    wave++;
+    spawnQueue=4+wave*2;
+    waveActive=true;lastSpawn=0;
+    status.textContent='Wave '+wave+' incoming!';
+    paintHud();refreshButtons();
+  }
+  function enemyHp(){return 4+wave*2;}
+  function enemySpeed(){return 0.55+wave*0.04;}
+  function spawnEnemy(){
+    enemies.push({x:PATH[0].x,y:PATH[0].y,wp:1,hp:enemyHp(),maxHp:enemyHp(),speed:enemySpeed(),slowUntil:0,prog:0});
+  }
+  function waveCleared(){
+    waveActive=false;
+    var bonus=25+wave*5;
+    gold+=bonus;
+    paintHud();refreshButtons();
+    if(wave>=MAX_WAVES){
+      won=true;over=true;
+      status.textContent='You win! The castle stands. Final gold '+gold+'. Press Restart to play again.';
+      if(window.mgaBeep)window.mgaBeep(880,0.3);
+    }else{
+      status.textContent='Wave '+wave+' cleared! +'+bonus+' gold bonus. Build more towers, then press Next Wave.';
+      if(window.mgaBeep)window.mgaBeep(880,0.15);
+    }
+  }
+  function castleHit(){
+    castleHp--;
+    if(window.mgaBeep)window.mgaBeep(160,0.25);
+    paintHud();
+    if(castleHp<=0){
+      over=true;
+      status.textContent='The castle has fallen! You reached wave '+wave+'. Press Restart to try again.';
+      if(window.mgaBeep)window.mgaBeep(120,0.4);
+      refreshButtons();
+    }
+  }
+  function dist(ax,ay,bx,by){return Math.sqrt((ax-bx)*(ax-bx)+(ay-by)*(ay-by));}
+  function update(){
+    if(over)return;
+    var now=Date.now();
+    if(waveActive&&spawnQueue>0){
+      if(!lastSpawn||now-lastSpawn>900){spawnEnemy();spawnQueue--;lastSpawn=now;}
+    }
+    for(var i=enemies.length-1;i>=0;i--){
+      var e=enemies[i];
+      var sp=e.speed*(now<e.slowUntil?0.5:1);
+      var tgt=PATH[e.wp];
+      var d=dist(e.x,e.y,tgt.x,tgt.y);
+      if(d<=sp){e.x=tgt.x;e.y=tgt.y;e.wp++;e.prog++;}
+      else{e.x+=(tgt.x-e.x)/d*sp;e.y+=(tgt.y-e.y)/d*sp;}
+      if(e.wp>=PATH.length){enemies.splice(i,1);castleHit();if(over)return;}
+    }
+    for(var s=0;s<spots.length;s++){
+      var tw=spots[s].tower;
+      if(!tw)continue;
+      var t=TYPES[tw.type];
+      if(now<tw.nextShot)continue;
+      var best=null,bestProg=-1;
+      for(var j=0;j<enemies.length;j++){
+        var en=enemies[j];
+        if(dist(spots[s].x,spots[s].y,en.x,en.y)<=t.range&&en.prog>bestProg){best=en;bestProg=en.prog;}
+      }
+      if(best){
+        tw.nextShot=now+t.rate;
+        projectiles.push({x:spots[s].x,y:spots[s].y,target:best,dmg:t.dmg+tw.level-1,slow:t.slow||0,slowDur:t.slowDur||0,color:t.color});
+        if(window.mgaBeep)window.mgaBeep(500,0.04);
+      }
+    }
+    for(var p=projectiles.length-1;p>=0;p--){
+      var pr=projectiles[p];
+      if(!pr.target||pr.target.hp<=0||enemies.indexOf(pr.target)<0){projectiles.splice(p,1);continue;}
+      var dd=dist(pr.x,pr.y,pr.target.x,pr.target.y);
+      if(dd<=9){
+        pr.target.hp-=pr.dmg;
+        if(pr.slow)pr.target.slowUntil=Date.now()+pr.slowDur;
+        if(pr.target.hp<=0){
+          var idx=enemies.indexOf(pr.target);
+          if(idx>=0)enemies.splice(idx,1);
+          gold+=8;
+          if(window.mgaBeep)window.mgaBeep(760,0.08);
+          paintHud();refreshButtons();
+        }
+        projectiles.splice(p,1);
+      }else{
+        pr.x+=(pr.target.x-pr.x)/dd*8;
+        pr.y+=(pr.target.y-pr.y)/dd*8;
+      }
+    }
+    if(waveActive&&spawnQueue===0&&enemies.length===0)waveCleared();
+  }
+  function drawPath(){
+    ctx.strokeStyle='#d9a066';ctx.lineWidth=34;ctx.lineJoin='round';ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(PATH[0].x,PATH[0].y);
+    for(var i=1;i<PATH.length;i++)ctx.lineTo(PATH[i].x,PATH[i].y);
+    ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=2;ctx.setLineDash([10,10]);
+    ctx.beginPath();ctx.moveTo(PATH[0].x,PATH[0].y);
+    for(var j=1;j<PATH.length;j++)ctx.lineTo(PATH[j].x,PATH[j].y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  function drawCastle(){
+    var cx=372,cy=430;
+    ctx.fillStyle='#9ca3af';ctx.strokeStyle='#000';ctx.lineWidth=2;
+    ctx.fillRect(cx-26,cy-34,52,34);ctx.strokeRect(cx-26,cy-34,52,34);
+    ctx.fillRect(cx-34,cy-52,16,52);ctx.strokeRect(cx-34,cy-52,16,52);
+    ctx.fillRect(cx+18,cy-52,16,52);ctx.strokeRect(cx+18,cy-52,16,52);
+    ctx.fillStyle='#ef4444';
+    ctx.beginPath();ctx.moveTo(cx,cy-52);ctx.lineTo(cx,cy-70);ctx.lineTo(cx+16,cy-63);ctx.lineTo(cx,cy-56);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#374151';
+    ctx.fillRect(cx-8,cy-18,16,18);
+    ctx.fillStyle='#fbbf24';
+    ctx.font='bold 11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('CASTLE',cx,cy+16);
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#86c06c';ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#65a34d';
+    for(var b=0;b<14;b++){ctx.beginPath();ctx.arc((b*67)%W,(b*113)%H,18,0,Math.PI*2);ctx.fill();}
+    drawPath();
+    for(var s=0;s<spots.length;s++){
+      var sp=spots[s];
+      ctx.setLineDash([5,5]);
+      ctx.strokeStyle=selected===s?'#000':'rgba(0,0,0,0.55)';
+      ctx.lineWidth=selected===s?3:2;
+      ctx.beginPath();ctx.arc(sp.x,sp.y,22,0,Math.PI*2);ctx.stroke();
+      ctx.setLineDash([]);
+      if(selected===s&&sp.tower){
+        ctx.strokeStyle='rgba(0,0,0,0.4)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.arc(sp.x,sp.y,TYPES[sp.tower.type].range,0,Math.PI*2);ctx.stroke();
+      }
+      if(sp.tower){
+        var t=TYPES[sp.tower.type];
+        ctx.fillStyle=t.color;ctx.strokeStyle='#000';ctx.lineWidth=2;
+        ctx.beginPath();ctx.arc(sp.x,sp.y,16,0,Math.PI*2);ctx.fill();ctx.stroke();
+        ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';
+        ctx.fillText(sp.tower.type==='arrow'?'A':sp.tower.type==='frost'?'F':'C',sp.x,sp.y+4);
+        ctx.fillStyle='#000';ctx.font='bold 10px sans-serif';
+        ctx.fillText('Lv'+sp.tower.level,sp.x,sp.y+28);
+      }else{
+        ctx.fillStyle='rgba(255,255,255,0.85)';ctx.font='bold 16px sans-serif';ctx.textAlign='center';
+        ctx.fillText('+',sp.x,sp.y+6);
+      }
+    }
+    for(var e=0;e<enemies.length;e++){
+      var en=enemies[e];
+      ctx.fillStyle=Date.now()<en.slowUntil?'#7dd3fc':'#dc2626';
+      ctx.strokeStyle='#000';ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(en.x,en.y,11,0,Math.PI*2);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#000';
+      ctx.fillRect(en.x-11,en.y-19,22,4);
+      ctx.fillStyle='#22c55e';
+      ctx.fillRect(en.x-11,en.y-19,22*Math.max(0,en.hp/en.maxHp),4);
+    }
+    for(var p=0;p<projectiles.length;p++){
+      ctx.fillStyle=projectiles[p].color;
+      ctx.beginPath();ctx.arc(projectiles[p].x,projectiles[p].y,4,0,Math.PI*2);ctx.fill();
+    }
+    drawCastle();
+    if(over){
+      ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#fff';ctx.font='bold 26px sans-serif';ctx.textAlign='center';
+      ctx.fillText(won?'YOU WIN!':'CASTLE FALLEN',W/2,240);
+      ctx.font='16px sans-serif';
+      ctx.fillText(won?'All 10 waves survived!':'Wave '+wave+' — press Restart',W/2,275);
+    }
+  }
+  function loop(){update();draw();requestAnimationFrame(loop);}
+  canvas.addEventListener('pointerdown',function(e){
+    if(over)return;
+    var r=canvas.getBoundingClientRect();
+    var x=(e.clientX-r.left)*(W/r.width),y=(e.clientY-r.top)*(H/r.height);
+    var best=-1,bd=1e9;
+    for(var i=0;i<spots.length;i++){
+      var d=dist(x,y,spots[i].x,spots[i].y);
+      if(d<bd){bd=d;best=i;}
+    }
+    if(bd<=28){
+      selected=best;
+      var sp=spots[best];
+      status.textContent=sp.tower?TYPES[sp.tower.type].label+' tower (level '+sp.tower.level+') — upgrade it or build elsewhere.':'Empty build spot — pick a tower below.';
+      refreshButtons();
+    }else{
+      selected=null;
+      refreshButtons();
+    }
+  });
+  btnArrow.addEventListener('click',function(){buildTower('arrow');});
+  btnFrost.addEventListener('click',function(){buildTower('frost');});
+  btnCannon.addEventListener('click',function(){buildTower('cannon');});
+  btnUpgrade.addEventListener('click',function(){upgradeTower();});
+  btnWave.addEventListener('click',function(){startWave();});
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();if(window.mgaBeep)window.mgaBeep(660,0.1);});
+  reset();
+  loop();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+</body>
+</html>
