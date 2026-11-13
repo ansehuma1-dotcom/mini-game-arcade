@@ -81,17 +81,17 @@ first game ships.
 | 9 | Alien Zapper | Arcade | All Ages | Ship zapping descending aliens | ✅ (LIVE 2026-11-13, commit c48055e4)
 | 9 | Coin Collector | Arcade | All Ages | Coins bouncing into a chest | ✅ (LIVE 2026-11-13, commit c48055e4)
 | 9 | Number Quest | Puzzle | All Ages | Number path adventure | ✅ (LIVE 2026-11-13, commit c48055e4)
-| 10 | Chess Lite | Board (new) | Adults | Mini chess board, king piece |
+| 10 | Chess Lite | Board (new) | Adults | Mini chess board, king piece | ✅ (LIVE 2026-11-13, commit fba8d58d)
 
 2026-11-12 run: Day 9 still NOT live — all 5 game pages return 404 on the production domain, homepage has no Day 9 references (site still at 42 games). Push NOT retried, per the standing rule (do not retry a broken publish until the user fixes the GitHub push-approval route); Day 10 builds NOT started (needs the user's say-so after the blocker report). Local Day 9 files intact and ready (game pages, thumbnails, lang-day9.js, updated index.html + sitemap.xml, manifest ~/workspace/mga-day9-paths).
 
 2026-11-13 run: Day 9 IS NOW LIVE. The user had tapped Allowed on the 12 Nov push card (17:44 PKT) but that approval came after the run ended, so the push never executed. First push attempt this run was interrupted by a service restart (nothing landed — head still Day 8); retry succeeded without a fresh card. Commit c48055e49d01adac96df8c453656d4dc7a2d3ff6, verified live signed-out: all 5 pages 200, homepage 47 cards with all 5 Day 9 cards + thumbnails, Number Merge card correctly on number-merge-thumb.svg. Play-check of Bubble Blast + Shape Match via live browser in progress at time of writing. Day 10 builds started in the same run (push route working again).
 
-2026-11-13 run (Day 10): Day 9 play-check PASSED live (Bubble Blast: 4 shots, score 0→40, Restart reset; Shape Match: cards flip, moves counter, flip-back works; no Start button on either — both playable immediately on load, as designed). Day 10 built: Chess Lite, Checkers Clash, Penalty Kick, Basket Hoops, Goal Keeper + Board/Sports categories (menu + filters on 36 pages, lang-day10.js with 31 keys × 11 languages). Local gate passed: node --check on all 5 scripts, runtime smoke tests (chess 13/13 DOM checks + 8-game fuzz, checkers 24-ply play-through, hoops DOM-stub harness, penalty/keeper 1200-frame harness), 52 homepage cards, sitemap 57 URLs. Pushing 2026-11-13.
-| 10 | Checkers Clash | Board | All Ages | Red and black checkers jumping |
-| 10 | Penalty Kick | Sports (new) | All Ages | Football, goal, keeper diving |
-| 10 | Basket Hoops | Sports | All Ages | Basketball arcing into a hoop |
-| 10 | Goal Keeper | Sports | Kids | Keeper gloves stopping shots |
+2026-11-13 run (Day 10): Day 9 play-check PASSED live (Bubble Blast: 4 shots, score 0→40, Restart reset; Shape Match: cards flip, moves counter, flip-back works; no Start button on either — both playable immediately on load, as designed). Day 10 built: Chess Lite, Checkers Clash, Penalty Kick, Basket Hoops, Goal Keeper + Board/Sports categories (menu + filters on 36 pages, lang-day10.js with 31 keys × 11 languages). Local gate passed: node --check on all 5 scripts, runtime smoke tests (chess 13/13 DOM checks + 8-game fuzz, checkers 24-ply play-through, hoops DOM-stub harness, penalty/keeper 1200-frame harness), 52 homepage cards, sitemap 57 URLs. Pushed 2026-11-13, commit fba8d58d426a36aa075ff53bb6ea998876bf735a (first attempt died in a service restart, retry succeeded). LIVE VERIFIED signed-out: homepage 52 cards, Board filter shows exactly Chess Lite + Checkers Clash; Chess Lite e2→e4 highlighted and moved, computer replied a7→a5, Restart restored start position; Penalty Kick corner shot scored (Score 10, Goals 1, Kicks left 4). NOTE: in the test browser's screenshots the back-rank glyphs showed as outline boxes (pawns rendered) — a font-coverage quirk of that minimal VM browser; the standard Unicode glyphs are in the DOM and the game works. Site now at 52 games.
+| 10 | Checkers Clash | Board | All Ages | Red and black checkers jumping | ✅ (LIVE 2026-11-13, commit fba8d58d)
+| 10 | Penalty Kick | Sports (new) | All Ages | Football, goal, keeper diving | ✅ (LIVE 2026-11-13, commit fba8d58d)
+| 10 | Basket Hoops | Sports | All Ages | Basketball arcing into a hoop | ✅ (LIVE 2026-11-13, commit fba8d58d)
+| 10 | Goal Keeper | Sports | Kids | Keeper gloves stopping shots | ✅ (LIVE 2026-11-13, commit fba8d58d)
 | 11 | Fishing Frenzy | Arcade | Kids | Hook catching fish underwater |
 | 11 | Farm Merge | Idle | All Ages | Crops merging on farm plots |
 | 11 | Pizza Maker | Idle | Kids | Pizza oven, toppings, timer |
