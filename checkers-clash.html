@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkers Clash — Free Board Game | Mini Game Arcade</title>
+<meta name="description" content="Play Checkers Clash free online: jump the black checkers, crown your kings, and capture them all to win.">
+<meta name="keywords" content="checkers game, play checkers online, free board game">
+<meta property="og:title" content="Checkers Clash — Mini Game Arcade">
+<meta property="og:description" content="Play Checkers Clash free online: jump the black checkers, crown your kings, and capture them all to win.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/checkers-clash.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/checkers-clash.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+.board{display:grid;grid-template-columns:repeat(8,1fr);max-width:480px;margin:0 auto;border:3px solid #000;border-radius:12px;overflow:hidden}
+.sq{aspect-ratio:1;border:0;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;background:#FFF3C4}
+.sq.dark{background:#23A094}
+.sq.sel{box-shadow:inset 0 0 0 4px #FF90E8}
+.sq.hint{box-shadow:inset 0 0 0 4px #FFC900}
+.sq.hint::after{content:'';width:26%;height:26%;border-radius:50%;background:#FF90E8;border:2px solid #000}
+.sq:focus{outline:3px solid #FF90E8;outline-offset:-3px}
+.piece{width:76%;height:76%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:clamp(1rem,4.5vw,1.5rem);font-weight:700;border:2px solid #000;box-shadow:inset 0 -4px 0 rgba(0,0,0,.25)}
+.piece.red{background:#E63946;color:#FFC900}
+.piece.black{background:#1A1A1A;color:#FFC900}
+</style>
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html?type=board" data-menu-type="board" data-i18n="board">Board</a>
+    <a href="index.html?type=sports" data-menu-type="sports" data-i18n="sports">Sports</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="board">Board</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Checkers Clash</h1>
+  <p data-i18n="checkers_intro">A friendly game of checkers against the computer! Jump the black pieces, crown your kings on the far row, and capture them all. The computer answers every move — take your time.</p>
+  <div class="hud">
+    <span><span data-i18n="checkers_turn">Turn:</span> <strong id="turn">You</strong></span>
+    <span><span data-i18n="checkers_pieces">Pieces:</span> <strong id="pieces">Red 12 — Black 12</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Your turn — tap a red piece to see where it can move.</p>
+    <div class="board" id="board" role="grid" aria-label="Checkers board"></div>
+    <p style="margin-top:16px"><button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button></p>
+  </div>
+  <p class="muted">Controls: click or tap one of your red pieces to see where it can move, then click a highlighted square. Jump over a black piece to capture it — if the same piece can jump again, keep jumping! Reach the far row to crown a king, which moves both ways. Capture all the black pieces, or block them so they cannot move, to win. Press R to restart.</p>
+<script>
+(function(){
+  var boardEl=document.getElementById('board');
+  var statusEl=document.getElementById('status');
+  var turnEl=document.getElementById('turn');
+  var piecesEl=document.getElementById('pieces');
+  var ALL=[[-1,-1],[-1,1],[1,-1],[1,1]];
+  var board,turn,over,selected,selMoves,mustJump,aiBusy,token,cells;
+  cells=[];
+  function beep(f,d){if(window.mgaBeep)window.mgaBeep(f,d);}
+  function inB(r,c){return r>=0&&r<8&&c>=0&&c<8;}
+  function cloneBoard(b){
+    var n=[];
+    for(var r=0;r<8;r++){n.push([]);for(var c=0;c<8;c++){var p=b[r][c];n[r].push(p?{c:p.c,k:p.k}:null);}}
+    return n;
+  }
+  function dirsFor(p){
+    if(p.k)return ALL;
+    return p.c==='r'?[[-1,-1],[-1,1]]:[[1,-1],[1,1]];
+  }
+  function movesFrom(b,r,c,jumpsOnly){
+    var p=b[r][c];
+    if(!p)return [];
+    var out=[],i,d,nr,nc,mr,mc;
+    if(!jumpsOnly){
+      var ds=dirsFor(p);
+      for(i=0;i<ds.length;i++){d=ds[i];nr=r+d[0];nc=c+d[1];
+        if(inB(nr,nc)&&!b[nr][nc])out.push({from:[r,c],to:[nr,nc],cap:null});}
+    }
+    for(i=0;i<ALL.length;i++){d=ALL[i];mr=r+d[0];mc=c+d[1];nr=r+2*d[0];nc=c+2*d[1];
+      if(inB(nr,nc)&&b[mr][mc]&&b[mr][mc].c!==p.c&&!b[nr][nc])out.push({from:[r,c],to:[nr,nc],cap:[mr,mc]});}
+    return out;
+  }
+  function allMoves(b,color,jumpsOnly){
+    var out=[];
+    for(var r=0;r<8;r++)for(var c=0;c<8;c++){
+      if(b[r][c]&&b[r][c].c===color){var ms=movesFrom(b,r,c,jumpsOnly);for(var i=0;i<ms.length;i++)out.push(ms[i]);}
+    }
+    return out;
+  }
+  function countPieces(b,color){var n=0;for(var r=0;r<8;r++)for(var c=0;c<8;c++)if(b[r][c]&&b[r][c].c===color)n++;return n;}
+  function applyMove(b,m){
+    var p=b[m.from[0]][m.from[1]];
+    b[m.from[0]][m.from[1]]=null;
+    if(m.cap)b[m.cap[0]][m.cap[1]]=null;
+    b[m.to[0]][m.to[1]]=p;
+    var crowned=false;
+    if(!p.k&&((p.c==='r'&&m.to[0]===0)||(p.c==='b'&&m.to[0]===7))){p.k=true;crowned=true;}
+    return {captured:!!m.cap,crowned:crowned};
+  }
+  function longestChain(b,r,c){
+    var jumps=movesFrom(b,r,c,true);
+    if(!jumps.length)return [];
+    var best=[];
+    for(var i=0;i<jumps.length;i++){
+      var nb=cloneBoard(b);
+      var res=applyMove(nb,jumps[i]);
+      var rest=res.crowned?[]:longestChain(nb,jumps[i].to[0],jumps[i].to[1]);
+      var chain=[jumps[i]].concat(rest);
+      if(chain.length>best.length)best=chain;
+    }
+    return best;
+  }
+  function reset(){
+    board=[];
+    for(var r=0;r<8;r++){board.push([]);for(var c=0;c<8;c++){
+      var p=null;
+      if((r+c)%2===1){
+        if(r<3)p={c:'b',k:false};
+        else if(r>4)p={c:'r',k:false};
+      }
+      board[r].push(p);
+    }}
+    turn='r';over=false;selected=null;selMoves=[];mustJump=false;aiBusy=false;
+    token=(token||0)+1;
+    statusEl.textContent='Your turn — tap a red piece to see where it can move.';
+    render();
+  }
+  function buildBoard(){
+    for(var r=0;r<8;r++)for(var c=0;c<8;c++){
+      (function(r,c){
+        var b=document.createElement('button');
+        b.type='button';
+        b.className='sq'+(((r+c)%2===1)?' dark':'');
+        b.addEventListener('click',function(){onCell(r,c);});
+        boardEl.appendChild(b);
+        cells.push(b);
+      })(r,c);
+    }
+  }
+  function render(){
+    var rc=countPieces(board,'r'),bc=countPieces(board,'b');
+    piecesEl.textContent='Red '+rc+' — Black '+bc;
+    turnEl.textContent=over?'—':(turn==='r'?'You':'Computer');
+    for(var r=0;r<8;r++)for(var c=0;c<8;c++){
+      var cell=cells[r*8+c];
+      var p=board[r][c];
+      var cls='sq'+(((r+c)%2===1)?' dark':'');
+      if(selected&&selected.r===r&&selected.c===c)cls+=' sel';
+      var hint=false;
+      for(var i=0;i<selMoves.length;i++)if(selMoves[i].to[0]===r&&selMoves[i].to[1]===c){hint=true;break;}
+      if(hint)cls+=' hint';
+      cell.className=cls;
+      cell.innerHTML=p?'<span class="piece '+(p.c==='r'?'red':'black')+'">'+(p.k?'♛':'')+'</span>':'';
+      cell.setAttribute('aria-label','Row '+(r+1)+', column '+(c+1)+(p?(', '+(p.c==='r'?'red':'black')+(p.k?' king':'')+' piece'):', empty square'));
+    }
+  }
+  function endGame(msg){
+    over=true;
+    statusEl.textContent=msg;
+    beep(120,0.4);
+    render();
+  }
+  function checkEnd(nextColor){
+    var rc=countPieces(board,'r'),bc=countPieces(board,'b');
+    if(bc===0){endGame('You win! You captured all the black pieces. Press Restart to play again.');return true;}
+    if(rc===0){endGame('The computer wins — all your red pieces were captured. Press Restart to play again.');return true;}
+    if(allMoves(board,nextColor,false).length===0){
+      if(allMoves(board,nextColor==='r'?'b':'r',false).length===0){
+        endGame('Draw! Neither side can move. Press Restart to play again.');
+      }else if(nextColor==='r'){
+        endGame('No moves left for you — the computer wins. Press Restart to play again.');
+      }else{
+        endGame('The computer has no moves left — you win! Press Restart to play again.');
+      }
+      return true;
+    }
+    return false;
+  }
+  function onCell(r,c){
+    if(over||turn!=='r'||aiBusy)return;
+    var i,m;
+    if(selected){
+      for(i=0;i<selMoves.length;i++){
+        m=selMoves[i];
+        if(m.to[0]===r&&m.to[1]===c){doPlayerMove(m);return;}
+      }
+    }
+    var p=board[r][c];
+    if(p&&p.c==='r'){
+      if(mustJump&&!(selected&&selected.r===r&&selected.c===c)){
+        statusEl.textContent='Keep jumping with the same piece!';
+        return;
+      }
+      selected={r:r,c:c};
+      selMoves=movesFrom(board,r,c,mustJump);
+      if(!selMoves.length){statusEl.textContent='That piece cannot move right now — try another red piece.';}
+      else{statusEl.textContent='Choose a highlighted square to move.';}
+      render();
+      return;
+    }
+    selected=null;selMoves=[];render();
+  }
+  function doPlayerMove(m){
+    var res=applyMove(board,m);
+    beep(res.captured?300:520,res.captured?0.15:0.08);
+    if(res.crowned){statusEl.textContent='You crowned a king! It moves both ways.';beep(880,0.2);}
+    else if(res.captured){statusEl.textContent='Captured!';}
+    render();
+    if(m.cap&&!res.crowned){
+      var again=movesFrom(board,m.to[0],m.to[1],true);
+      if(again.length){
+        selected={r:m.to[0],c:m.to[1]};selMoves=again;mustJump=true;
+        statusEl.textContent='Keep jumping with the same piece!';
+        render();return;
+      }
+    }
+    mustJump=false;selected=null;selMoves=[];
+    if(checkEnd('b'))return;
+    turn='b';aiBusy=true;
+    statusEl.textContent='Computer is thinking…';
+    render();
+    token=(token||0)+1;
+    var t=token;
+    setTimeout(function(){if(t===token&&!over)aiTurn(t);},600);
+  }
+  function aiTurn(t){
+    if(over||t!==token)return;
+    var jumps=allMoves(board,'b',true);
+    var chosen=null;
+    if(jumps.length){
+      var seen={},starts=[],i,k;
+      for(i=0;i<jumps.length;i++){
+        k=jumps[i].from[0]+','+jumps[i].from[1];
+        if(!seen[k]){seen[k]=true;starts.push(jumps[i].from);}
+      }
+      var bestLen=0,bestChains=[];
+      for(i=0;i<starts.length;i++){
+        var ch=longestChain(board,starts[i][0],starts[i][1]);
+        if(ch.length>bestLen){bestLen=ch.length;bestChains=[ch];}
+        else if(ch.length===bestLen){bestChains.push(ch);}
+      }
+      var simple=allMoves(board,'b',false).filter(function(m){return !m.cap;});
+      if(Math.random()<0.85||!simple.length){
+        chosen=bestChains[Math.floor(Math.random()*bestChains.length)];
+      }else{
+        chosen=[simple[Math.floor(Math.random()*simple.length)]];
+      }
+    }else{
+      var moves=allMoves(board,'b',false);
+      if(!moves.length)return;
+      chosen=[moves[Math.floor(Math.random()*moves.length)]];
+    }
+    var idx=0;
+    (function step(){
+      if(over||t!==token)return;
+      var m=chosen[idx];
+      var res=applyMove(board,m);
+      beep(res.captured?300:520,res.captured?0.15:0.08);
+      if(res.crowned){statusEl.textContent='The computer crowned a king!';beep(880,0.2);}
+      render();
+      idx++;
+      if(idx<chosen.length){setTimeout(step,350);}
+      else{
+        if(checkEnd('r'))return;
+        turn='r';aiBusy=false;
+        statusEl.textContent='Your turn — tap a red piece to see where it can move.';
+        render();
+      }
+    })();
+  }
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();beep(660,0.1);});
+  document.addEventListener('keydown',function(e){if(e.key==='r'||e.key==='R'){reset();}});
+  buildBoard();
+  reset();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+<script src="lang-day9.js"></script>
+<script src="lang-day10.js"></script>
+</body>
+</html>
