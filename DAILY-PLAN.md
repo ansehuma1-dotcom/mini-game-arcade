@@ -52,16 +52,62 @@ stickman action — adapted here as family-friendly, 1-tap, no-download original
 | 27 | Bow Aim | Arcade | All Ages | Bow aiming at round targets | ✅ |
 | 28 | Star Blaster | Arcade | All Ages | Ship dodging and blasting asteroids | ✅ |
 | 29 | Harvest Tap | Idle | All Ages | Farm crops growing, tap to harvest | ✅ |
-| 30 | Quiz Quest | Words | All Ages | Question card with 4 answers | ✅ |
-| 31 | Parking Puzzle | Puzzle | Adults | Cars sliding out of a jammed lot | ☐ |
-| 32 | Block Drop | Puzzle | All Ages | Blocks dropping and clearing lines | ☐ |
-| 33 | Bubble Match | Puzzle | All Ages | Matching coloured bubbles in a row | ☐ |
-| 34 | Dino Dash | Runner | Kids | Original dino jumping over rocks | ☐ |
-| 35 | Coin Pusher | Arcade | All Ages | Coins dropping and pushing others off | ☐ |
+| 30 | Quiz Quest | Words | All Ages | Question card with 4 answers | ✅ (Next double-fire bug FIXED live 2026-11-07, commit 60ab916, play-tested: counter advances 1 per click) |
+| 31 | Parking Puzzle | Puzzle | Adults | Cars sliding out of a jammed lot | ✅ |
+| 32 | Block Drop | Puzzle | All Ages | Blocks dropping and clearing lines | ✅ |
+| 33 | Bubble Match | Puzzle | All Ages | Matching coloured bubbles in a row | ✅ |
+| 34 | Dino Dash | Runner | Kids | Original dino jumping over rocks | ✅ |
+| 35 | Coin Pusher | Arcade | All Ages | Coins dropping and pushing others off | ✅ |
 
 New categories to create only when their game ships (standing rule): Idle, Runner,
 Words, Racing, Cards, Strategy. Existing categories stay: Arcade, Puzzle, Kids, Adults,
 All Ages. Do not create a category for a game that has not shipped.
+
+## Queue 2 — APPROVED by the user 2026-11-09 (proposed 2026-11-08)
+Day 8 builds from the 2026-11-09 daily run. Same rules as Queue 1: original code/art/names only, at least 5/day,
+quality gate per game, no AdSense, no Facebook posts, no header/menu redesign, no
+removals. New categories here (Sports, Board) are created only when their
+first game ships.
+
+| Day | Game (original name) | Category | Audience | Thumbnail idea | Status |
+|-----|----------------------|----------|----------|----------------|--------|
+| 8 | Candy Catch | Arcade | Kids | Sweets falling into a jar | ✅ |
+| 8 | Penguin Slide | Runner | Kids | Penguin sliding on ice, dodging cracks | ✅ |
+| 8 | Word Builder | Words | All Ages | Letter tiles building a word | ✅ |
+| 8 | Turbo Sprint | Racing | All Ages | Race car with nitro boost | ✅ |
+| 8 | Tower Siege | Strategy | All Ages | Towers defending a castle path | ✅ |
+| 9 | Bubble Blast | Puzzle | All Ages | Cannon aiming at bubble clusters | ⚠ (built locally, push blocked — GitHub approval timed out)
+| 9 | Shape Match | Puzzle | Kids | Shapes pairing up | ⚠ (built locally, push blocked — GitHub approval timed out)
+| 9 | Alien Zapper | Arcade | All Ages | Ship zapping descending aliens | ⚠ (built locally, push blocked — GitHub approval timed out)
+| 9 | Coin Collector | Arcade | All Ages | Coins bouncing into a chest | ⚠ (built locally, push blocked — GitHub approval timed out)
+| 9 | Number Quest | Puzzle | All Ages | Number path adventure | ⚠ (built locally, push blocked — GitHub approval timed out)
+| 10 | Chess Lite | Board (new) | Adults | Mini chess board, king piece |
+
+2026-11-12 run: Day 9 still NOT live — all 5 game pages return 404 on the production domain, homepage has no Day 9 references (site still at 42 games). Push NOT retried, per the standing rule (do not retry a broken publish until the user fixes the GitHub push-approval route); Day 10 builds NOT started (needs the user's say-so after the blocker report). Local Day 9 files intact and ready (game pages, thumbnails, lang-day9.js, updated index.html + sitemap.xml, manifest ~/workspace/mga-day9-paths).
+| 10 | Checkers Clash | Board | All Ages | Red and black checkers jumping |
+| 10 | Penalty Kick | Sports (new) | All Ages | Football, goal, keeper diving |
+| 10 | Basket Hoops | Sports | All Ages | Basketball arcing into a hoop |
+| 10 | Goal Keeper | Sports | Kids | Keeper gloves stopping shots |
+| 11 | Fishing Frenzy | Arcade | Kids | Hook catching fish underwater |
+| 11 | Farm Merge | Idle | All Ages | Crops merging on farm plots |
+| 11 | Pizza Maker | Idle | Kids | Pizza oven, toppings, timer |
+| 11 | Monster Dash | Runner | All Ages | Friendly monster hopping gaps |
+| 11 | Laser Maze | Puzzle | All Ages | Mirrors bending a laser beam |
+| 12 | Rhythm Beat | Arcade | All Ages | Beats pulsing to a rhythm bar |
+| 12 | Word Search | Words | All Ages | Letter grid, hidden words circled |
+| 12 | Crossword Mini | Words | Adults | Small crossword grid, clues |
+| 12 | Blackjack Blitz | Cards | Adults | Cards totalling 21 |
+| 12 | Poker Pairs | Cards | Adults | Poker hand, matching pairs |
+| 13 | Bridge Builder | Strategy | All Ages | Bridge planks over a river gap |
+| 13 | City Builder | Strategy | All Ages | Tiny city blocks rising |
+| 13 | Rocket Launch | Arcade | Kids | Rocket blasting past stars |
+| 13 | Submarine Dive | Arcade | All Ages | Sub dodging mines underwater |
+| 13 | Treasure Hunt | Puzzle | Kids | Map with X marking treasure |
+| 14 | Escape Room | Puzzle | Adults | Locked room, keys and clues |
+| 14 | Pet Care | Idle | Kids | Happy pet, food and hearts |
+| 14 | Snowball Fight | Arcade | Kids | Snowballs flying in a yard |
+| 14 | Helicopter Rescue | Arcade | All Ages | Helicopter lifting stranded hikers |
+| 14 | Jungle Snake | Arcade | All Ages | Snake coiling through jungle fruit |
 
 ## Daily run checklist
 1. Take the next FIVE (minimum) ☐ games in order; skip none, do not repeat a shipped game. If one fails its gate, publish the next game in the queue the same day to still reach 5 live games that day if possible; otherwise report the shortfall plainly.

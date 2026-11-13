@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#FFF7D6"/>
+  <circle cx="200" cy="150" r="118" fill="#FFC900" opacity="0.35"/>
+  <!-- face-down card -->
+  <g>
+    <rect x="52" y="52" width="84" height="104" rx="14" fill="#FFC900" stroke="#000" stroke-width="4"/>
+    <text x="94" y="122" font-family="Arial, sans-serif" font-size="52" font-weight="bold" text-anchor="middle" fill="#000">?</text>
+  </g>
+  <!-- circle card -->
+  <g>
+    <rect x="158" y="52" width="84" height="104" rx="14" fill="#fff" stroke="#000" stroke-width="4"/>
+    <circle cx="200" cy="104" r="28" fill="#23A094"/>
+  </g>
+  <!-- star card -->
+  <g>
+    <rect x="264" y="52" width="84" height="104" rx="14" fill="#fff" stroke="#000" stroke-width="4"/>
+    <polygon points="306,76 313,96 334,96 317,108 323,128 306,116 289,128 295,108 278,96 299,96" fill="#EAB308" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+  </g>
+  <!-- heart card -->
+  <g>
+    <rect x="52" y="168" width="84" height="104" rx="14" fill="#fff" stroke="#000" stroke-width="4"/>
+    <path d="M94 244 C 66 222 66 196 82 188 C 88 185 94 190 94 196 C 94 190 100 185 106 188 C 122 196 122 222 94 244 Z" fill="#EC4899"/>
+  </g>
+  <!-- triangle card -->
+  <g>
+    <rect x="158" y="168" width="84" height="104" rx="14" fill="#fff" stroke="#000" stroke-width="4"/>
+    <polygon points="200,188 228,240 172,240" fill="#F97316"/>
+  </g>
+  <!-- square + diamond card -->
+  <g>
+    <rect x="264" y="168" width="84" height="104" rx="14" fill="#fff" stroke="#000" stroke-width="4"/>
+    <rect x="280" y="196" width="26" height="26" rx="4" fill="#3B82F6"/>
+    <polygon points="322,196 334,209 322,222 310,209" fill="#8B5CF6"/>
+  </g>
+</svg>

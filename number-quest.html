@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Number Quest — Free Puzzle Game | Mini Game Arcade</title>
+<meta name="description" content="Play Number Quest free online: tap the shuffled number tiles in order from 1 to 25 and light the path to the star. 3 lives, timer counts up.">
+<meta name="keywords" content="number quest game, number game, puzzle game, kids number game, free puzzle game">
+<meta property="og:title" content="Number Quest — Mini Game Arcade">
+<meta property="og:description" content="Play Number Quest free online: tap the shuffled number tiles in order from 1 to 25 and light the path to the star. 3 lives, timer counts up.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/number-quest.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/number-quest.html">
+<style>
+.quest-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:420px;margin:16px auto}
+.quest-tile{aspect-ratio:1;min-height:56px;border:2px solid #1f2937;border-radius:14px;background:#FFC900;font-size:1.6rem;font-weight:800;cursor:pointer;color:#000}
+.quest-tile:hover,.quest-tile:focus{background:#FF90E8;outline:3px solid #23A094;outline-offset:2px}
+.quest-tile.lit{background:#23A094;color:#fff;border-color:#0f766e}
+.quest-tile.wrong{background:#ef4444;color:#fff;border-color:#7f1d1d;animation:quest-shake .35s}
+.quest-tile:disabled{cursor:default}
+@keyframes quest-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@media(max-width:500px){.quest-tile{font-size:1.3rem;min-height:52px}}
+</style>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="puzzle">Puzzle</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Number Quest</h1>
+  <p data-i18n="quest_intro">A number path adventure! The tiles 1 to 25 are shuffled on the board. Tap them in order from 1 to 25 to light the path to the star. Each correct tile scores 10 points, but a wrong tap costs a life — you have 3.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="lives">Lives:</span> <strong id="lives">❤❤❤</strong></span>
+    <span><span data-i18n="time">Time:</span> <strong id="time">0:00</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap tile 1 to start!</p>
+    <div class="quest-grid" id="board" role="group" aria-label="Number Quest board"></div>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap or click a tile — or use Tab to move between tiles and Enter to tap one. Tap the tiles in order from 1 to 25. A correct tile lights up teal and scores 10 points. A wrong tile flashes red and costs 1 of your 3 lives. Find all 25 tiles to reach the star. The timer starts on your first correct tile and counts up — faster is better!</p>
+<script>
+(function(){
+  var board=document.getElementById('board');
+  var scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),timeEl=document.getElementById('time'),status=document.getElementById('status');
+  var TOTAL=25,POINTS=10,MAX_LIVES=3;
+  var tiles,next,score,lives,over,won,started,seconds,timerId;
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var t=a[i];a[i]=a[j];a[j]=t;
+    }
+    return a;
+  }
+  function fmtTime(s){
+    var m=Math.floor(s/60),sec=s%60;
+    return m+':'+(sec<10?'0':'')+sec;
+  }
+  function paintHud(){
+    scoreEl.textContent=score;
+    livesEl.textContent='❤'.repeat(lives)+'🤍'.repeat(MAX_LIVES-lives);
+    timeEl.textContent=fmtTime(seconds);
+  }
+  function stopTimer(){
+    if(timerId){clearInterval(timerId);timerId=null;}
+  }
+  function startTimer(){
+    if(timerId)return;
+    timerId=setInterval(function(){
+      seconds++;
+      timeEl.textContent=fmtTime(seconds);
+    },1000);
+  }
+  function buildBoard(){
+    board.innerHTML='';
+    var nums=shuffle([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]);
+    tiles=[];
+    for(var i=0;i<nums.length;i++){
+      (function(n){
+        var b=document.createElement('button');
+        b.type='button';
+        b.className='quest-tile';
+        b.textContent=n;
+        b.setAttribute('aria-label','Tile '+n);
+        b.addEventListener('click',function(){tapTile(b,n);});
+        board.appendChild(b);
+        tiles.push(b);
+      })(nums[i]);
+    }
+  }
+  function reset(){
+    stopTimer();
+    next=1;score=0;lives=MAX_LIVES;over=false;won=false;started=false;seconds=0;
+    buildBoard();
+    status.textContent='Tap tile 1 to start!';
+    paintHud();
+  }
+  function endGame(msg){
+    over=true;
+    stopTimer();
+    for(var i=0;i<tiles.length;i++)tiles[i].disabled=true;
+    status.textContent=msg;
+  }
+  function tapTile(btn,n){
+    if(over||btn.disabled)return;
+    if(n===next){
+      if(!started){started=true;startTimer();}
+      btn.classList.add('lit');
+      btn.disabled=true;
+      score+=POINTS;
+      next++;
+      if(window.mgaBeep)window.mgaBeep(660,0.1);
+      paintHud();
+      if(next>TOTAL){
+        won=true;
+        if(window.mgaBeep)window.mgaBeep(880,0.3);
+        endGame('⭐ You did it! All 25 tiles in '+fmtTime(seconds)+' — score '+score+'. Press Restart to play again.');
+      }else{
+        status.textContent='Nice! Now find tile '+next+'.';
+      }
+    }else{
+      lives--;
+      if(window.mgaBeep)window.mgaBeep(160,0.25);
+      btn.classList.add('wrong');
+      setTimeout(function(){btn.classList.remove('wrong');},400);
+      paintHud();
+      if(lives<=0){
+        if(window.mgaBeep)window.mgaBeep(120,0.4);
+        endGame('Out of lives! You reached tile '+next+' with score '+score+'. Press Restart to try again.');
+      }else{
+        status.textContent='Oops! That was tile '+n+' — find tile '+next+'. Lives left: '+lives+'.';
+      }
+    }
+  }
+  document.getElementById('restartBtn').addEventListener('click',function(){
+    reset();
+    if(window.mgaBeep)window.mgaBeep(660,0.1);
+  });
+  reset();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+<script src="lang-day9.js"></script>
+</body>
+</html>
