@@ -92,11 +92,13 @@ first game ships.
 | 10 | Penalty Kick | Sports (new) | All Ages | Football, goal, keeper diving | ✅ (LIVE 2026-11-13, commit fba8d58d)
 | 10 | Basket Hoops | Sports | All Ages | Basketball arcing into a hoop | ✅ (LIVE 2026-11-13, commit fba8d58d)
 | 10 | Goal Keeper | Sports | Kids | Keeper gloves stopping shots | ✅ (LIVE 2026-11-13, commit fba8d58d)
-| 11 | Fishing Frenzy | Arcade | Kids | Hook catching fish underwater | ✅ (LIVE 2026-11-14, commit TBD)
-| 11 | Farm Merge | Idle | All Ages | Crops merging on farm plots | ✅ (LIVE 2026-11-14, commit TBD)
-| 11 | Pizza Maker | Idle | Kids | Pizza oven, toppings, timer | ✅ (LIVE 2026-11-14, commit TBD)
-| 11 | Monster Dash | Runner | All Ages | Friendly monster hopping gaps | ✅ (LIVE 2026-11-14, commit TBD)
-| 11 | Laser Maze | Puzzle | All Ages | Mirrors bending a laser beam | ✅ (LIVE 2026-11-14, commit TBD)
+| 11 | Fishing Frenzy | Arcade | Kids | Hook catching fish underwater | ✅ (LIVE 2026-11-14, 068a194d)
+| 11 | Farm Merge | Idle | All Ages | Crops merging on farm plots | ✅ (LIVE 2026-11-14, 068a194d)
+| 11 | Pizza Maker | Idle | Kids | Pizza oven, toppings, timer | ✅ (LIVE 2026-11-14, 068a194d)
+| 11 | Monster Dash | Runner | All Ages | Friendly monster hopping gaps | ✅ (LIVE 2026-11-14, 068a194d)
+| 11 | Laser Maze | Puzzle | All Ages | Mirrors bending a laser beam | ✅ (LIVE 2026-11-14, 068a194d)
+2026-11-14 run (Day 11): All 5 games LIVE. First push attempt died in a service restart (nothing landed — head still 750daeca); retry succeeded. Commit 068a194d, verified live signed-out: all 5 pages 200, all 5 thumbnails 200, lang-day11.js 200, homepage 57 cards. No new categories (Arcade/Idle/Runner/Puzzle all existed). Two bugs found and fixed in builders' smoke tests: Farm Merge same-plot merge guard, Monster Dash gap-respawn sign error. Play-check of Fishing Frenzy + Laser Maze via live browser in progress at time of writing. Site now at 57 games.
+
 | 12 | Rhythm Beat | Arcade | All Ages | Beats pulsing to a rhythm bar |
 | 12 | Word Search | Words | All Ages | Letter grid, hidden words circled |
 | 12 | Crossword Mini | Words | Adults | Small crossword grid, clues |
