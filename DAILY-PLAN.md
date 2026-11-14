@@ -92,11 +92,11 @@ first game ships.
 | 10 | Penalty Kick | Sports (new) | All Ages | Football, goal, keeper diving | ✅ (LIVE 2026-11-13, commit fba8d58d)
 | 10 | Basket Hoops | Sports | All Ages | Basketball arcing into a hoop | ✅ (LIVE 2026-11-13, commit fba8d58d)
 | 10 | Goal Keeper | Sports | Kids | Keeper gloves stopping shots | ✅ (LIVE 2026-11-13, commit fba8d58d)
-| 11 | Fishing Frenzy | Arcade | Kids | Hook catching fish underwater |
-| 11 | Farm Merge | Idle | All Ages | Crops merging on farm plots |
-| 11 | Pizza Maker | Idle | Kids | Pizza oven, toppings, timer |
-| 11 | Monster Dash | Runner | All Ages | Friendly monster hopping gaps |
-| 11 | Laser Maze | Puzzle | All Ages | Mirrors bending a laser beam |
+| 11 | Fishing Frenzy | Arcade | Kids | Hook catching fish underwater | ✅ (LIVE 2026-11-14, commit TBD)
+| 11 | Farm Merge | Idle | All Ages | Crops merging on farm plots | ✅ (LIVE 2026-11-14, commit TBD)
+| 11 | Pizza Maker | Idle | Kids | Pizza oven, toppings, timer | ✅ (LIVE 2026-11-14, commit TBD)
+| 11 | Monster Dash | Runner | All Ages | Friendly monster hopping gaps | ✅ (LIVE 2026-11-14, commit TBD)
+| 11 | Laser Maze | Puzzle | All Ages | Mirrors bending a laser beam | ✅ (LIVE 2026-11-14, commit TBD)
 | 12 | Rhythm Beat | Arcade | All Ages | Beats pulsing to a rhythm bar |
 | 12 | Word Search | Words | All Ages | Letter grid, hidden words circled |
 | 12 | Crossword Mini | Words | Adults | Small crossword grid, clues |

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fishing Frenzy — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Fishing Frenzy free online: lower your hook to catch colourful fish. Normal fish are worth 10, golden fish 30 — you have 60 seconds.">
+<meta name="keywords" content="fishing game, fishing frenzy game, free arcade game, kids game">
+<meta property="og:title" content="Fishing Frenzy — Mini Game Arcade">
+<meta property="og:description" content="Play Fishing Frenzy free online: lower your hook to catch colourful fish. Normal fish are worth 10, golden fish 30 — you have 60 seconds.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/fishing-frenzy.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/fishing-frenzy.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html?type=board" data-menu-type="board" data-i18n="board">Board</a>
+    <a href="index.html?type=sports" data-menu-type="sports" data-i18n="sports">Sports</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Fishing Frenzy</h1>
+  <p data-i18n="fishing_intro">The pond is full of fish! Move your hook, drop it at the right moment, and reel in a catch. Normal fish are worth 10 points, golden fish 30. You have 60 seconds — how many can you catch?</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="time_left">Time left:</span> <strong id="timeLeft">60</strong></span>
+    <span><span data-i18n="fishing_caught">Caught:</span> <strong id="caught">0</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Move the hook and drop it on a fish!</p>
+    <canvas id="game" width="400" height="520" aria-label="Fishing Frenzy game area" style="max-width:400px;height:auto;border:2px solid #000;border-radius:16px"></canvas>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn" id="leftBtn" type="button">◀ Left</button>
+      <button class="btn" id="dropBtn" type="button" data-i18n="fishing_drop">🎣 Drop</button>
+      <button class="btn" id="rightBtn" type="button">Right ▶</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: move the hook with the Left/Right arrow keys, drag it on the game area, or use the Left/Right buttons. Press Space, tap the Drop button, or tap the water to lower the hook — it grabs the first fish it touches and reels it in. Normal fish are worth 10, golden fish 30.</p>
+<script>
+(function(){
+  var canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+  var scoreEl=document.getElementById('score'),timeEl=document.getElementById('timeLeft'),caughtEl=document.getElementById('caught'),status=document.getElementById('status');
+  var W=400,H=520,ROUND_MS=60000,HOOK_TOP=64,HOOK_MAX=470,DROP_SPEED=7,REEL_SPEED=6;
+  var COLORS=['#ef4444','#f97316','#8b5cf6','#ec4899','#22c55e','#06b6d4','#f59e0b'];
+  var hookX,hookY,hookState,caughtFish,fishes,score,caught,over,startAt,lastSpawn,keys,bubbles;
+  function reset(){
+    hookX=W/2;hookY=HOOK_TOP;hookState='idle';caughtFish=null;
+    fishes=[];score=0;caught=0;over=false;bubbles=[];
+    startAt=Date.now();lastSpawn=0;keys={left:false,right:false};
+    for(var i=0;i<6;i++)spawnFish(true);
+    status.textContent='Move the hook and drop it on a fish!';
+    paintHud();
+  }
+  function paintHud(){
+    scoreEl.textContent=score;
+    var t=Math.max(0,Math.ceil((ROUND_MS-(Date.now()-startAt))/1000));
+    timeEl.textContent=t;
+    caughtEl.textContent=caught;
+  }
+  function endRound(){
+    over=true;hookState='idle';caughtFish=null;
+    status.textContent='Time up! You caught '+caught+' fish. Score '+score+'. Press Restart to play again.';
+    if(window.mgaBeep)window.mgaBeep(880,0.3);
+    paintHud();
+  }
+  function spawnFish(anywhere){
+    var gold=Math.random()<0.12;
+    var dir=Math.random()<0.5?-1:1;
+    var size=gold?26:16+Math.random()*12;
+    var y=120+Math.random()*330;
+    var x=anywhere?Math.random()*W:(dir>0?-40:W+40);
+    fishes.push({x:x,y:y,dir:dir,speed:(0.6+Math.random()*1.3+((Date.now()-startAt)/ROUND_MS)*0.7)*(gold?1.4:1),
+      size:size,gold:gold,color:COLORS[Math.floor(Math.random()*COLORS.length)],wig:Math.random()*Math.PI*2});
+  }
+  function dropHook(){
+    if(over||hookState!=='idle')return;
+    hookState='dropping';
+    if(window.mgaBeep)window.mgaBeep(440,0.08);
+  }
+  function update(){
+    if(over)return;
+    var now=Date.now();
+    if(now-startAt>=ROUND_MS){endRound();return;}
+    if(now-lastSpawn>900){spawnFish(false);lastSpawn=now;}
+    if(hookState==='idle'){
+      if(keys.left)hookX-=6;
+      if(keys.right)hookX+=6;
+      hookX=Math.max(24,Math.min(W-24,hookX));
+    }else if(hookState==='dropping'){
+      hookY+=DROP_SPEED;
+      for(var i=fishes.length-1;i>=0;i--){
+        var f=fishes[i];
+        if(Math.abs(f.x-hookX)<f.size+8&&Math.abs(f.y-hookY)<f.size+10){
+          caughtFish=f;fishes.splice(i,1);hookState='reeling';break;
+        }
+      }
+      if(hookState==='dropping'&&hookY>=HOOK_MAX){
+        hookState='reeling';
+        if(window.mgaBeep)window.mgaBeep(180,0.15);
+        status.textContent='Missed! Try again.';
+      }
+    }else if(hookState==='reeling'){
+      hookY-=REEL_SPEED;
+      if(caughtFish)caughtFish.y=hookY+16;
+      if(hookY<=HOOK_TOP){
+        hookY=HOOK_TOP;
+        if(caughtFish){
+          var pts=caughtFish.gold?30:10;
+          score+=pts;caught++;
+          status.textContent=(caughtFish.gold?'Golden fish! +30':'Caught one! +10')+' Score '+score+'.';
+          if(window.mgaBeep)window.mgaBeep(caughtFish.gold?990:760,0.15);
+          bubbles.push({x:hookX,y:HOOK_TOP+10,r:4,life:30});
+          caughtFish=null;
+        }
+        hookState='idle';
+        paintHud();
+      }
+    }
+    for(var j=fishes.length-1;j>=0;j--){
+      var g=fishes[j];
+      g.x+=g.dir*g.speed;g.wig+=0.12;
+      if(g.x<-50||g.x>W+50){fishes.splice(j,1);spawnFish(false);}
+    }
+    for(var b=bubbles.length-1;b>=0;b--){
+      bubbles[b].y-=1;bubbles[b].life--;
+      if(bubbles[b].life<=0)bubbles.splice(b,1);
+    }
+    paintHud();
+  }
+  function drawFish(f){
+    ctx.save();
+    ctx.translate(f.x,f.y+Math.sin(f.wig)*3);
+    ctx.scale(f.dir,1);
+    var s=f.size;
+    ctx.fillStyle=f.gold?'#fbbf24':f.color;
+    ctx.beginPath();
+    ctx.ellipse(0,0,s,s*0.62,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-s*0.8,0);ctx.lineTo(-s*1.5,-s*0.55);ctx.lineTo(-s*1.5,s*0.55);ctx.closePath();
+    ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.5)';
+    ctx.beginPath();ctx.ellipse(-s*0.2,-s*0.2,s*0.45,s*0.25,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#111827';
+    ctx.beginPath();ctx.arc(s*0.55,-s*0.12,2.6,0,Math.PI*2);ctx.fill();
+    if(f.gold){
+      ctx.fillStyle='#92400e';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('★',0,1);ctx.textBaseline='alphabetic';
+    }
+    ctx.restore();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#bae6fd');g.addColorStop(0.35,'#38bdf8');g.addColorStop(1,'#0369a1');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#fde68a';
+    ctx.beginPath();ctx.arc(340,52,26,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,0.5)';
+    ctx.beginPath();ctx.arc(80,46,18,0,Math.PI*2);ctx.arc(110,40,13,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(2,132,199,0.55)';
+    ctx.fillRect(0,84,W,4);
+    ctx.strokeStyle='rgba(255,255,255,0.35)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(20,180);ctx.quadraticCurveTo(90,165,160,180);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(230,300);ctx.quadraticCurveTo(300,285,380,300);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(40,420);ctx.quadraticCurveTo(110,405,180,420);ctx.stroke();
+    ctx.fillStyle='#fbbf24';
+    ctx.beginPath();ctx.arc(70,478,6,0,Math.PI*2);ctx.arc(150,492,5,0,Math.PI*2);ctx.arc(330,486,6,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#65a30d';
+    ctx.beginPath();ctx.moveTo(60,H);ctx.lineTo(70,H-40);ctx.lineTo(80,H);ctx.closePath();ctx.fill();
+    ctx.beginPath();ctx.moveTo(310,H);ctx.lineTo(320,H-34);ctx.lineTo(330,H);ctx.closePath();ctx.fill();
+    for(var i=0;i<fishes.length;i++)drawFish(fishes[i]);
+    ctx.strokeStyle='rgba(255,255,255,0.85)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(hookX,0);ctx.lineTo(hookX,hookY);ctx.stroke();
+    ctx.strokeStyle='#7c2d12';ctx.lineWidth=3;
+    ctx.beginPath();ctx.arc(hookX,hookY+8,8,Math.PI*0.1,Math.PI*1.35);ctx.stroke();
+    if(caughtFish)drawFish(caughtFish);
+    for(var b=0;b<bubbles.length;b++){
+      ctx.strokeStyle='rgba(255,255,255,0.7)';ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(bubbles[b].x,bubbles[b].y,bubbles[b].r,0,Math.PI*2);ctx.stroke();
+    }
+    ctx.fillStyle='#92400e';
+    ctx.fillRect(hookX-22,0,44,10);
+    if(over){
+      ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#fff';ctx.font='bold 26px sans-serif';ctx.textAlign='center';
+      ctx.fillText('ROUND OVER',W/2,240);
+      ctx.font='16px sans-serif';
+      ctx.fillText('Caught '+caught+' fish — score '+score,W/2,275);
+      ctx.fillText('Press Restart to play again',W/2,300);
+    }
+  }
+  function loop(){update();draw();requestAnimationFrame(loop);}
+  function canvasX(e){
+    var r=canvas.getBoundingClientRect();
+    return (e.clientX-r.left)*(W/r.width);
+  }
+  canvas.addEventListener('pointerdown',function(e){
+    hookX=canvasX(e);
+    hookX=Math.max(24,Math.min(W-24,hookX));
+    dropHook();
+    e.preventDefault();
+  });
+  canvas.addEventListener('pointermove',function(e){
+    if(e.buttons&&hookState==='idle')hookX=Math.max(24,Math.min(W-24,canvasX(e)));
+  });
+  function hold(btn,key){
+    btn.addEventListener('pointerdown',function(e){keys[key]=true;e.preventDefault();});
+    ['pointerup','pointerleave','pointercancel'].forEach(function(ev){btn.addEventListener(ev,function(){keys[key]=false;});});
+  }
+  hold(document.getElementById('leftBtn'),'left');
+  hold(document.getElementById('rightBtn'),'right');
+  document.getElementById('dropBtn').addEventListener('click',function(){dropHook();});
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();if(window.mgaBeep)window.mgaBeep(660,0.1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowLeft'){keys.left=true;e.preventDefault();}
+    if(e.key==='ArrowRight'){keys.right=true;e.preventDefault();}
+    if(e.key===' '){dropHook();e.preventDefault();}
+  });
+  document.addEventListener('keyup',function(e){
+    if(e.key==='ArrowLeft')keys.left=false;
+    if(e.key==='ArrowRight')keys.right=false;
+  });
+  reset();
+  loop();
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+<script src="lang-day9.js"></script>
+<script src="lang-day10.js"></script>
+<script src="lang-day11.js"></script>
+</body>
+</html>

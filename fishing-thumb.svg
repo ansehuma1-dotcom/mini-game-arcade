@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Fishing Frenzy thumbnail: a fishing hook catching a colourful fish underwater">
+  <defs>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#bae6fd"/>
+      <stop offset="0.35" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#0369a1"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#water)"/>
+  <circle cx="330" cy="38" r="22" fill="#fde68a"/>
+  <path d="M0 52 Q 100 44 200 52 T 400 52" stroke="#fff" stroke-width="5" fill="none" opacity="0.7"/>
+  <path d="M0 52 Q 100 44 200 52 T 400 52 L 400 300 L 0 300 Z" fill="url(#water)"/>
+  <g opacity="0.5" stroke="#fff" stroke-width="3" fill="none">
+    <path d="M30 130 Q 80 118 130 130"/>
+    <path d="M250 210 Q 310 198 370 210"/>
+  </g>
+  <!-- orange fish swimming left -->
+  <g transform="translate(110 170)">
+    <ellipse cx="0" cy="0" rx="42" ry="26" fill="#f97316"/>
+    <path d="M-34 0 L-62 -20 L-62 20 Z" fill="#f97316"/>
+    <ellipse cx="-8" cy="-8" rx="18" ry="10" fill="#fff" opacity="0.35"/>
+    <circle cx="22" cy="-5" r="5" fill="#111827"/>
+    <circle cx="24" cy="-7" r="1.8" fill="#fff"/>
+  </g>
+  <!-- purple fish swimming right -->
+  <g transform="translate(300 235)">
+    <ellipse cx="0" cy="0" rx="34" ry="21" fill="#8b5cf6"/>
+    <path d="M34 0 L58 -16 L58 16 Z" fill="#8b5cf6"/>
+    <ellipse cx="8" cy="-6" rx="14" ry="8" fill="#fff" opacity="0.35"/>
+    <circle cx="-20" cy="-4" r="4" fill="#111827"/>
+    <circle cx="-19" cy="-5" r="1.5" fill="#fff"/>
+  </g>
+  <!-- pink fish swimming left -->
+  <g transform="translate(280 120)">
+    <ellipse cx="0" cy="0" rx="26" ry="16" fill="#ec4899"/>
+    <path d="M-21 0 L-40 -13 L-40 13 Z" fill="#ec4899"/>
+    <circle cx="13" cy="-3" r="3.5" fill="#111827"/>
+  </g>
+  <!-- golden fish caught on the hook -->
+  <g transform="translate(190 185)">
+    <ellipse cx="0" cy="0" rx="38" ry="24" fill="#fbbf24"/>
+    <path d="M-31 0 L-56 -18 L-56 18 Z" fill="#fbbf24"/>
+    <ellipse cx="-7" cy="-7" rx="16" ry="9" fill="#fff" opacity="0.4"/>
+    <circle cx="20" cy="-4" r="4.5" fill="#111827"/>
+    <text x="-2" y="6" font-family="sans-serif" font-size="16" font-weight="bold" fill="#92400e" text-anchor="middle">★</text>
+  </g>
+  <!-- fishing line and hook -->
+  <line x1="190" y1="0" x2="190" y2="158" stroke="#fff" stroke-width="3"/>
+  <rect x="172" y="0" width="36" height="9" fill="#92400e"/>
+  <path d="M190 158 A 9 9 0 1 1 190 176" stroke="#7c2d12" stroke-width="4" fill="none"/>
+  <!-- bubbles -->
+  <g stroke="#fff" stroke-width="2" fill="none" opacity="0.8">
+    <circle cx="235" cy="215" r="6"/>
+    <circle cx="250" cy="195" r="4"/>
+    <circle cx="150" cy="220" r="5"/>
+  </g>
+  <!-- pebbles and plant -->
+  <g fill="#fbbf24">
+    <circle cx="60" cy="288" r="7"/>
+    <circle cx="330" cy="290" r="7"/>
+  </g>
+  <path d="M355 300 L362 268 L369 300 Z" fill="#65a30d"/>
+</svg>

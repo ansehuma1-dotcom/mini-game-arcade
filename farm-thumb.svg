@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" role="img" aria-label="Farm Merge thumbnail: crops merging on farm plots">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#bae6fd"/>
+      <stop offset="1" stop-color="#e0f2fe"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#sky)"/>
+  <circle cx="340" cy="44" r="28" fill="#fde047"/>
+  <circle cx="340" cy="44" r="38" fill="#fde047" opacity="0.35"/>
+  <ellipse cx="70" cy="52" rx="42" ry="16" fill="#ffffff"/>
+  <ellipse cx="120" cy="66" rx="34" ry="13" fill="#ffffff" opacity="0.9"/>
+  <ellipse cx="200" cy="150" rx="260" ry="120" fill="#86efac"/>
+  <rect x="0" y="150" width="400" height="150" fill="#4ade80"/>
+  <g font-family="sans-serif" font-weight="bold">
+    <text x="200" y="34" text-anchor="middle" font-size="30" fill="#166534" stroke="#ffffff" stroke-width="5" paint-order="stroke">FARM MERGE</text>
+  </g>
+  <g>
+    <rect x="52" y="120" width="88" height="64" rx="12" fill="#8b5a2b" stroke="#6b4423" stroke-width="3"/>
+    <rect x="156" y="120" width="88" height="64" rx="12" fill="#8b5a2b" stroke="#6b4423" stroke-width="3"/>
+    <rect x="260" y="120" width="88" height="64" rx="12" fill="#8b5a2b" stroke="#6b4423" stroke-width="3"/>
+    <rect x="52" y="200" width="88" height="64" rx="12" fill="#8b5a2b" stroke="#6b4423" stroke-width="3"/>
+    <rect x="156" y="200" width="88" height="64" rx="12" fill="#8b5a2b" stroke="#6b4423" stroke-width="3"/>
+    <rect x="260" y="200" width="88" height="64" rx="12" fill="#8b5a2b" stroke="#6b4423" stroke-width="3"/>
+  </g>
+  <g font-size="40" text-anchor="middle">
+    <text x="96" y="162">🌱</text>
+    <text x="200" y="162">🌱</text>
+    <text x="304" y="162">🥕</text>
+    <text x="96" y="242">🎃</text>
+    <text x="200" y="242">🌻</text>
+    <text x="304" y="242">🍈</text>
+  </g>
+  <g>
+    <path d="M 118 152 L 178 152" stroke="#f59e0b" stroke-width="7" stroke-linecap="round"/>
+    <path d="M 168 143 L 182 152 L 168 161" fill="none" stroke="#f59e0b" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="148" cy="132" r="16" fill="#f59e0b"/>
+    <text x="148" y="138" text-anchor="middle" font-size="20" font-family="sans-serif" font-weight="bold" fill="#ffffff">+</text>
+  </g>
+  <g>
+    <circle cx="352" cy="252" r="22" fill="#fbbf24" stroke="#b45309" stroke-width="3"/>
+    <text x="352" y="261" text-anchor="middle" font-size="22" font-family="sans-serif" font-weight="bold" fill="#92400e">¢</text>
+  </g>
+</svg>
