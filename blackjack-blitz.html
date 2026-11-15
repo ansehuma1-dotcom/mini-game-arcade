@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blackjack Blitz — Free Card Game | Mini Game Arcade</title>
+<meta name="description" content="Play Blackjack Blitz free online: classic blackjack against the dealer with play chips. Beat the dealer to 21 without going over — blackjack pays 3 to 2.">
+<meta name="keywords" content="blackjack game, free card game, blackjack blitz, 21 card game, play chips">
+<meta property="og:title" content="Blackjack Blitz — Mini Game Arcade">
+<meta property="og:description" content="Play Blackjack Blitz free online: classic blackjack against the dealer with play chips. Beat the dealer to 21 without going over — blackjack pays 3 to 2.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/blackjack-blitz.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/blackjack-blitz.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+.bj-hand{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;min-height:100px;margin:6px 0 2px}
+.bj-card{width:64px;height:92px;background:#fff;border:2px solid #1e293b;border-radius:10px;position:relative;font-family:sans-serif;flex:0 0 auto;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.bj-card .bj-rank{position:absolute;top:4px;left:6px;font-size:18px;font-weight:800;line-height:1}
+.bj-card .bj-suit{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:34px}
+.bj-card .bj-rank-b{position:absolute;bottom:4px;right:6px;font-size:18px;font-weight:800;line-height:1;transform:rotate(180deg)}
+.bj-card.red{color:#dc2626}
+.bj-card.black{color:#111827}
+.bj-card.back{background:repeating-linear-gradient(45deg,#7c3aed 0 8px,#5b21b6 8px 16px);border-color:#4c1d95}
+.bj-card.back .bj-back{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;font-weight:800}
+.bj-label{font-weight:700;margin:10px 0 0}
+.bj-total{font-weight:700}
+</style>
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html?type=board" data-menu-type="board" data-i18n="board">Board</a>
+    <a href="index.html?type=sports" data-menu-type="sports" data-i18n="sports">Sports</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="cards">Cards</p> <p class="tag" data-i18n="adults">Adults</p>
+  <h1>Blackjack Blitz</h1>
+  <p data-i18n="blackjack_intro">Classic blackjack against the dealer! You start with 100 play chips and bet 10 chips a round. Beat the dealer to 21 without going over — a blackjack pays 3 to 2. Chips are play points only; no real money is involved.</p>
+  <div class="hud">
+    <span><span data-i18n="blackjack_chips">Chips:</span> <strong id="chips">100</strong></span>
+    <span>Bet: <strong>10</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Tap Deal to start a round — 10 chips a round, blackjack pays 3 to 2!</p>
+    <p class="bj-label"><span data-i18n="blackjack_dealer_hand">Dealer:</span> <span class="bj-total" id="dealerTotal"></span></p>
+    <div class="bj-hand" id="dealerHand" aria-label="Dealer hand"></div>
+    <p class="bj-label"><span data-i18n="blackjack_your_hand">Your hand:</span> <span class="bj-total" id="playerTotal"></span></p>
+    <div class="bj-hand" id="playerHand" aria-label="Your hand"></div>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn small" id="dealBtn" type="button" data-i18n="blackjack_deal">Deal</button>
+      <button class="btn small" id="hitBtn" type="button" data-i18n="blackjack_hit">Hit</button>
+      <button class="btn small" id="standBtn" type="button" data-i18n="blackjack_stand">Stand</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap Deal to start a round (10 chips), then Hit to take a card or Stand to let the dealer play. The dealer draws to 17. Aces count 11 or 1, whichever is better. Blackjack pays 3 to 2. Chips are play points only — no real money. Keyboard: D to deal, H to hit, S to stand, R to restart.</p>
+<script>
+(function(){
+  var chipsEl=document.getElementById('chips'),
+      statusEl=document.getElementById('status'),
+      playerHandEl=document.getElementById('playerHand'),
+      dealerHandEl=document.getElementById('dealerHand'),
+      playerTotalEl=document.getElementById('playerTotal'),
+      dealerTotalEl=document.getElementById('dealerTotal'),
+      dealBtn=document.getElementById('dealBtn'),
+      hitBtn=document.getElementById('hitBtn'),
+      standBtn=document.getElementById('standBtn'),
+      restartBtn=document.getElementById('restartBtn');
+  var SUITS={S:'\u2660',H:'\u2665',D:'\u2666',C:'\u2663'};
+  var RANKS=['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  var BET=10,START_CHIPS=100;
+  var chips=START_CHIPS,deck=[],forcedDeck=null,player=[],dealer=[],
+      phase='idle',holeHidden=true;
+  function beep(f,d){if(window.mgaBeep)window.mgaBeep(f,d);}
+  function buildDeck(){
+    deck=[];
+    ['S','H','D','C'].forEach(function(s){
+      RANKS.forEach(function(r){deck.push({rank:r,suit:s});});
+    });
+    for(var i=deck.length-1;i>0;i--){
+      var j=Math.floor(Math.random()*(i+1));
+      var t=deck[i];deck[i]=deck[j];deck[j]=t;
+    }
+  }
+  function draw(){
+    if(forcedDeck&&forcedDeck.length)return forcedDeck.shift();
+    if(!deck.length)buildDeck();
+    return deck.pop();
+  }
+  function cardValue(c){
+    if(c.rank==='A')return 11;
+    if(c.rank==='J'||c.rank==='Q'||c.rank==='K')return 10;
+    return parseInt(c.rank,10);
+  }
+  function handTotal(hand){
+    var total=0,aces=0;
+    hand.forEach(function(c){total+=cardValue(c);if(c.rank==='A')aces++;});
+    while(total>21&&aces>0){total-=10;aces--;}
+    return total;
+  }
+  function isBlackjack(hand){return hand.length===2&&handTotal(hand)===21;}
+  function makeCardEl(c,faceDown){
+    var el=document.createElement('div');
+    if(faceDown){
+      el.className='bj-card back';
+      var q=document.createElement('span');
+      q.className='bj-back';q.textContent='?';
+      el.appendChild(q);
+      return el;
+    }
+    var red=(c.suit==='H'||c.suit==='D');
+    el.className='bj-card '+(red?'red':'black');
+    var r1=document.createElement('span');r1.className='bj-rank';r1.textContent=c.rank;
+    var s=document.createElement('span');s.className='bj-suit';s.textContent=SUITS[c.suit];
+    var r2=document.createElement('span');r2.className='bj-rank-b';r2.textContent=c.rank;
+    el.appendChild(r1);el.appendChild(s);el.appendChild(r2);
+    return el;
+  }
+  function render(){
+    chipsEl.textContent=chips;
+    playerHandEl.innerHTML='';
+    player.forEach(function(c){playerHandEl.appendChild(makeCardEl(c,false));});
+    dealerHandEl.innerHTML='';
+    dealer.forEach(function(c,i){
+      dealerHandEl.appendChild(makeCardEl(c,holeHidden&&phase==='playing'&&i===1));
+    });
+    playerTotalEl.textContent=player.length?('('+handTotal(player)+')'):'';
+    if(dealer.length){
+      dealerTotalEl.textContent=(holeHidden&&phase==='playing')
+        ?('('+cardValue(dealer[0])+'+ ?)')
+        :('('+handTotal(dealer)+')');
+    }else{dealerTotalEl.textContent='';}
+    dealBtn.disabled=(phase==='playing'||chips<BET);
+    hitBtn.disabled=(phase!=='playing');
+    standBtn.disabled=(phase!=='playing');
+  }
+  function setStatus(msg){statusEl.textContent=msg;}
+  function finishRound(msg){
+    phase='done';
+    if(chips<=0){phase='broke';setStatus(msg+' You are out of chips! Tap Restart to play again with 100 chips.');}
+    else{setStatus(msg+' Tap Deal to play another round.');}
+    render();
+  }
+  function deal(){
+    if(phase==='playing')return;
+    if(chips<BET){phase='broke';setStatus('Out of chips! Tap Restart to play again with 100 chips.');render();return;}
+    chips-=BET;
+    buildDeck();
+    player=[draw(),draw()];
+    dealer=[draw(),draw()];
+    holeHidden=true;
+    phase='playing';
+    beep(660,0.08);
+    var pBJ=isBlackjack(player),dBJ=isBlackjack(dealer);
+    render();
+    if(pBJ&&dBJ){
+      holeHidden=false;chips+=BET;
+      beep(660,0.12);
+      finishRound('Push! You both have blackjack — your 10 chips are returned.');
+    }else if(pBJ){
+      holeHidden=false;chips+=BET+15;
+      beep(880,0.15);setTimeout(function(){beep(1174,0.15);},160);setTimeout(function(){beep(1568,0.3);},320);
+      finishRound('Blackjack! You win 15 chips on top of your bet.');
+    }else if(dBJ){
+      holeHidden=false;
+      beep(220,0.2);
+      finishRound('Dealer has blackjack. You lose your 10 chips.');
+    }else{
+      setStatus('Your turn — Hit to take a card, or Stand to let the dealer play.');
+      render();
+    }
+  }
+  function hit(){
+    if(phase!=='playing')return;
+    player.push(draw());
+    beep(520,0.08);
+    var total=handTotal(player);
+    if(total>21){
+      holeHidden=false;
+      beep(220,0.25);
+      finishRound('Bust! You have '+total+' — over 21. You lose your 10 chips.');
+    }else if(total===21){
+      setStatus('21! Standing automatically…');
+      render();
+      stand();
+    }else{
+      setStatus('You have '+total+'. Hit again, or Stand.');
+      render();
+    }
+  }
+  function stand(){
+    if(phase!=='playing')return;
+    holeHidden=false;
+    render();
+    while(handTotal(dealer)<17){dealer.push(draw());}
+    var p=handTotal(player),d=handTotal(dealer);
+    render();
+    if(d>21){
+      chips+=BET*2;
+      beep(880,0.15);setTimeout(function(){beep(1174,0.2);},160);
+      finishRound('Dealer busts with '+d+'! You win 10 chips.');
+    }else if(p>d){
+      chips+=BET*2;
+      beep(880,0.15);setTimeout(function(){beep(1174,0.2);},160);
+      finishRound('You win! '+p+' beats the dealer\u2019s '+d+'. You win 10 chips.');
+    }else if(p<d){
+      beep(220,0.2);
+      finishRound('Dealer wins '+d+' to '+p+'. You lose your 10 chips.');
+    }else{
+      chips+=BET;
+      beep(660,0.12);
+      finishRound('Push! Both have '+p+' — your 10 chips are returned.');
+    }
+  }
+  function restart(){
+    chips=START_CHIPS;player=[];dealer=[];forcedDeck=null;
+    phase='idle';holeHidden=true;
+    setStatus('Fresh start — 100 chips! Tap Deal to start a round.');
+    beep(660,0.1);
+    render();
+  }
+  dealBtn.addEventListener('click',deal);
+  hitBtn.addEventListener('click',hit);
+  standBtn.addEventListener('click',stand);
+  restartBtn.addEventListener('click',restart);
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(k==='d')deal();
+    else if(k==='h')hit();
+    else if(k==='s')stand();
+    else if(k==='r')restart();
+  });
+  render();
+  // Test hook (harmless in production): lets a node harness verify the rules.
+  window.__blackjackTest={
+    state:function(){
+      return {
+        chips:chips,phase:phase,
+        playerTotal:handTotal(player),
+        dealerTotal:(holeHidden&&phase==='playing')?handTotal([dealer[0]]):handTotal(dealer),
+        playerCards:player.map(function(c){return c.rank+c.suit;}),
+        dealerCards:dealer.map(function(c){return c.rank+c.suit;})
+      };
+    },
+    deal:deal,hit:hit,stand:stand,restart:restart,
+    setDeck:function(cards){forcedDeck=cards.map(function(c){return {rank:c.rank,suit:c.suit};});}
+  };
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+<script src="lang-day9.js"></script>
+<script src="lang-day10.js"></script>
+<script src="lang-day11.js"></script>
+<script src="lang-day12.js"></script>
+</body>
+</html>

@@ -99,11 +99,11 @@ first game ships.
 | 11 | Laser Maze | Puzzle | All Ages | Mirrors bending a laser beam | ✅ (LIVE 2026-11-14, 068a194d)
 2026-11-14 run (Day 11): All 5 games LIVE. First push attempt died in a service restart (nothing landed — head still 750daeca); retry succeeded. Commit 068a194d, verified live signed-out: all 5 pages 200, all 5 thumbnails 200, lang-day11.js 200, homepage 57 cards. No new categories (Arcade/Idle/Runner/Puzzle all existed). Two bugs found and fixed in builders' smoke tests: Farm Merge same-plot merge guard, Monster Dash gap-respawn sign error. Play-check PASSED live (browser 13:58–14:01 PKT): homepage 57 cards with all 5 new cards + thumbnails; Fishing Frenzy caught a fish (Score 0→10, Caught 1) and Restart reset to 0/60/0; Laser Maze mirror rotated, beam path changed, Moves 0→1, Level 1/3; language switch to Español translated nav + HUD; Idle filter showed Tap Bakery, Harvest Tap, Farm Merge, Pizza Maker. Minor note: Laser Maze in-canvas instruction line stays English after language switch (HUD/nav translate). Site now at 57 games.
 
-| 12 | Rhythm Beat | Arcade | All Ages | Beats pulsing to a rhythm bar |
-| 12 | Word Search | Words | All Ages | Letter grid, hidden words circled |
-| 12 | Crossword Mini | Words | Adults | Small crossword grid, clues |
-| 12 | Blackjack Blitz | Cards | Adults | Cards totalling 21 |
-| 12 | Poker Pairs | Cards | Adults | Poker hand, matching pairs |
+| 12 | Rhythm Beat | Arcade | All Ages | Beats pulsing to a rhythm bar | ✅ (LIVE 2026-11-15) |
+| 12 | Word Search | Words | All Ages | Letter grid, hidden words circled | ✅ (LIVE 2026-11-15) |
+| 12 | Crossword Mini | Words | Adults | Small crossword grid, clues | ✅ (LIVE 2026-11-15) |
+| 12 | Blackjack Blitz | Cards | Adults | Cards totalling 21 | ✅ (LIVE 2026-11-15) |
+| 12 | Poker Pairs | Cards | Adults | Poker hand, matching pairs | ✅ (LIVE 2026-11-15) |
 | 13 | Bridge Builder | Strategy | All Ages | Bridge planks over a river gap |
 | 13 | City Builder | Strategy | All Ages | Tiny city blocks rising |
 | 13 | Rocket Launch | Arcade | Kids | Rocket blasting past stars |

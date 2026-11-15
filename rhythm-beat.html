@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rhythm Beat — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Rhythm Beat free online: coloured notes fall down 4 lanes — tap the lane or press D F J K exactly when a note crosses the glowing line. Perfect hits score 100, good hits 50. 60 seconds, combo scoring, mobile and desktop.">
+<meta name="keywords" content="rhythm game, music game, beat game, free arcade game, tap game">
+<meta property="og:title" content="Rhythm Beat — Mini Game Arcade">
+<meta property="og:description" content="Play Rhythm Beat free online: tap the lanes or press D F J K to hit the falling notes right on the beat. 60 seconds — how high can your combo go?">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/rhythm-beat.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/rhythm-beat.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html?type=board" data-menu-type="board" data-i18n="board">Board</a>
+    <a href="index.html?type=sports" data-menu-type="sports" data-i18n="sports">Sports</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="all_ages">All Ages</p>
+  <h1>Rhythm Beat</h1>
+  <p data-i18n="rhythm_intro">Feel the beat! Notes fall down four lanes — tap the lane or press the matching key exactly when a note crosses the glowing line. Perfect hits score 100, good hits 50, and every hit builds your combo. 60 seconds on the clock.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="rhythm_combo">Combo:</span> <strong id="combo">0</strong></span>
+    <span><span data-i18n="time_left">Time left:</span> <strong id="timeLeft">60</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Press Start, then tap a lane or press D F J K when a note crosses the glowing line!</p>
+    <canvas id="game" width="400" height="480" aria-label="Rhythm Beat game area" style="max-width:400px;height:auto;border:2px solid #000;border-radius:16px"></canvas>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn small" id="startBtn" type="button">Start</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: tap or click a lane on the game area, or press D F J K (or keys 1-4) for lanes 1 to 4. Hit a note right as it crosses the glowing line: perfect hits score 100, good hits score 50. A missed note breaks your combo. You have 60 seconds — how high can your combo go?</p>
+<script>
+(function(){
+  var canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+  var scoreEl=document.getElementById('score'),comboEl=document.getElementById('combo'),
+      timeEl=document.getElementById('timeLeft'),statusEl=document.getElementById('status');
+  var W=400,H=480,LANES=4,LANE_W=W/LANES,HIT_Y=400,NOTE_R=22;
+  var COLORS=['#ec4899','#f59e0b','#22c55e','#3b82f6'];
+  var KEYMAP={d:0,f:1,j:2,k:3,'1':0,'2':1,'3':2,'4':3};
+  // Steady beat pattern: one note every half second, lane order repeats.
+  var PATTERN=[0,2,1,3,2,0,3,1,1,3,0,2,3,0,2,1];
+  var DURATION=60,SPAWN_EVERY=0.5,SPEED=260;
+  var PERFECT_WIN=24,GOOD_WIN=55,MISS_Y=HIT_Y+70;
+  var score,combo,misses,elapsed,playing,notes,spawnTimer,patternIdx,flash,feedback,feedbackUntil,lastTs;
+  function beep(f,d){if(window.mgaBeep)window.mgaBeep(f,d);}
+  function updateHUD(){
+    scoreEl.textContent=score;
+    comboEl.textContent=combo;
+    timeEl.textContent=Math.max(0,Math.ceil(DURATION-elapsed));
+  }
+  function start(){
+    score=0;combo=0;misses=0;elapsed=0;spawnTimer=0;patternIdx=0;
+    notes=[];flash=[0,0,0,0];feedback='';feedbackUntil=0;playing=true;lastTs=null;
+    statusEl.textContent='Tap a lane or press D F J K when a note crosses the glowing line!';
+    updateHUD();
+  }
+  function restart(){start();}
+  function endGame(){
+    playing=false;
+    statusEl.textContent='Time up! Final score: '+score+' — best combo hit '+combo+' notes in a row, '+misses+' missed. Press Restart to play again.';
+    beep(880,0.15);setTimeout(function(){beep(1174,0.15);},160);setTimeout(function(){beep(1568,0.3);},320);
+    updateHUD();
+  }
+  function spawnNote(lane){
+    notes.push({lane:lane,y:-NOTE_R,hit:false});
+  }
+  function update(dt){
+    if(!playing)return;
+    elapsed+=dt;
+    if(elapsed>=DURATION){elapsed=DURATION;endGame();return;}
+    spawnTimer+=dt;
+    while(spawnTimer>=SPAWN_EVERY){
+      spawnTimer-=SPAWN_EVERY;
+      if(elapsed<DURATION-2){
+        spawnNote(PATTERN[patternIdx%PATTERN.length]);
+        patternIdx++;
+      }
+    }
+    for(var i=notes.length-1;i>=0;i--){
+      var n=notes[i];
+      n.y+=SPEED*dt;
+      if(!n.hit&&n.y>MISS_Y){
+        notes.splice(i,1);
+        misses++;
+        combo=0;
+        feedback='MISS';feedbackUntil=elapsed+0.6;
+        beep(220,0.12);
+      }
+    }
+    updateHUD();
+  }
+  function hit(lane){
+    if(!playing)return false;
+    var best=-1,bestDy=1e9;
+    for(var i=0;i<notes.length;i++){
+      var n=notes[i];
+      if(n.lane!==lane||n.hit)continue;
+      var dy=Math.abs(n.y-HIT_Y);
+      if(dy<=GOOD_WIN&&dy<bestDy){best=i;bestDy=dy;}
+    }
+    if(best<0)return false;
+    var n2=notes[best];
+    n2.hit=true;
+    notes.splice(best,1);
+    combo++;
+    flash[lane]=elapsed+0.12;
+    if(bestDy<=PERFECT_WIN){
+      score+=100;feedback='PERFECT!';beep(880,0.1);
+    }else{
+      score+=50;feedback='GOOD';beep(660,0.1);
+    }
+    feedbackUntil=elapsed+0.6;
+    updateHUD();
+    return true;
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0f172a');g.addColorStop(1,'#312e81');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    // lanes
+    for(var l=0;l<LANES;l++){
+      var x=l*LANE_W;
+      ctx.fillStyle=flash[l]>elapsed?'rgba(255,255,255,0.25)':'rgba(255,255,255,0.04)';
+      ctx.fillRect(x,0,LANE_W,HIT_Y+30);
+      ctx.strokeStyle='rgba(148,163,184,0.35)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,HIT_Y+30);ctx.stroke();
+      ctx.fillStyle=COLORS[l];
+      ctx.font='bold 20px sans-serif';ctx.textAlign='center';
+      ctx.fillText('DFJK'[l],x+LANE_W/2,HIT_Y+62);
+    }
+    // hit line (glowing)
+    var pulse=0.7+0.3*Math.sin(Date.now()/150);
+    ctx.save();
+    ctx.strokeStyle='rgba(251,191,36,'+pulse+')';ctx.lineWidth=5;ctx.lineCap='round';
+    ctx.shadowColor='#fbbf24';ctx.shadowBlur=16;
+    ctx.beginPath();ctx.moveTo(0,HIT_Y);ctx.lineTo(W,HIT_Y);ctx.stroke();
+    ctx.restore();
+    // notes
+    for(var i=0;i<notes.length;i++){
+      var n=notes[i],cx=n.lane*LANE_W+LANE_W/2;
+      ctx.save();
+      ctx.fillStyle=COLORS[n.lane];
+      ctx.beginPath();ctx.arc(cx,n.y,NOTE_R,0,Math.PI*2);ctx.fill();
+      ctx.lineWidth=3;ctx.strokeStyle='#fff';ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='bold 22px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('♪',cx,n.y+1);
+      ctx.restore();
+    }
+    // feedback text
+    if(feedback&&elapsed<feedbackUntil){
+      ctx.fillStyle=feedback==='PERFECT!'?'#fbbf24':(feedback==='GOOD'?'#4ade80':'#f87171');
+      ctx.font='bold 30px sans-serif';ctx.textAlign='center';ctx.textBaseline='alphabetic';
+      ctx.fillText(feedback,W/2,150);
+    }
+    if(!playing){
+      ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#fff';ctx.font='bold 30px sans-serif';ctx.textAlign='center';
+      ctx.fillText(elapsed>=DURATION?'TIME UP!':'RHYTHM BEAT',W/2,220);
+      ctx.font='18px sans-serif';
+      ctx.fillText('Score: '+score+'   Misses: '+misses,W/2,258);
+      ctx.fillText('Press Start to play',W/2,288);
+    }
+  }
+  function loop(ts){
+    if(lastTs===null)lastTs=ts;
+    var dt=Math.min(0.05,(ts-lastTs)/1000);
+    lastTs=ts;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+  function laneFromEvent(e){
+    var rect=canvas.getBoundingClientRect();
+    var x=(e.clientX-rect.left)*(W/rect.width);
+    return Math.max(0,Math.min(LANES-1,Math.floor(x/LANE_W)));
+  }
+  canvas.addEventListener('pointerdown',function(e){
+    hit(laneFromEvent(e));
+    e.preventDefault();
+  });
+  document.getElementById('startBtn').addEventListener('click',function(){start();beep(660,0.1);});
+  document.getElementById('restartBtn').addEventListener('click',function(){restart();beep(660,0.1);});
+  document.addEventListener('keydown',function(e){
+    var k=(e.key||'').toLowerCase();
+    if(k in KEYMAP){if(!e.repeat)hit(KEYMAP[k]);e.preventDefault();}
+  });
+  start();
+  playing=false;
+  statusEl.textContent='Press Start, then tap a lane or press D F J K when a note crosses the glowing line!';
+  updateHUD();
+  loop(0);
+  // Test hook (harmless in production): lets a node harness verify the rules.
+  window.__rhythmTest={
+    state:function(){return {score:score,combo:combo,misses:misses,timeLeft:Math.max(0,Math.ceil(DURATION-elapsed)),playing:playing};},
+    start:start,
+    hit:hit,
+    restart:restart,
+    tick:function(dt){update(dt);},
+    spawn:function(lane,y){notes.push({lane:lane,y:y,hit:false});}
+  };
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+<script src="lang-day9.js"></script>
+<script src="lang-day10.js"></script>
+<script src="lang-day11.js"></script>
+<script src="lang-day12.js"></script>
+</body>
+</html>

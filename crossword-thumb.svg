@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Crossword Mini game thumbnail">
+  <rect width="400" height="400" fill="#f5f3ff"/>
+  <rect x="24" y="24" width="352" height="352" rx="24" fill="#ffffff" stroke="#7c3aed" stroke-width="4"/>
+  <g font-family="sans-serif" font-weight="800" text-anchor="middle">
+    <!-- crossword grid: 5x5 cells of 52px starting at (60,44) -->
+    <g>
+      <!-- row 0: S T A R (highlighted) + black -->
+      <rect x="60" y="44" width="52" height="52" fill="#fde047" stroke="#334155" stroke-width="2"/>
+      <rect x="112" y="44" width="52" height="52" fill="#fde047" stroke="#334155" stroke-width="2"/>
+      <rect x="164" y="44" width="52" height="52" fill="#fde047" stroke="#334155" stroke-width="2"/>
+      <rect x="216" y="44" width="52" height="52" fill="#fde047" stroke="#334155" stroke-width="2"/>
+      <rect x="268" y="44" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <!-- row 1: E + blacks + U + black -->
+      <rect x="60" y="96" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="112" y="96" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <rect x="164" y="96" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <rect x="216" y="96" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="268" y="96" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <!-- row 2: N O O N + black -->
+      <rect x="60" y="148" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="112" y="148" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="164" y="148" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="216" y="148" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="268" y="148" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <!-- row 3: S + blacks + G + black -->
+      <rect x="60" y="200" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="112" y="200" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <rect x="164" y="200" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <rect x="216" y="200" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="268" y="200" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <!-- row 4: E G G S + black -->
+      <rect x="60" y="252" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="112" y="252" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="164" y="252" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="216" y="252" width="52" height="52" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+      <rect x="268" y="252" width="52" height="52" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+      <!-- letters -->
+      <text x="86" y="80" font-size="28" fill="#0f172a">S</text>
+      <text x="138" y="80" font-size="28" fill="#0f172a">T</text>
+      <text x="190" y="80" font-size="28" fill="#0f172a">A</text>
+      <text x="242" y="80" font-size="28" fill="#0f172a">R</text>
+      <text x="86" y="132" font-size="28" fill="#0f172a">E</text>
+      <text x="242" y="132" font-size="28" fill="#0f172a">U</text>
+      <text x="86" y="184" font-size="28" fill="#0f172a">N</text>
+      <text x="138" y="184" font-size="28" fill="#0f172a">O</text>
+      <text x="190" y="184" font-size="28" fill="#0f172a">O</text>
+      <text x="242" y="184" font-size="28" fill="#0f172a">N</text>
+      <text x="86" y="236" font-size="28" fill="#0f172a">S</text>
+      <text x="242" y="236" font-size="28" fill="#0f172a">G</text>
+      <text x="86" y="288" font-size="28" fill="#0f172a">E</text>
+      <text x="138" y="288" font-size="28" fill="#0f172a">G</text>
+      <text x="190" y="288" font-size="28" fill="#0f172a">G</text>
+      <text x="242" y="288" font-size="28" fill="#0f172a">S</text>
+      <!-- clue numbers -->
+      <text x="66" y="56" font-size="11" fill="#64748b" text-anchor="start">1</text>
+      <text x="222" y="56" font-size="11" fill="#64748b" text-anchor="start">2</text>
+      <text x="66" y="160" font-size="11" fill="#64748b" text-anchor="start">3</text>
+      <text x="66" y="264" font-size="11" fill="#64748b" text-anchor="start">4</text>
+    </g>
+    <!-- pencil leaning on the grid's bottom-right corner -->
+    <g transform="rotate(38 330 300)">
+      <rect x="318" y="238" width="24" height="86" rx="4" fill="#fbbf24" stroke="#92400e" stroke-width="2"/>
+      <rect x="318" y="238" width="24" height="18" fill="#f472b6" stroke="#92400e" stroke-width="2"/>
+      <path d="M318 324 L342 324 L330 348 Z" fill="#fde68a" stroke="#92400e" stroke-width="2"/>
+      <path d="M326 338 L334 338 L330 348 Z" fill="#334155"/>
+    </g>
+  </g>
+  <text x="200" y="372" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="800" fill="#7c3aed">SOLVE THE GRID!</text>
+</svg>
