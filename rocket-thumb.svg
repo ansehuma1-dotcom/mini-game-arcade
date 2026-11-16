@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Rocket Launch game thumbnail">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f172a"/><stop offset="0.6" stop-color="#1e3a8a"/><stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#sky)"/>
+  <g fill="rgba(255,255,255,0.9)">
+    <circle cx="40" cy="40" r="2"/><circle cx="90" cy="90" r="2.5"/><circle cx="150" cy="50" r="1.8"/><circle cx="250" cy="70" r="2.2"/><circle cx="330" cy="40" r="2"/><circle cx="370" cy="110" r="2.4"/><circle cx="60" cy="160" r="1.8"/><circle cx="300" cy="150" r="2"/><circle cx="200" cy="120" r="1.6"/><circle cx="120" cy="200" r="2"/><circle cx="350" cy="220" r="2"/>
+  </g>
+  <circle cx="52" cy="54" r="22" fill="#e2e8f0"/>
+  <circle cx="45" cy="48" r="5" fill="#cbd5e1"/><circle cx="60" cy="62" r="4" fill="#cbd5e1"/>
+  <g transform="translate(200 190)">
+    <path d="M0 -26 L7 -8 L26 -8 L11 4 L16 23 L0 12 L-16 23 L-11 4 L-26 -8 L-7 -8 Z" fill="#fbbf24"/>
+    <path d="M0 -26 L7 -8 L26 -8 L11 4 L16 23 L0 12 L-16 23 L-11 4 L-26 -8 L-7 -8 Z" fill="none" stroke="#92400e" stroke-width="2" transform="translate(120 40) scale(0.9)"/>
+  </g>
+  <g transform="translate(330 250)">
+    <path d="M0 -26 L7 -8 L26 -8 L11 4 L16 23 L0 12 L-16 23 L-11 4 L-26 -8 L-7 -8 Z" fill="#fbbf24"/>
+  </g>
+  <g>
+    <path d="M200 148 L214 176 L200 178 L186 176 Z" fill="#f97316"/>
+    <path d="M200 150 L208 172 L200 174 L192 172 Z" fill="#fde047"/>
+    <path d="M200 96 Q214 118 212 150 L188 150 Q186 118 200 96 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+    <circle cx="200" cy="128" r="7" fill="#38bdf8" stroke="#0c4a6e" stroke-width="2"/>
+    <path d="M188 138 L176 162 L188 158 Z" fill="#ef4444"/>
+    <path d="M212 138 L224 162 L212 158 Z" fill="#ef4444"/>
+  </g>
+  <g fill="#78716c">
+    <circle cx="90" cy="270" r="16"/><circle cx="86" cy="266" r="4" fill="#57534e"/><circle cx="96" cy="276" r="3" fill="#57534e"/>
+    <circle cx="320" cy="300" r="13"/><circle cx="317" cy="297" r="3" fill="#57534e"/>
+  </g>
+  <rect x="0" y="368" width="400" height="32" fill="#334155"/>
+  <text x="200" y="392" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="800" fill="#fbbf24">BLAST OFF!</text>
+</svg>

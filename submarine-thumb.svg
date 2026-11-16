@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Submarine Dive game thumbnail">
+  <defs>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0ea5e9"/><stop offset="0.6" stop-color="#0369a1"/><stop offset="1" stop-color="#082f49"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#sea)"/>
+  <g fill="rgba(255,255,255,0.07)">
+    <path d="M40 0 L70 0 L130 400 L70 400 Z"/>
+    <path d="M160 0 L204 0 L264 400 L204 400 Z"/>
+  </g>
+  <g stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none">
+    <circle cx="80" cy="80" r="4"/><circle cx="120" cy="50" r="3"/><circle cx="300" cy="70" r="5"/><circle cx="340" cy="40" r="3"/><circle cx="250" cy="110" r="3"/>
+  </g>
+  <g>
+    <circle cx="330" cy="110" r="11" fill="#f8fafc"/>
+    <circle cx="327" cy="107" r="3" fill="#fbcfe8"/>
+    <circle cx="330" cy="110" r="17" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+    <circle cx="90" cy="280" r="11" fill="#f8fafc"/>
+    <circle cx="87" cy="277" r="3" fill="#fbcfe8"/>
+  </g>
+  <g transform="translate(320 250)">
+    <g stroke="#1f2937" stroke-width="4" stroke-linecap="round">
+      <line x1="-12" y1="-12" x2="-19" y2="-19"/><line x1="12" y1="-12" x2="19" y2="-19"/><line x1="-12" y1="12" x2="-19" y2="19"/><line x1="12" y1="12" x2="19" y2="19"/><line x1="-17" y1="0" x2="-24" y2="0"/><line x1="17" y1="0" x2="24" y2="0"/><line x1="0" y1="-17" x2="0" y2="-24"/><line x1="0" y1="17" x2="0" y2="24"/>
+    </g>
+    <circle r="15" fill="#374151"/><circle cx="-5" cy="-5" r="4" fill="#6b7280"/><circle r="4" fill="#ef4444"/>
+  </g>
+  <g transform="translate(70 330)">
+    <g stroke="#1f2937" stroke-width="4" stroke-linecap="round">
+      <line x1="-11" y1="-11" x2="-17" y2="-17"/><line x1="11" y1="-11" x2="17" y2="-17"/><line x1="-11" y1="11" x2="-17" y2="17"/><line x1="11" y1="11" x2="17" y2="17"/><line x1="-15" y1="0" x2="-21" y2="0"/><line x1="15" y1="0" x2="21" y2="0"/><line x1="0" y1="-15" x2="0" y2="-21"/><line x1="0" y1="15" x2="0" y2="21"/>
+    </g>
+    <circle r="13" fill="#374151"/><circle cx="-4" cy="-4" r="4" fill="#6b7280"/><circle r="3.5" fill="#ef4444"/>
+  </g>
+  <g transform="translate(190 180)">
+    <ellipse rx="58" ry="34" fill="#facc15" stroke="#a16207" stroke-width="2"/>
+    <rect x="-14" y="-50" width="28" height="20" fill="#eab308"/>
+    <circle cx="22" cy="-4" r="12" fill="#38bdf8" stroke="#0c4a6e" stroke-width="3"/>
+    <path d="M-56 -14 L-76 0 L-56 14 Z" fill="#f97316"/>
+    <line x1="-58" y1="-24" x2="-58" y2="24" stroke="#78350f" stroke-width="5"/>
+    <circle cx="-84" cy="-8" r="4" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+    <circle cx="-92" cy="10" r="3" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2"/>
+  </g>
+  <rect x="0" y="374" width="400" height="26" fill="#d6a860"/>
+  <text x="200" y="396" text-anchor="middle" font-family="sans-serif" font-size="24" font-weight="800" fill="#ffffff">DIVE FOR PEARLS!</text>
+</svg>

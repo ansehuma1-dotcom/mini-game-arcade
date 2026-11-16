@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rocket Launch — Free Arcade Game | Mini Game Arcade</title>
+<meta name="description" content="Play Rocket Launch free online: hold to thrust, steer past asteroids, grab stars and climb 500 metres into space. 3 lives, fun for kids.">
+<meta name="keywords" content="rocket launch game, space arcade game, free kids game, rocket game">
+<meta property="og:title" content="Rocket Launch — Mini Game Arcade">
+<meta property="og:description" content="Play Rocket Launch free online: hold to thrust, steer past asteroids, grab stars and climb 500 metres into space. 3 lives, fun for kids.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mini-game-arcade-tau.vercel.app/rocket-launch.html">
+<link rel="canonical" href="https://mini-game-arcade-tau.vercel.app/rocket-launch.html">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+<header>
+  <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="siteMenu" aria-label="Menu">☰</button>
+  <a href="index.html">🍉 Mini Game Arcade</a>
+  <nav class="header-links">
+    <a href="index.html" data-i18n="home">Home</a>
+    <a href="about.html" data-i18n="about">About</a>
+    <a href="contact.html" data-i18n="contact">Contact</a>
+    <a href="privacy.html" data-i18n="privacy">Privacy</a>
+    <a href="terms.html" data-i18n="terms">Terms</a>
+  </nav>
+  <div class="header-actions"><label class="lang-label">🌐 <select id="langSelect" aria-label="Language"><option value="en">English</option><option value="hi">हिन्दी</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="pt">Português</option><option value="ar">العربية</option><option value="zh">中文</option><option value="ru">Русский</option><option value="tr">Türkçe</option><option value="ur">اردو</option></select></label></div>
+  <nav class="site-menu hidden" id="siteMenu" aria-label="Categories">
+    <a href="index.html" data-menu-type="all" data-i18n="all_games">All Games</a>
+    <a href="index.html?type=arcade" data-menu-type="arcade" data-i18n="arcade">Arcade</a>
+    <a href="index.html?type=puzzle" data-menu-type="puzzle" data-i18n="puzzle">Puzzle</a>
+    <a href="index.html?type=idle" data-menu-type="idle" data-i18n="idle">Idle</a>
+    <a href="index.html?type=runner" data-menu-type="runner" data-i18n="runner">Runner</a>
+    <a href="index.html?type=words" data-menu-type="words" data-i18n="words">Words</a>
+    <a href="index.html?type=racing" data-menu-type="racing" data-i18n="racing">Racing</a>
+    <a href="index.html?type=cards" data-menu-type="cards" data-i18n="cards">Cards</a>
+    <a href="index.html?type=strategy" data-menu-type="strategy" data-i18n="strategy">Strategy</a>
+    <a href="index.html?type=board" data-menu-type="board" data-i18n="board">Board</a>
+    <a href="index.html?type=sports" data-menu-type="sports" data-i18n="sports">Sports</a>
+    <a href="index.html" data-menu-audience="all" data-i18n="all_ages">All Ages</a>
+    <a href="index.html?audience=kids" data-menu-audience="kids" data-i18n="kids">Kids</a>
+    <a href="index.html?audience=adults" data-menu-audience="adults" data-i18n="adults">Adults</a>
+  </nav>
+</header>
+<main>
+  <p class="tag" data-i18n="arcade">Arcade</p> <p class="tag" data-i18n="kids">Kids</p>
+  <h1>Rocket Launch</h1>
+  <p data-i18n="rocket_intro">Blast off into space! Hold to thrust, steer around the asteroids and grab the stars. Reach 500 metres high to win — you have 3 lives.</p>
+  <div class="hud">
+    <span><span data-i18n="score">Score:</span> <strong id="score">0</strong></span>
+    <span><span data-i18n="rocket_altitude">Altitude:</span> <strong id="altitude">0m</strong></span>
+    <span><span data-i18n="lives">Lives:</span> <strong id="lives">3</strong></span>
+  </div>
+  <div class="card" style="text-align:center">
+    <p id="status" aria-live="polite" style="font-weight:700;min-height:1.5em">Hold Space, hold the Thrust button, or hold your finger on the game to lift off!</p>
+    <canvas id="game" width="400" height="400" aria-label="Rocket Launch game area" style="max-width:400px;height:auto;border:2px solid #000;border-radius:16px"></canvas>
+    <p style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+      <button class="btn small" id="thrustBtn" type="button">🚀 Hold to Thrust</button>
+      <button class="btn small secondary" id="restartBtn" type="button" data-i18n="restart">Restart</button>
+    </p>
+  </div>
+  <p class="muted">Controls: hold Space, hold the Thrust button, or hold your finger on the game to thrust upward. Steer left and right with the arrow keys or by dragging. Dodge the asteroids, grab stars for 10 points each, and reach 500 metres to win. An asteroid hit costs a life — you have 3.</p>
+<script>
+(function(){
+  var canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+  var scoreEl=document.getElementById('score'),altEl=document.getElementById('altitude'),
+      livesEl=document.getElementById('lives'),status=document.getElementById('status');
+  var W=400,H=400,WIN_ALT=500;
+  var rocket,altitude,stars,lives,score,won,over,thrusting,invuln,spawnTick,objects,targetX,bgStars;
+  function beep(f,d){if(window.mgaBeep)window.mgaBeep(f,d);}
+  function updateHUD(){
+    scoreEl.textContent=score;
+    altEl.textContent=altitude+'m';
+    livesEl.textContent=lives;
+  }
+  function reset(){
+    rocket={x:200,y:330,vy:0};
+    altitude=0;stars=0;lives=3;score=0;won=false;over=false;
+    thrusting=false;invuln=0;spawnTick=0;objects=[];targetX=null;
+    bgStars=[];
+    for(var i=0;i<40;i++)bgStars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.6+0.6});
+    updateHUD();
+    status.textContent='Hold Space, hold the Thrust button, or hold your finger on the game to lift off!';
+  }
+  function spawn(){
+    var kind=Math.random()<0.62?'rock':'star';
+    objects.push({kind:kind,x:24+Math.random()*(W-48),y:-24,speed:kind==='rock'?2+Math.random()*2:1.6+Math.random(),r:kind==='rock'?14+Math.random()*8:11,spin:Math.random()*Math.PI*2});
+  }
+  function update(){
+    if(won||over)return;
+    if(thrusting){rocket.vy-=0.55;altitude+=2;}
+    else{rocket.vy+=0.28;}
+    if(rocket.vy<-6)rocket.vy=-6;
+    if(rocket.vy>5)rocket.vy=5;
+    rocket.y+=rocket.vy;
+    if(rocket.y<50){rocket.y=50;if(rocket.vy<0)rocket.vy=0;}
+    if(rocket.y>350){rocket.y=350;if(rocket.vy>0)rocket.vy=0;}
+    if(targetX!==null){
+      if(rocket.x<targetX-4)rocket.x+=5;
+      else if(rocket.x>targetX+4)rocket.x-=5;
+    }
+    if(rocket.x<20)rocket.x=20;
+    if(rocket.x>W-20)rocket.x=W-20;
+    if(invuln>0)invuln--;
+    spawnTick++;
+    if(spawnTick>=38){spawnTick=0;spawn();}
+    for(var i=objects.length-1;i>=0;i--){
+      var o=objects[i];
+      o.y+=o.speed;o.spin+=0.02;
+      if(o.y>H+30){objects.splice(i,1);continue;}
+      var dx=Math.abs(o.x-rocket.x),dy=Math.abs(o.y-rocket.y);
+      if(dx<26&&dy<26){
+        if(o.kind==='star'){
+          stars++;objects.splice(i,1);beep(990,0.1);
+        }else if(invuln===0){
+          lives--;invuln=50;objects.splice(i,1);beep(180,0.25);
+          if(lives<=0){
+            over=true;
+            status.textContent='Game over! Your rocket was hit. Final score: '+score+'. Press Restart to fly again.';
+            beep(160,0.4);
+          }else{
+            status.textContent='Ouch! An asteroid hit you — '+lives+(lives===1?' life':' lives')+' left.';
+          }
+        }
+      }
+    }
+    score=altitude+stars*10;
+    updateHUD();
+    if(altitude>=WIN_ALT&&!won){
+      won=true;
+      status.textContent='You reached space! Final score: '+score+'. Press Restart to fly again.';
+      beep(880,0.15);setTimeout(function(){beep(1174,0.15);},160);setTimeout(function(){beep(1568,0.3);},320);
+    }
+  }
+  function drawStarShape(x,y,rad,color){
+    ctx.save();ctx.translate(x,y);ctx.fillStyle=color;
+    ctx.beginPath();
+    for(var i=0;i<10;i++){
+      var a=-Math.PI/2+i*Math.PI/5,rr=i%2===0?rad:rad*0.45;
+      var px=Math.cos(a)*rr,py=Math.sin(a)*rr;
+      if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py);
+    }
+    ctx.closePath();ctx.fill();ctx.restore();
+  }
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0f172a');g.addColorStop(0.6,'#1e3a8a');g.addColorStop(1,'#7c3aed');
+    ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(255,255,255,0.85)';
+    bgStars.forEach(function(s){ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);ctx.fill();});
+    // moon
+    ctx.fillStyle='#e2e8f0';ctx.beginPath();ctx.arc(52,54,22,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#cbd5e1';ctx.beginPath();ctx.arc(45,48,5,0,Math.PI*2);ctx.arc(60,62,4,0,Math.PI*2);ctx.fill();
+    // ground
+    ctx.fillStyle='#334155';ctx.fillRect(0,H-24,W,24);
+    ctx.fillStyle='#475569';ctx.fillRect(0,H-24,W,5);
+    // objects
+    objects.forEach(function(o){
+      if(o.kind==='star'){drawStarShape(o.x,o.y,o.r,'#fbbf24');}
+      else{
+        ctx.save();ctx.translate(o.x,o.y);ctx.rotate(o.spin);
+        ctx.fillStyle='#78716c';ctx.beginPath();ctx.arc(0,0,o.r,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#57534e';
+        ctx.beginPath();ctx.arc(-o.r*0.35,-o.r*0.3,o.r*0.25,0,Math.PI*2);ctx.fill();
+        ctx.beginPath();ctx.arc(o.r*0.3,o.r*0.35,o.r*0.2,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#a8a29e';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,o.r-2,0,Math.PI*2);ctx.stroke();
+        ctx.restore();
+      }
+    });
+    // rocket (blink while invulnerable)
+    if(!(invuln>0&&Math.floor(invuln/5)%2===0)){
+      var rx=rocket.x,ry=rocket.y;
+      if(thrusting){
+        var fl=14+Math.random()*12;
+        ctx.fillStyle='#f97316';
+        ctx.beginPath();ctx.moveTo(rx-8,ry+22);ctx.lineTo(rx,ry+22+fl);ctx.lineTo(rx+8,ry+22);ctx.closePath();ctx.fill();
+        ctx.fillStyle='#fde047';
+        ctx.beginPath();ctx.moveTo(rx-5,ry+22);ctx.lineTo(rx,ry+22+fl*0.6);ctx.lineTo(rx+5,ry+22);ctx.closePath();ctx.fill();
+      }
+      ctx.fillStyle='#e2e8f0';
+      ctx.beginPath();ctx.moveTo(rx,ry-26);ctx.quadraticCurveTo(rx+12,ry-8,rx+10,ry+20);ctx.lineTo(rx-10,ry+20);ctx.quadraticCurveTo(rx-12,ry-8,rx,ry-26);ctx.fill();
+      ctx.strokeStyle='#94a3b8';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(rx,ry-6,6,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#0c4a6e';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle='#ef4444';
+      ctx.beginPath();ctx.moveTo(rx-10,ry+8);ctx.lineTo(rx-20,ry+24);ctx.lineTo(rx-10,ry+22);ctx.closePath();ctx.fill();
+      ctx.beginPath();ctx.moveTo(rx+10,ry+8);ctx.lineTo(rx+20,ry+24);ctx.lineTo(rx+10,ry+22);ctx.closePath();ctx.fill();
+    }
+    // altitude bar
+    ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(W-24,20,10,200);
+    ctx.fillStyle='#fbbf24';ctx.fillRect(W-24,20+200*(1-Math.min(1,altitude/WIN_ALT)),10,200*Math.min(1,altitude/WIN_ALT));
+    ctx.fillStyle='#fff';ctx.font='bold 11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('SPACE',W-19,232);
+    if(won){
+      ctx.fillStyle='rgba(0,0,0,0.6)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#fbbf24';ctx.font='bold 30px sans-serif';ctx.textAlign='center';
+      ctx.fillText('YOU REACHED SPACE!',W/2,190);
+      ctx.fillStyle='#fff';ctx.font='18px sans-serif';
+      ctx.fillText('Altitude '+altitude+'m — score '+score,W/2,228);
+      ctx.fillText('Press Restart to fly again',W/2,258);
+    }
+    if(over){
+      ctx.fillStyle='rgba(0,0,0,0.55)';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#fff';ctx.font='bold 26px sans-serif';ctx.textAlign='center';
+      ctx.fillText('GAME OVER',W/2,190);
+      ctx.font='16px sans-serif';
+      ctx.fillText('Final score: '+score+' — press Restart to fly again',W/2,222);
+    }
+  }
+  function loop(){update();draw();requestAnimationFrame(loop);}
+  function canvasX(e){
+    var rect=canvas.getBoundingClientRect();
+    return (e.clientX-rect.left)*(W/rect.width);
+  }
+  canvas.addEventListener('pointerdown',function(e){thrusting=true;targetX=canvasX(e);e.preventDefault();});
+  canvas.addEventListener('pointermove',function(e){if(thrusting)targetX=canvasX(e);});
+  canvas.addEventListener('pointerup',function(){thrusting=false;targetX=null;});
+  canvas.addEventListener('pointerleave',function(){thrusting=false;targetX=null;});
+  var thrustBtn=document.getElementById('thrustBtn');
+  thrustBtn.addEventListener('pointerdown',function(e){thrusting=true;e.preventDefault();});
+  thrustBtn.addEventListener('pointerup',function(){thrusting=false;});
+  thrustBtn.addEventListener('pointerleave',function(){thrusting=false;});
+  document.getElementById('restartBtn').addEventListener('click',function(){reset();beep(660,0.1);});
+  document.addEventListener('keydown',function(e){
+    if(e.key===' '){thrusting=true;e.preventDefault();}
+    else if(e.key==='ArrowLeft'){rocket.x=Math.max(20,rocket.x-14);e.preventDefault();}
+    else if(e.key==='ArrowRight'){rocket.x=Math.min(W-20,rocket.x+14);e.preventDefault();}
+  });
+  document.addEventListener('keyup',function(e){if(e.key===' ')thrusting=false;});
+  reset();
+  loop();
+  // Test hook (harmless in production): lets a node harness verify the game.
+  window.__rocketTest={
+    WIN_ALT:WIN_ALT,
+    state:function(){return {altitude:altitude,stars:stars,lives:lives,score:score,won:won,over:over,thrusting:thrusting,x:rocket.x,y:rocket.y,objects:objects.length};},
+    thrust:function(on){thrusting=!!on;},
+    setX:function(x){rocket.x=x;},
+    spawnStar:function(x,y){objects.push({kind:'star',x:x,y:y,speed:2,r:11,spin:0});},
+    spawnAsteroid:function(x,y){objects.push({kind:'rock',x:x,y:y,speed:2,r:16,spin:0});},
+    update:update,
+    reset:reset
+  };
+})();
+</script>
+  <p><a href="index.html" data-i18n="back">← Back to all games</a></p>
+</main>
+<footer>
+  <a href="about.html" data-i18n="about">About</a> · <a href="contact.html" data-i18n="contact">Contact</a> · <a href="privacy.html" data-i18n="privacy">Privacy Policy</a> · <a href="terms.html" data-i18n="terms">Terms</a>
+</footer>
+<script src="game-controls.js"></script>
+<script src="menu.js"></script>
+<script src="lang.js"></script>
+<script src="lang-day4.js"></script>
+<script src="lang-day5.js"></script>
+<script src="lang-day6.js"></script>
+<script src="lang-day7.js"></script>
+<script src="lang-day8.js"></script>
+<script src="lang-day9.js"></script>
+<script src="lang-day10.js"></script>
+<script src="lang-day11.js"></script>
+<script src="lang-day12.js"></script>
+<script src="lang-day13.js"></script>
+</body>
+</html>
