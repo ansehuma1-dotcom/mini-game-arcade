@@ -207,7 +207,7 @@
     // gap marker while building
     if(!crossing&&!won&&bridgeLen()<gap){
       ctx.fillStyle='rgba(0,0,0,0.55)';ctx.font='bold 13px sans-serif';ctx.textAlign='center';
-      ctx.fillText('gap: '+gap+'m — each plank covers '+PLANK_W+'m',BANK+gap/2,GROUND+120);
+      ctx.fillText('Gap: '+gap+'m — each plank covers '+PLANK_W+'m',W/2,GROUND+120);
     }
     drawWalker(walkerX,GROUND);
     if(won){
