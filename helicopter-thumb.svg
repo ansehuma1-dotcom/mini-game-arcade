@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Helicopter Rescue game thumbnail">
+  <rect width="400" height="300" fill="#7dd3fc"/>
+  <circle cx="348" cy="42" r="24" fill="#fef08a"/>
+  <g fill="rgba(255,255,255,0.9)">
+    <ellipse cx="80" cy="52" rx="34" ry="13"/>
+    <ellipse cx="210" cy="34" rx="28" ry="11"/>
+    <ellipse cx="310" cy="86" rx="30" ry="12"/>
+  </g>
+  <!-- city skyline -->
+  <g>
+    <rect x="0" y="210" width="70" height="90" fill="#7c3aed"/>
+    <rect x="80" y="190" width="70" height="110" fill="#64748b"/>
+    <rect x="160" y="220" width="70" height="80" fill="#0ea5e9"/>
+    <rect x="240" y="200" width="70" height="100" fill="#f59e0b"/>
+    <rect x="320" y="225" width="80" height="75" fill="#64748b"/>
+    <g fill="rgba(255,255,255,0.75)">
+      <rect x="14" y="224" width="12" height="10"/><rect x="40" y="224" width="12" height="10"/>
+      <rect x="14" y="248" width="12" height="10"/><rect x="40" y="248" width="12" height="10"/>
+      <rect x="94" y="204" width="12" height="10"/><rect x="120" y="204" width="12" height="10"/>
+      <rect x="94" y="228" width="12" height="10"/><rect x="120" y="228" width="12" height="10"/>
+      <rect x="174" y="234" width="12" height="10"/><rect x="200" y="234" width="12" height="10"/>
+      <rect x="254" y="214" width="12" height="10"/><rect x="280" y="214" width="12" height="10"/>
+      <rect x="334" y="239" width="12" height="10"/><rect x="360" y="239" width="12" height="10"/>
+    </g>
+  </g>
+  <!-- helipad on the left rooftop -->
+  <circle cx="35" cy="208" r="20" fill="#ffffff" stroke="#dc2626" stroke-width="3"/>
+  <path d="M28 200 L28 216 M42 200 L42 216 M28 208 L42 208" stroke="#dc2626" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <!-- stranded hiker waving on the right rooftop -->
+  <g stroke="#1f2937" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M352 246 L352 262"/>
+    <path d="M352 250 L344 256 M352 250 L360 240"/>
+    <path d="M352 262 L347 274 M352 262 L357 274"/>
+  </g>
+  <circle cx="352" cy="240" r="6" fill="#f59e0b"/>
+  <!-- rescue helicopter -->
+  <g>
+    <line x1="200" y1="96" x2="200" y2="130" stroke="#1f2937" stroke-width="3"/>
+    <line x1="150" y1="92" x2="250" y2="92" stroke="#1f2937" stroke-width="4" stroke-linecap="round"/>
+    <path d="M192 128 L158 118 L158 132 L192 138 Z" fill="#b91c1c"/>
+    <path d="M158 118 L164 104 L172 118 Z" fill="#dc2626"/>
+    <ellipse cx="200" cy="140" rx="34" ry="17" fill="#dc2626"/>
+    <ellipse cx="214" cy="136" rx="12" ry="8" fill="#bae6fd"/>
+    <path d="M182 156 L182 164 M214 156 L214 164 M176 164 L222 164" stroke="#1f2937" stroke-width="3" stroke-linecap="round" fill="none"/>
+    <!-- winch line lifting a hiker -->
+    <line x1="200" y1="156" x2="200" y2="182" stroke="#1f2937" stroke-width="2"/>
+    <g stroke="#1f2937" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M200 196 L200 208"/>
+      <path d="M200 200 L193 205 M200 200 L207 205"/>
+      <path d="M200 208 L196 218 M200 208 L204 218"/>
+    </g>
+    <circle cx="200" cy="190" r="6" fill="#f59e0b"/>
+  </g>
+  <!-- birds -->
+  <g stroke="#1f2937" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M96 120 Q104 112 112 120 Q120 112 128 120"/>
+    <path d="M288 60 Q295 53 302 60 Q309 53 316 60"/>
+  </g>
+</svg>

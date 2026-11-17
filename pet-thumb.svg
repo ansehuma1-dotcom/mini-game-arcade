@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Pet Care game thumbnail">
+  <rect width="400" height="300" fill="#FFF3D6"/>
+  <circle cx="48" cy="46" r="26" fill="#FDE68A"/>
+  <ellipse cx="104" cy="42" rx="30" ry="12" fill="#ffffff"/>
+  <ellipse cx="300" cy="36" rx="36" ry="13" fill="#ffffff"/>
+  <rect y="238" width="400" height="62" fill="#B5E48C"/>
+  <g>
+    <path d="M200 78 C186 62 166 66 166 84 C166 96 182 106 200 114 C218 106 234 96 234 84 C234 66 214 62 200 78 Z" fill="#F472B6"/>
+    <path d="M112 108 C104 98 90 100 90 112 C90 120 102 127 112 132 C122 127 134 120 134 112 C134 100 120 98 112 108 Z" fill="#F9A8D4"/>
+    <path d="M292 100 C284 90 270 92 270 104 C270 112 282 119 292 124 C302 119 314 112 314 104 C314 92 300 90 292 100 Z" fill="#F9A8D4"/>
+  </g>
+  <g>
+    <ellipse cx="62" cy="252" rx="32" ry="13" fill="#3B82F6"/>
+    <rect x="30" y="252" width="64" height="6" fill="#60A5FA"/>
+    <circle cx="50" cy="250" r="6" fill="#92400E"/>
+    <circle cx="68" cy="250" r="6" fill="#92400E"/>
+    <circle cx="60" cy="244" r="6" fill="#92400E"/>
+  </g>
+  <g>
+    <circle cx="338" cy="252" r="22" fill="#EF4444"/>
+    <path d="M316 252 A22 22 0 0 1 360 252 L360 258 A22 22 0 0 1 316 258 Z" fill="#ffffff"/>
+    <circle cx="338" cy="252" r="8" fill="#EF4444"/>
+  </g>
+  <g>
+    <ellipse cx="152" cy="118" rx="17" ry="26" fill="#FB923C" transform="rotate(-28 152 118)"/>
+    <ellipse cx="248" cy="118" rx="17" ry="26" fill="#FB923C" transform="rotate(28 248 118)"/>
+    <ellipse cx="152" cy="118" rx="8" ry="14" fill="#FDBA74" transform="rotate(-28 152 118)"/>
+    <ellipse cx="248" cy="118" rx="8" ry="14" fill="#FDBA74" transform="rotate(28 248 118)"/>
+    <circle cx="200" cy="180" r="82" fill="#FB923C"/>
+    <ellipse cx="200" cy="216" rx="50" ry="38" fill="#FED7AA"/>
+    <ellipse cx="158" cy="248" rx="20" ry="11" fill="#EA7C28"/>
+    <ellipse cx="242" cy="248" rx="20" ry="11" fill="#EA7C28"/>
+    <circle cx="168" cy="168" r="15" fill="#ffffff"/>
+    <circle cx="232" cy="168" r="15" fill="#ffffff"/>
+    <circle cx="171" cy="170" r="7" fill="#1F2937"/>
+    <circle cx="235" cy="170" r="7" fill="#1F2937"/>
+    <circle cx="173" cy="167" r="2.5" fill="#ffffff"/>
+    <circle cx="237" cy="167" r="2.5" fill="#ffffff"/>
+    <circle cx="144" cy="194" r="10" fill="#F9A8D4"/>
+    <circle cx="256" cy="194" r="10" fill="#F9A8D4"/>
+    <ellipse cx="200" cy="190" rx="8" ry="5.5" fill="#7C2D12"/>
+    <path d="M184 202 A20 20 0 0 0 216 202" stroke="#7C2D12" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

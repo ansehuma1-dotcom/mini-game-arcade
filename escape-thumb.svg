@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300" role="img" aria-label="Escape Room game thumbnail">
+  <rect width="400" height="300" fill="#f7e7c3"/>
+  <rect y="252" width="400" height="48" fill="#a4713f"/>
+  <rect y="246" width="400" height="6" fill="#8b5e34"/>
+  <ellipse cx="200" cy="272" rx="150" ry="16" fill="#b45309" opacity="0.35"/>
+  <g>
+    <rect x="130" y="28" width="140" height="224" fill="#6b4423"/>
+    <rect x="138" y="36" width="124" height="208" fill="#8b5a2b"/>
+    <rect x="150" y="48" width="100" height="70" fill="none" stroke="#5b3a1a" stroke-width="3"/>
+    <rect x="150" y="130" width="100" height="70" fill="none" stroke="#5b3a1a" stroke-width="3"/>
+    <circle cx="238" cy="140" r="10" fill="#d4a017" stroke="#92400e" stroke-width="2"/>
+    <circle cx="200" cy="140" r="11" fill="#1f2937"/>
+    <rect x="196" y="140" width="8" height="18" fill="#1f2937"/>
+    <circle cx="200" cy="140" r="4" fill="#fbbf24"/>
+  </g>
+  <g transform="rotate(-35 90 210)">
+    <circle cx="78" cy="210" r="14" fill="none" stroke="#d4a017" stroke-width="7"/>
+    <circle cx="82" cy="210" r="5" fill="none" stroke="#92400e" stroke-width="2"/>
+    <rect x="90" y="206" width="52" height="8" rx="3" fill="#d4a017"/>
+    <rect x="128" y="206" width="10" height="8" fill="#d4a017"/>
+    <rect x="138" y="206" width="8" height="8" fill="#d4a017"/>
+  </g>
+  <g transform="rotate(25 320 215)">
+    <circle cx="320" cy="215" r="34" fill="rgba(191,227,255,0.55)" stroke="#92400e" stroke-width="6"/>
+    <rect x="348" y="206" width="46" height="12" rx="6" fill="#92400e"/>
+    <path d="M298 196 L314 196 L306 232 Z" fill="#fff" opacity="0.5"/>
+  </g>
+  <g>
+    <rect x="52" y="60" width="72" height="52" fill="#6b4423"/>
+    <rect x="58" y="66" width="60" height="40" fill="#bfe3ff"/>
+    <rect x="66" y="92" width="44" height="4" fill="#16a34a"/>
+    <rect x="72" y="80" width="5" height="12" fill="#fff"/>
+    <rect x="84" y="80" width="5" height="12" fill="#fff"/>
+    <rect x="96" y="80" width="5" height="12" fill="#fff"/>
+    <circle cx="74" cy="76" r="3" fill="#f97316"/>
+    <circle cx="86" cy="76" r="3" fill="#f97316"/>
+    <circle cx="98" cy="76" r="3" fill="#f97316"/>
+  </g>
+</svg>
