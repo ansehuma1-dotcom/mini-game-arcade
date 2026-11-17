@@ -104,16 +104,18 @@ first game ships.
 | 12 | Crossword Mini | Words | Adults | Small crossword grid, clues | ✅ (LIVE 2026-11-15) |
 | 12 | Blackjack Blitz | Cards | Adults | Cards totalling 21 | ✅ (LIVE 2026-11-15) |
 | 12 | Poker Pairs | Cards | Adults | Poker hand, matching pairs | ✅ (LIVE 2026-11-15) |
-| 13 | Bridge Builder | Strategy | All Ages | Bridge planks over a river gap |
-| 13 | City Builder | Strategy | All Ages | Tiny city blocks rising |
-| 13 | Rocket Launch | Arcade | Kids | Rocket blasting past stars |
-| 13 | Submarine Dive | Arcade | All Ages | Sub dodging mines underwater |
-| 13 | Treasure Hunt | Puzzle | Kids | Map with X marking treasure |
-| 14 | Escape Room | Puzzle | Adults | Locked room, keys and clues |
-| 14 | Pet Care | Idle | Kids | Happy pet, food and hearts |
-| 14 | Snowball Fight | Arcade | Kids | Snowballs flying in a yard |
-| 14 | Helicopter Rescue | Arcade | All Ages | Helicopter lifting stranded hikers |
-| 14 | Jungle Snake | Arcade | All Ages | Snake coiling through jungle fruit |
+| 13 | Bridge Builder | Strategy | All Ages | Bridge planks over a river gap | ✅ (LIVE 2026-11-16, commit 9829cb4a; gap-caption clip fix ebb05c0c)
+| 13 | City Builder | Strategy | All Ages | Tiny city blocks rising | ✅ (LIVE 2026-11-16, commit 9829cb4a)
+| 13 | Rocket Launch | Arcade | Kids | Rocket blasting past stars | ✅ (LIVE 2026-11-16, commit 9829cb4a)
+| 13 | Submarine Dive | Arcade | All Ages | Sub dodging mines underwater | ✅ (LIVE 2026-11-16, commit 9829cb4a)
+| 13 | Treasure Hunt | Puzzle | Kids | Map with X marking treasure | ✅ (LIVE 2026-11-16, commit 9829cb4a)
+| 14 | Escape Room | Puzzle | Adults | Locked room, keys and clues | ✅ (LIVE 2026-11-17, commit bfbc5726)
+| 14 | Pet Care | Idle | Kids | Happy pet, food and hearts | ✅ (LIVE 2026-11-17, commit bfbc5726)
+| 14 | Snowball Fight | Arcade | Kids | Snowballs flying in a yard | ✅ (LIVE 2026-11-17, commit bfbc5726)
+| 14 | Helicopter Rescue | Arcade | All Ages | Helicopter lifting stranded hikers | ✅ (LIVE 2026-11-17, commit bfbc5726)
+| 14 | Jungle Snake | Arcade | All Ages | Snake coiling through jungle fruit | ✅ (LIVE 2026-11-17, commit bfbc5726)
+
+2026-11-17 run (Day 14 — QUEUE 2 COMPLETE): All 5 games LIVE. First builder subagent died silently with no files; re-dispatched as 5 parallel per-game builders, all passed gates (Escape 16/16, Pet 12/12, Snowball 9/9, Heli 9/9, Snake 12/12 harness assertions + node --check). Assembly fixes: Jungle Snake keys renamed snake_* → jungle_* (snake_* already belong to Snake Rush in lang.js); thumbnail jungle-snake-thumb.svg (jungle-thumb.svg belongs to Jungle Jump). lang-day14.js: 30 keys × 11 languages, parity PASS. Push commit bfbc5726, verified live signed-out: all 13 URLs 200, homepage 72 cards, sitemap 6× 2026-11-17. Live play-check PASSED all 6 checks (homepage filters/language, Escape Room wrong code rejected + code 488 win + restart, Pet Care feed/play/sleep raise meters + restart, Snowball hit +10 + restart, Helicopter Up-button move + bird hits + restart, Jungle Snake steer + wall death + restart). Minor note: ArrowUp key presses aimed at the canvas element errored in the test browser (unknown outcome) — movement verified via Up button instead. Site now at 72 games. QUEUE 2 FINISHED (35 games, Days 8–14) — a Queue 3 proposal is needed from the user; do NOT invent one and keep publishing without him.
 
 ## Daily run checklist
 1. Take the next FIVE (minimum) ☐ games in order; skip none, do not repeat a shipped game. If one fails its gate, publish the next game in the queue the same day to still reach 5 live games that day if possible; otherwise report the shortfall plainly.
